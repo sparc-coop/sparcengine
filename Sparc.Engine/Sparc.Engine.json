@@ -294,6 +294,12 @@
           "username": {
             "type": "string"
           },
+          "email": {
+            "type": "string"
+          },
+          "phoneNumber": {
+            "type": "string"
+          },
           "userId": {
             "type": "string"
           },
@@ -334,6 +340,17 @@
             "items": {
               "$ref": "#/components/schemas/ProductKey"
             }
+          },
+          "emailOrPhone": {
+            "type": "string",
+            "nullable": true
+          },
+          "isVerified": {
+            "type": "boolean"
+          },
+          "verificationHash": {
+            "type": "string",
+            "nullable": true
           },
           "primaryLanguage": {
             "$ref": "#/components/schemas/Language"
