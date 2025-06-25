@@ -28,23 +28,18 @@
 		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="Passwordless" Version="2.0.0" />
-		<PackageReference Include="Scalar.AspNetCore" Version="2.4.17" />
-		<PackageReference Include="Markdig" Version="0.41.2" />
+		<PackageReference Include="Scalar.AspNetCore" Version="2.5.0" />
+		<PackageReference Include="Markdig" Version="0.41.3" />
 		<PackageReference Include="Azure.AI.Translation.Text" Version="1.0.0" />
 		<PackageReference Include="DeepL.net" Version="1.15.0" />
 		<PackageReference Include="Microsoft.CognitiveServices.Speech" Version="1.44.0" />
 		<PackageReference Include="NAudio.Lame" Version="2.0.1" />
+		<PackageReference Include="Sparc.Blossom" Version="10.0.0-preview.5" />
+		<PackageReference Include="Sparc.Blossom.Data.Cosmos" Version="10.0.0-preview.4" />
 		<PackageReference Include="Stripe.net" Version="48.2.0" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<Folder Include="Communication\" />
 	</ItemGroup>
-
-	<ItemGroup>
-		<ProjectReference Include="..\..\blossom\Sparc.Core\Sparc.Core.csproj" />
-		<ProjectReference Include="..\..\blossom\Sparc.Blossom.Data.Cosmos\Sparc.Blossom.Data.Cosmos.csproj" />
-		<ProjectReference Include="..\..\blossom\Sparc.Blossom\Sparc.Blossom.csproj" />
-	</ItemGroup>
-
 </Project>
