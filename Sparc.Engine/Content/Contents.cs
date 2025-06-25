@@ -48,6 +48,37 @@ public class Contents(BlossomAggregateOptions<TextContent> options, KoriTranslat
         return translation;
     }
 
+    public async Task<List<TextContent>> BulkTranslate(List<TextContent> contents)
+    {
+        var user = await auth.GetAsync(User);
+        var toLanguage = user?.Avatar.Language;
+
+        var results = new List<TextContent>();
+
+        foreach (var content in contents)
+        {
+            var newId = TextContent.IdHash(content.Text, toLanguage);
+            var existing = await Repository.Query
+                .Where(x => x.Domain == content.Domain && x.Id == newId)
+                .CosmosFirstOrDefaultAsync();
+
+            if (existing != null)
+            {
+                results.Add(existing);
+                continue;
+            }
+
+            var translation = await translator.TranslateAsync(content, toLanguage);
+            if (translation == null)
+                continue;
+
+            await Repository.AddAsync(translation);
+            results.Add(translation);
+        }
+
+        return results;
+    }
+
     public BlossomQuery<TextContent> All(string pageId) => Query().Where(content => content.PageId == pageId && content.SourceContentId == null);
 
     public async Task<IEnumerable<Language>> Languages()
