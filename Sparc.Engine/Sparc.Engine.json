@@ -120,7 +120,53 @@
         }
       }
     },
-    "/auth/user-products": {
+    "/user/language": {
+      "get": {
+        "tags": [
+          "SparcEngineAuthenticator`1"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Language2"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Sparc.Engine"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Language2"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BlossomUser"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/user-products": {
       "post": {
         "tags": [
           "Sparc.Engine"
@@ -149,24 +195,7 @@
         }
       }
     },
-    "/user/language": {
-      "get": {
-        "tags": [
-          "SparcEngineAuthenticator`1"
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Language2"
-                }
-              }
-            }
-          }
-        }
-      },
+    "/user/update-user": {
       "post": {
         "tags": [
           "Sparc.Engine"
@@ -175,7 +204,65 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/Language2"
+                "$ref": "#/components/schemas/UpdateUserRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BlossomUser"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/verify-code": {
+      "post": {
+        "tags": [
+          "Sparc.Engine"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VerificationRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/update-avatar": {
+      "post": {
+        "tags": [
+          "Sparc.Engine"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateAvatarRequest"
               }
             }
           },
@@ -532,6 +619,69 @@
           }
         }
       },
+      "UpdateAvatarRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "default": null,
+            "nullable": true
+          },
+          "backgroundColor": {
+            "type": "string",
+            "default": null,
+            "nullable": true
+          },
+          "pronouns": {
+            "type": "string",
+            "default": null,
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "default": null,
+            "nullable": true
+          },
+          "emoji": {
+            "type": "string",
+            "default": null,
+            "nullable": true
+          },
+          "gender": {
+            "type": "string",
+            "default": null,
+            "nullable": true
+          }
+        }
+      },
+      "UpdateUserRequest": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string",
+            "default": null,
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "default": null,
+            "nullable": true
+          },
+          "phoneNumber": {
+            "type": "string",
+            "default": null,
+            "nullable": true
+          },
+          "requireEmailVerification": {
+            "type": "boolean",
+            "default": false
+          },
+          "requirePhoneVerification": {
+            "type": "boolean",
+            "default": false
+          }
+        }
+      },
       "UserAvatar": {
         "type": "object",
         "properties": {
@@ -644,6 +794,21 @@
           }
         },
         "nullable": true
+      },
+      "VerificationRequest": {
+        "required": [
+          "emailOrPhone",
+          "code"
+        ],
+        "type": "object",
+        "properties": {
+          "emailOrPhone": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          }
+        }
       },
       "Word": {
         "required": [

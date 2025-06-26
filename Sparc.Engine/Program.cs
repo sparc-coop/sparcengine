@@ -4,6 +4,7 @@ using Scalar.AspNetCore;
 using Sparc.Blossom.Authentication;
 using Sparc.Blossom.Data;
 using Sparc.Engine;
+using Sparc.Notifications.Twilio;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddOpenApi();
@@ -21,6 +22,8 @@ builder.Services.AddMediatR(options =>
     options.NotificationPublisher = new TaskWhenAllPublisher();
     options.NotificationPublisherType = typeof(TaskWhenAllPublisher);
 });
+
+builder.Services.AddTwilio(builder.Configuration);
 
 builder.Services.AddCors(options =>
 {
