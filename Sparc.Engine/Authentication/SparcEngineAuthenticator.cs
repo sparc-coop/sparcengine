@@ -354,7 +354,7 @@ public class SparcEngineAuthenticator<T> : BlossomDefaultAuthenticator<T>, IBlos
         user.MapPost("update-avatar", async (SparcEngineAuthenticator<T> auth, ClaimsPrincipal principal, [FromBody] UpdateAvatarRequest request) => await auth.UpdateAvatarAsync(principal, request));
     }
 
-    private async Task<BlossomUser> SetLanguageAsync(ClaimsPrincipal principal, Language language)
+    private async Task<Language> SetLanguageAsync(ClaimsPrincipal principal, Language language)
     {
         await base.GetUserAsync(principal);
 
@@ -364,6 +364,6 @@ public class SparcEngineAuthenticator<T> : BlossomDefaultAuthenticator<T>, IBlos
         Translator.SetLanguage(User, language.Id);
         await SaveAsync();
 
-        return User;
+        return User.PrimaryLanguage ?? language;
     }
 }
