@@ -23,9 +23,11 @@ export default class KoriTranslateNode extends HTMLElement {
         const hash = SparcEngine.idHash(this.#original);
         db.translations.get(hash).then(translation => {
             if (translation) {
+                console.log('found!', this.#original);
                 this.render(translation);
             }
             else {
+                console.log('not found!', this.#original);
                 this.classList.add('kori-translating');
                 SparcEngine.translate(this.#original, this.#originalLang)
                     .then(newTranslation => {
