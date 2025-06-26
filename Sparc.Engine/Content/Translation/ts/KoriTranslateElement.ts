@@ -7,6 +7,9 @@ export default class KoriTranslateElement extends HTMLElement {
     #mode;
     #originalLang;
     #originalText = {};
+    #pendingTranslations = [];
+    #translationTimer = null;
+    #translationDelay = 100;
 
     constructor() {
         super();
@@ -29,6 +32,10 @@ export default class KoriTranslateElement extends HTMLElement {
 
         this.wrapTextNodes(this.#observedElement);
 
+        if (this.#pendingTranslations.length > 0) {
+            this.processBulkTranslations();
+        }
+
         if (this.#mode === 'live') {
             console.log('observing', this.#observedElement);
             this.observer = new MutationObserver(this.#observer);
@@ -39,6 +46,11 @@ export default class KoriTranslateElement extends HTMLElement {
     disconnectedCallback() {
         if (this.observer)
             this.observer.disconnect();
+
+        if (this.#translationTimer) {
+            clearTimeout(this.#translationTimer);
+            this.#translationTimer = null;
+        }
     }
 
     wrapTextNodes(element) {
@@ -62,11 +74,11 @@ export default class KoriTranslateElement extends HTMLElement {
                     node.hash = SparcEngine.idHash(text, this.#originalLang);
                     this.#originalText[node.hash] = text;
                     document.addEventListener('kori-language-changed', (event: any) => {
-                        this.askForTranslation(node);
+                        this.queueForTranslation(node);
                     });
                     console.log('live node registered', node.textContent);
                 }
-                this.askForTranslation(node);
+                this.queueForTranslation(node);
             } else if (this.#mode === 'static') {
                 const wrapper = document.createElement('kori-t');
                 wrapper.textContent = node.textContent.trim();
@@ -114,19 +126,66 @@ export default class KoriTranslateElement extends HTMLElement {
         return NodeFilter.FILTER_ACCEPT;
     }
 
-    askForTranslation(textNode) {
+    queueForTranslation(textNode) {
         const hash = SparcEngine.idHash(textNode.textContent);
 
         db.translations.get(hash).then(translation => {
             if (translation) {
                 textNode.textContent = translation.text;
             } else {
-                SparcEngine.translate(this.#originalText[textNode.hash], this.#originalLang)
-                    .then(newTranslation => {
-                        textNode.textContent = newTranslation.text;
-                        db.translations.put(newTranslation);
-                    });
+                //SparcEngine.translate(this.#originalText[textNode.hash], this.#originalLang)
+                //    .then(newTranslation => {
+                //        textNode.textContent = newTranslation.text;
+                //        db.translations.put(newTranslation);
+                //    });
+
+                // Queue for bulk translation if not in cache
+                if (!this.#pendingTranslations.some(node => node.hash === textNode.hash)) {
+                    this.#pendingTranslations.push(textNode);
+                }
+
+                // Set a timer to process batch translations
+                if (!this.#translationTimer) {
+                    this.#translationTimer = setTimeout(() => {
+                        this.processBulkTranslations();
+                        this.#translationTimer = null;
+                    }, this.#translationDelay);
+                }
             }
         });
+    }
+
+    processBulkTranslations() {
+        if (this.#pendingTranslations.length === 0) return;
+
+        console.log(`Processing bulk translation for ${this.#pendingTranslations.length} nodes`);
+
+        const textsToTranslate = this.#pendingTranslations.map(node => ({
+            hash: node.hash,
+            text: this.#originalText[node.hash]
+        }));
+
+        const pendingNodes = [...this.#pendingTranslations];
+        this.#pendingTranslations = [];
+
+        this.bulkTranslate(textsToTranslate, this.#originalLang)
+            .then(newTranslations => {
+                // Update nodes with their translations
+                for (const node of pendingNodes) {
+                    const translation = newTranslations.find(t => t.hash === node.hash);
+                    if (translation) {
+                        node.textContent = translation.text;
+                    }
+                }
+
+                // Store translations in cache
+                newTranslations.forEach(translation => {
+                    db.translations.put(translation);
+                });
+            });
+    }
+
+    async bulkTranslate(textsToTranslate, sourceLang) {
+        return await SparcEngine.bulkTranslate(textsToTranslate, sourceLang);
     }
 }

@@ -32,6 +32,11 @@ public class Contents(BlossomAggregateOptions<TextContent> options, KoriTranslat
         var user = await auth.GetAsync(User);
         var toLanguage = user?.Avatar.Language;
 
+        return await GetOrTranslatesAsync(content, toLanguage);
+    }
+
+    private async Task<TextContent> GetOrTranslatesAsync(TextContent content, Language toLanguage)
+    {
         var newId = TextContent.IdHash(content.Text, toLanguage);
         var existing = await Repository.Query
             .Where(x => x.Domain == content.Domain && x.Id == newId)
@@ -39,7 +44,7 @@ public class Contents(BlossomAggregateOptions<TextContent> options, KoriTranslat
 
         if (existing != null)
             return existing;
-        
+
         var translation = await translator.TranslateAsync(content, toLanguage);
         if (translation == null)
             throw new InvalidOperationException("Translation failed.");
@@ -57,23 +62,7 @@ public class Contents(BlossomAggregateOptions<TextContent> options, KoriTranslat
 
         foreach (var content in contents)
         {
-            var newId = TextContent.IdHash(content.Text, toLanguage);
-            var existing = await Repository.Query
-                .Where(x => x.Domain == content.Domain && x.Id == newId)
-                .CosmosFirstOrDefaultAsync();
-
-            if (existing != null)
-            {
-                results.Add(existing);
-                continue;
-            }
-
-            var translation = await translator.TranslateAsync(content, toLanguage);
-            if (translation == null)
-                continue;
-
-            await Repository.AddAsync(translation);
-            results.Add(translation);
+            results.Add(await GetOrTranslatesAsync(content, toLanguage));
         }
 
         return results;
@@ -89,5 +78,6 @@ public class Contents(BlossomAggregateOptions<TextContent> options, KoriTranslat
         var group = endpoints.MapGroup("translate");
         group.MapPost("", async (HttpRequest request, TextContent content) => await Get(content));
         group.MapGet("languages", Languages).CacheOutput(x => x.Expire(TimeSpan.FromHours(1)));
+        group.MapPost("bulk", async (HttpRequest request, List<TextContent> contents) => await BulkTranslate(contents));
     }
 }
