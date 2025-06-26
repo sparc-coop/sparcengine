@@ -5,7 +5,7 @@ namespace Sparc.Engine;
 
 internal class AzureTranslator(IConfiguration configuration) : ITranslator
 {
-    TextTranslationClient? Client;
+    static TextTranslationClient? Client;
 
     internal static List<Language>? Languages;
 

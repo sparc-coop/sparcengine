@@ -5,7 +5,7 @@ namespace Sparc.Engine;
 
 internal class DeepLTranslator(IConfiguration configuration) : ITranslator
 {
-    Translator? Client;
+    static Translator? Client;
 
     internal static List<Language> SourceLanguages = [];
     internal static List<Language> TargetLanguages = [];
