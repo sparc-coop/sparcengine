@@ -75,7 +75,8 @@ public class Contents(BlossomAggregateOptions<TextContent> options, KoriTranslat
             .Where(content => !results.Any(x => x.Id == TextContent.IdHash(content.Text, toLanguage)))
             .ToList();
 
-        var translations = await translator.TranslateAsync(needsTranslation, [toLanguage]);
+        var additionalContext = string.Join("\n", contents.Select(x => x.Text));
+        var translations = await translator.TranslateAsync(needsTranslation, [toLanguage], additionalContext);
         await Repository.AddAsync(translations);
 
         return results.Union(translations).ToList();
