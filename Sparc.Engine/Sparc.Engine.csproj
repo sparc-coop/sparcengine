@@ -38,12 +38,18 @@
 		<PackageReference Include="Stripe.net" Version="48.2.0" />
 	</ItemGroup>
 
-	<ItemGroup Condition="'$(Configuration)' == 'Release'">
+	<!--<ItemGroup Condition="'$(Configuration)' == 'Release'">
 		<PackageReference Include="Sparc.Blossom" Version="10.0.0-preview.5" />
 		<PackageReference Include="Sparc.Blossom.Data.Cosmos" Version="10.0.0-preview.4" />
-	</ItemGroup>
+	</ItemGroup>-->
 
-	<ItemGroup Condition="'$(Configuration)' == 'Debug'">
+	<!--<ItemGroup Condition="'$(Configuration)' == 'Debug'">
+		<ProjectReference Include="../../blossom/Sparc.Core/Sparc.Core.csproj" />
+		<ProjectReference Include="../../blossom/Sparc.Blossom/Sparc.Blossom.csproj" />
+		<ProjectReference Include="../../blossom/Sparc.Blossom.Data.Cosmos/Sparc.Blossom.Data.Cosmos.csproj" />
+	</ItemGroup>-->
+
+	<ItemGroup>
 		<ProjectReference Include="../../blossom/Sparc.Core/Sparc.Core.csproj" />
 		<ProjectReference Include="../../blossom/Sparc.Blossom/Sparc.Blossom.csproj" />
 		<ProjectReference Include="../../blossom/Sparc.Blossom.Data.Cosmos/Sparc.Blossom.Data.Cosmos.csproj" />

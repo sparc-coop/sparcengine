@@ -60,13 +60,25 @@ public class Contents(BlossomAggregateOptions<TextContent> options, KoriTranslat
         var toLanguage = user?.Avatar.Language;
 
         var results = new ConcurrentBag<TextContent>();
-
         await Parallel.ForEachAsync(contents, async (content, _) =>
         {
-            results.Add(await GetOrTranslateAsync(content, toLanguage));
+            var newId = TextContent.IdHash(content.Text, toLanguage);
+            var existing = await Repository.Query
+                .Where(x => x.Domain == content.Domain && x.Id == newId)
+                .CosmosFirstOrDefaultAsync();
+
+            if (existing != null)
+                results.Add(existing);
         });
 
-        return results.ToList();
+        var needsTranslation = contents
+            .Where(content => !results.Any(x => x.Id == TextContent.IdHash(content.Text, toLanguage)))
+            .ToList();
+
+        var translations = await translator.TranslateAsync(needsTranslation, [toLanguage]);
+        await Repository.AddAsync(translations);
+
+        return results.Union(translations).ToList();
     }
 
     public BlossomQuery<TextContent> All(string pageId) => Query().Where(content => content.PageId == pageId && content.SourceContentId == null);
