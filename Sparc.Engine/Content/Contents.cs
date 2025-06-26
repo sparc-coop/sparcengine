@@ -1,6 +1,7 @@
 ﻿
 using Sparc.Blossom.Authentication;
 using Sparc.Blossom.Data;
+using System.Collections.Concurrent;
 
 namespace Sparc.Engine;
 
@@ -32,10 +33,10 @@ public class Contents(BlossomAggregateOptions<TextContent> options, KoriTranslat
         var user = await auth.GetAsync(User);
         var toLanguage = user?.Avatar.Language;
 
-        return await GetOrTranslatesAsync(content, toLanguage);
+        return await GetOrTranslateAsync(content, toLanguage);
     }
 
-    private async Task<TextContent> GetOrTranslatesAsync(TextContent content, Language toLanguage)
+    private async Task<TextContent> GetOrTranslateAsync(TextContent content, Language toLanguage)
     {
         var newId = TextContent.IdHash(content.Text, toLanguage);
         var existing = await Repository.Query
@@ -58,14 +59,14 @@ public class Contents(BlossomAggregateOptions<TextContent> options, KoriTranslat
         var user = await auth.GetAsync(User);
         var toLanguage = user?.Avatar.Language;
 
-        var results = new List<TextContent>();
+        var results = new ConcurrentBag<TextContent>();
 
-        foreach (var content in contents)
+        await Parallel.ForEachAsync(contents, async (content, _) =>
         {
-            results.Add(await GetOrTranslatesAsync(content, toLanguage));
-        }
+            results.Add(await GetOrTranslateAsync(content, toLanguage));
+        });
 
-        return results;
+        return results.ToList();
     }
 
     public BlossomQuery<TextContent> All(string pageId) => Query().Where(content => content.PageId == pageId && content.SourceContentId == null);
@@ -78,6 +79,6 @@ public class Contents(BlossomAggregateOptions<TextContent> options, KoriTranslat
         var group = endpoints.MapGroup("translate");
         group.MapPost("", async (HttpRequest request, TextContent content) => await Get(content));
         group.MapGet("languages", Languages).CacheOutput(x => x.Expire(TimeSpan.FromHours(1)));
-        group.MapPost("bulk", async (HttpRequest request, List<TextContent> contents) => await BulkTranslate(contents));
+        group.MapPost("bulk", BulkTranslate);
     }
 }
