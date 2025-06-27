@@ -89,7 +89,7 @@ public class Contents(BlossomAggregateOptions<TextContent> options, KoriTranslat
 
     public void Map(IEndpointRouteBuilder endpoints)
     {
-        var group = endpoints.MapGroup("translate");
+        var group = endpoints.MapGroup("translate").RequireCors("Tovik");
         group.MapPost("", async (HttpRequest request, TextContent content) => await Get(content));
         group.MapGet("languages", Languages).CacheOutput(x => x.Expire(TimeSpan.FromHours(1)));
         group.MapPost("bulk", BulkTranslate);

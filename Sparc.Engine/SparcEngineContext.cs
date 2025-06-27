@@ -23,5 +23,9 @@ internal class SparcEngineContext(DbContextOptions<SparcEngineContext> options) 
         model.Entity<TextContent>().ToContainer("TextContent")
             .HasPartitionKey(x => new { x.Domain, x.LanguageId })
             .HasKey(x => x.Id);
+
+        model.Entity<BlossomDomain>().ToContainer("Domains")
+            .HasPartitionKey(x => x.Domain)
+            .HasKey(x => x.Id);
     }
 }

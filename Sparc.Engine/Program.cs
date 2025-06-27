@@ -1,5 +1,7 @@
 using MediatR.NotificationPublishers;
+using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Http.Json;
+using Microsoft.Net.Http.Headers;
 using Scalar.AspNetCore;
 using Sparc.Blossom.Authentication;
 using Sparc.Blossom.Data;
@@ -25,17 +27,8 @@ builder.Services.AddMediatR(options =>
 
 builder.Services.AddTwilio(builder.Configuration);
 
-builder.Services.AddCors(options =>
-{
-    options.AddDefaultPolicy(policy =>
-    {
-        policy.WithOrigins("http://localhost:7047")
-              .AllowAnyMethod()
-              .AllowAnyHeader()
-              .SetIsOriginAllowed((string x) => true)
-              .AllowCredentials();
-    });
-});
+builder.Services.AddScoped<ICorsPolicyProvider, SparcEngineDomainPolicyProvider>();
+builder.Services.AddCors();
 
 builder.Services.Configure<JsonOptions>(options =>
 {

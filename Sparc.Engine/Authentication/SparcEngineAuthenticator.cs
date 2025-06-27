@@ -208,7 +208,7 @@ public class SparcEngineAuthenticator<T> : BlossomDefaultAuthenticator<T>, IBlos
         if (User is null)
             throw new InvalidOperationException("User not initialized");
 
-        bool alreadyHasProduct = User.Products.Any(p => p.ProductName.Equals(productName, StringComparison.OrdinalIgnoreCase));
+        bool alreadyHasProduct = User.Products.Any(p => p.ProductId.Equals(productName, StringComparison.OrdinalIgnoreCase));
 
         if (!alreadyHasProduct)
         {
@@ -330,12 +330,12 @@ public class SparcEngineAuthenticator<T> : BlossomDefaultAuthenticator<T>, IBlos
 
     public void Map(IEndpointRouteBuilder endpoints)
     {
-        var auth = endpoints.MapGroup("/auth");
+        var auth = endpoints.MapGroup("/auth").RequireCors("Auth");
         auth.MapPost("login", async (SparcEngineAuthenticator<T> auth, ClaimsPrincipal principal, HttpContext context, string? emailOrToken = null) => await auth.Login(principal, context, emailOrToken));
         auth.MapPost("logout", async (SparcEngineAuthenticator<T> auth, ClaimsPrincipal principal, string? emailOrToken = null) => await auth.Logout(principal, emailOrToken));
         auth.MapGet("userinfo", async (SparcEngineAuthenticator<T> auth, ClaimsPrincipal principal) => await auth.GetAsync(principal));
 
-        var user = endpoints.MapGroup("/user");
+        var user = endpoints.MapGroup("/user").RequireCors("Auth");
         user.MapGet("language", async (SparcEngineAuthenticator<T> auth, ClaimsPrincipal principal, HttpRequest request) =>
         {
             await auth.GetUserAsync(principal);
