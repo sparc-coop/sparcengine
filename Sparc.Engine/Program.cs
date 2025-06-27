@@ -30,6 +30,7 @@ builder.Services.AddTwilio(builder.Configuration);
 builder.Services.AddScoped<ICorsPolicyProvider, SparcEngineDomainPolicyProvider>();
 builder.Services.AddCors();
 
+builder.Services.AddHybridCache();
 builder.Services.Configure<JsonOptions>(options =>
 {
     options.SerializerOptions.Converters.Add(new ObjectToInferredTypesConverter());

@@ -1,11 +1,12 @@
 ﻿using Microsoft.AspNetCore.Cors.Infrastructure;
+using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Net.Http.Headers;
 using Sparc.Blossom.Authentication;
 using Sparc.Blossom.Data;
 
 namespace Sparc.Engine;
 
-public class SparcEngineDomainPolicyProvider(IRepository<BlossomDomain> domains) : ICorsPolicyProvider
+public class SparcEngineDomainPolicyProvider(IRepository<BlossomDomain> domains, HybridCache cache) : ICorsPolicyProvider
 {
     static CorsPolicy AllowAll = new CorsPolicyBuilder()
         .AllowAnyOrigin()
@@ -24,7 +25,7 @@ public class SparcEngineDomainPolicyProvider(IRepository<BlossomDomain> domains)
             return AllowAll;
 
         var currentDomain = context.Request.Headers.Origin.ToString();
-        var domain = await GetOrAddDomainAsync(currentDomain);
+        var domain = await cache.GetOrCreateAsync(currentDomain, async _ => await GetOrAddDomainAsync(currentDomain), new HybridCacheEntryOptions { Expiration = TimeSpan.FromMinutes(5) });
         if (!domain.HasProduct(policyName))
             return DenyAll;
 
