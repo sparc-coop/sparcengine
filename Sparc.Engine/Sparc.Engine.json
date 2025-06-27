@@ -123,7 +123,7 @@
     "/user/language": {
       "get": {
         "tags": [
-          "SparcEngineAuthenticator`1"
+          "Sparc.Engine"
         ],
         "responses": {
           "200": {
@@ -874,9 +874,6 @@
   "tags": [
     {
       "name": "Sparc.Engine"
-    },
-    {
-      "name": "SparcEngineAuthenticator`1"
     },
     {
       "name": "Contents"
