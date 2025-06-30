@@ -2,7 +2,7 @@
 
 namespace Sparc.Engine;
 
-public class SparcEngineAuthenticatorMiddleware(RequestDelegate next)
+public class SparcAuthenticatorMiddleware(RequestDelegate next)
 {
     private readonly RequestDelegate _next = next;
 

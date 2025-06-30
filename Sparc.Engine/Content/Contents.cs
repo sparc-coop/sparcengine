@@ -5,7 +5,7 @@ using System.Collections.Concurrent;
 
 namespace Sparc.Engine;
 
-public class Contents(BlossomAggregateOptions<TextContent> options, TovikTranslator translator, SparcEngineAuthenticator<BlossomUser> auth) 
+public class Contents(BlossomAggregateOptions<TextContent> options, TovikTranslator translator, SparcAuthenticator<BlossomUser> auth) 
     : BlossomAggregate<TextContent>(options), IBlossomEndpoints
 {
     public BlossomQuery<TextContent> Search(string searchTerm) => Query().Where(content =>

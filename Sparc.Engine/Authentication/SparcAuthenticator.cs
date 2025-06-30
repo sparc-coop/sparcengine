@@ -2,47 +2,20 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Passwordless;
-using Polly;
 using Sparc.Blossom.Authentication;
-using Sparc.Engine;
 using Sparc.Notifications.Twilio;
 using System.Security.Claims;
 
 namespace Sparc.Engine;
 
-public class SparcEngineAuthenticator<T> : BlossomDefaultAuthenticator<T>, IBlossomEndpoints
+public class SparcAuthenticator<T>(
+    IPasswordlessClient _passwordlessClient,
+    IRepository<T> users,
+    TwilioService twilio,
+    FriendlyId friendlyId,
+    IHttpContextAccessor http) : BlossomDefaultAuthenticator<T>(users), IBlossomEndpoints
     where T : BlossomUser, new()
 {
-    IPasswordlessClient PasswordlessClient { get; }
-    public FriendlyId FriendlyId { get; }
-    public TovikTranslator Translator { get; }
-    public IHttpContextAccessor Http { get; }
-    public HttpClient Client { get; }
-    public const string PublicKey = "sparcengine:public:63cc565eb9544940ad6f2c387b228677";
-    public TwilioService Twilio { get; }
-
-    public SparcEngineAuthenticator(
-        IPasswordlessClient _passwordlessClient,
-        IConfiguration config,
-        IRepository<T> users,
-        TwilioService twilio,
-        FriendlyId friendlyId,
-        TovikTranslator translator,
-        IHttpContextAccessor http)
-        : base(users)
-    {
-        PasswordlessClient = _passwordlessClient;
-        Twilio = twilio;
-        FriendlyId = friendlyId;
-        Translator = translator;
-        Http = http;
-        Client = new HttpClient
-        {
-            BaseAddress = new Uri("https://v4.passwordless.dev/")
-        };
-        Client.DefaultRequestHeaders.Add("ApiSecret", config.GetConnectionString("Passwordless"));
-    }
-
     public override async Task<ClaimsPrincipal> LoginAsync(ClaimsPrincipal principal)
     {
         var user = await GetAsync(principal);
@@ -50,11 +23,11 @@ public class SparcEngineAuthenticator<T> : BlossomDefaultAuthenticator<T>, IBlos
         await Users.UpdateAsync((T)user);
 
         var priorUser = BlossomUser.FromPrincipal(principal);
-        if (Http?.HttpContext != null && priorUser != user)
+        if (http?.HttpContext != null && priorUser != user)
         {
-            Http.HttpContext.User = newPrincipal;
-            await Http.HttpContext.SignOutAsync();
-            await Http.HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, newPrincipal, new() { IsPersistent = true });
+            http.HttpContext.User = newPrincipal;
+            await http.HttpContext.SignOutAsync();
+            await http.HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, newPrincipal, new() { IsPersistent = true });
         }
 
         return principal;
@@ -74,7 +47,7 @@ public class SparcEngineAuthenticator<T> : BlossomDefaultAuthenticator<T>, IBlos
         // Verify Authentication Token or Register
         if (emailOrToken != null && emailOrToken.StartsWith("verify"))
         {
-            var passwordlessUser = await PasswordlessClient.VerifyAuthenticationTokenAsync(emailOrToken);
+            var passwordlessUser = await _passwordlessClient.VerifyAuthenticationTokenAsync(emailOrToken);
 
             if (passwordlessUser?.Success == true)
             {
@@ -114,66 +87,12 @@ public class SparcEngineAuthenticator<T> : BlossomDefaultAuthenticator<T>, IBlos
 
     private async Task<string> SignUpWithPasswordlessAsync(BlossomUser user)
     {
-        var registerToken = await PasswordlessClient.CreateRegisterTokenAsync(new RegisterOptions(user.Id, user.Username)
+        var registerToken = await _passwordlessClient.CreateRegisterTokenAsync(new RegisterOptions(user.Id, user.Username)
         {
             Aliases = [user.Username]
         });
 
         return registerToken.Token;
-    }
-
-    private async Task<bool> HasPasskeys(string? externalId)
-    {
-        if (externalId == null)
-            return false;
-
-        var credentials = await PasswordlessClient.ListCredentialsAsync(externalId);
-        return credentials.Any();
-    }
-
-    private async Task<bool> SendMagicLinkAsync(BlossomUser user, string urlTemplate, int timeToLive = 3600)
-        => await PostAsync("magic-links/send", new
-        {
-            emailAddress = user.Username,
-            urlTemplate,
-            userId = user.Id,
-            timeToLive
-        });
-
-    private async Task<bool> PostAsync(string url, object payload)
-    {
-        var response = await Client.PostAsJsonAsync(url, payload);
-        return response.IsSuccessStatusCode;
-    }
-
-    private async Task LoginWithTokenAsync(string token)
-    {
-        if (User == null)
-            throw new Exception("User not initialized");
-
-        var passwordlessUser = await PasswordlessClient.VerifyAuthenticationTokenAsync(token);
-        if (passwordlessUser?.Success != true)
-            throw new Exception("Unable to verify token");
-
-        var hasPasskeys = await HasPasskeys(passwordlessUser.UserId);
-        if (!hasPasskeys)
-        {
-            var result = await SignUpWithPasswordlessAsync(User);
-        }
-
-        var parentUser = Users.Query.FirstOrDefault(x => x.ExternalId == passwordlessUser.UserId && x.ParentUserId == null);
-        if (parentUser != null)
-        {
-            User.SetParentUser(parentUser);
-            await SaveAsync();
-            User = parentUser;
-        }
-        else
-        {
-            User.Login("Passwordless", passwordlessUser.UserId);
-        }
-
-        await SaveAsync();
     }
 
     public override async IAsyncEnumerable<LoginStates> Logout(ClaimsPrincipal principal)
@@ -192,25 +111,12 @@ public class SparcEngineAuthenticator<T> : BlossomDefaultAuthenticator<T>, IBlos
 
         if (User!.Username == null)
         {
-            User.ChangeUsername(FriendlyId.Create(1, 2));
+            User.ChangeUsername(friendlyId.Create(1, 2));
             await SaveAsync();
         }
 
         return User;
     }
-
-    //protected override async Task<BlossomUser> GetUserAsync(ClaimsPrincipal principal)
-    //{
-    //    await base.GetUserAsync(principal);
-
-    //    if (User!.Username == null || User!.Username == "User")
-    //    {
-    //        User.ChangeUsername(FriendlyUsername.GetRandomName());
-    //        await SaveAsync();
-    //    }
-
-    //    return User;
-    //}
 
     private async Task SaveAsync()
     {
@@ -317,7 +223,7 @@ public class SparcEngineAuthenticator<T> : BlossomDefaultAuthenticator<T>, IBlos
         var message = $"Your Sparc verification code is: {code}";
         var subject = "Sparc Verification Code";
 
-        await Twilio.SendAsync(destination, message, subject);
+        await twilio.SendAsync(destination, message, subject);
         await SaveAsync();
     }
 
@@ -347,17 +253,17 @@ public class SparcEngineAuthenticator<T> : BlossomDefaultAuthenticator<T>, IBlos
     public void Map(IEndpointRouteBuilder endpoints)
     {
         var auth = endpoints.MapGroup("/auth").RequireCors("Auth");
-        auth.MapPost("login", async (SparcEngineAuthenticator<T> auth, ClaimsPrincipal principal, HttpContext context, string? emailOrToken = null) => await auth.Login(principal, context, emailOrToken));
-        auth.MapPost("logout", async (SparcEngineAuthenticator<T> auth, ClaimsPrincipal principal, string? emailOrToken = null) => await auth.Logout(principal, emailOrToken));
-        auth.MapGet("userinfo", async (SparcEngineAuthenticator<T> auth, ClaimsPrincipal principal) => await auth.GetAsync(principal));
+        auth.MapPost("login", async (SparcAuthenticator<T> auth, ClaimsPrincipal principal, HttpContext context, string? emailOrToken = null) => await auth.Login(principal, context, emailOrToken));
+        auth.MapPost("logout", async (SparcAuthenticator<T> auth, ClaimsPrincipal principal, string? emailOrToken = null) => await auth.Logout(principal, emailOrToken));
+        auth.MapGet("userinfo", async (SparcAuthenticator<T> auth, ClaimsPrincipal principal) => await auth.GetAsync(principal));
 
         var user = endpoints.MapGroup("/user").RequireCors("Auth");
-        user.MapGet("language", async (SparcEngineAuthenticator<T> auth, ClaimsPrincipal principal, HttpRequest request) => await auth.GetLanguageAsync(principal, request));
-        user.MapPost("language", async (SparcEngineAuthenticator<T> auth, ClaimsPrincipal principal, Language language) => await auth.SetLanguageAsync(principal, language));
-        user.MapPost("user-products", async (SparcEngineAuthenticator<T> auth, ClaimsPrincipal principal, [FromBody] AddProductRequest request) => await auth.AddProductAsync(principal, request.ProductName));
-        user.MapPost("update-user", async (SparcEngineAuthenticator<T> auth, ClaimsPrincipal principal, [FromBody] UpdateUserRequest request) => await auth.UpdateUserAsync(principal, request));
-        user.MapPost("verify-code", async (SparcEngineAuthenticator<T> auth, ClaimsPrincipal principal, [FromBody] VerificationRequest request) => await auth.VerifyCodeAsync(principal, request.EmailOrPhone, request.Code));
-        user.MapPost("update-avatar", async (SparcEngineAuthenticator<T> auth, ClaimsPrincipal principal, [FromBody] UpdateAvatarRequest request) => await auth.UpdateAvatarAsync(principal, request));
+        user.MapGet("language", async (SparcAuthenticator<T> auth, ClaimsPrincipal principal, HttpRequest request) => await auth.GetLanguageAsync(principal, request));
+        user.MapPost("language", async (SparcAuthenticator<T> auth, ClaimsPrincipal principal, Language language) => await auth.SetLanguageAsync(principal, language));
+        user.MapPost("user-products", async (SparcAuthenticator<T> auth, ClaimsPrincipal principal, [FromBody] AddProductRequest request) => await auth.AddProductAsync(principal, request.ProductName));
+        user.MapPost("update-user", async (SparcAuthenticator<T> auth, ClaimsPrincipal principal, [FromBody] UpdateUserRequest request) => await auth.UpdateUserAsync(principal, request));
+        user.MapPost("verify-code", async (SparcAuthenticator<T> auth, ClaimsPrincipal principal, [FromBody] VerificationRequest request) => await auth.VerifyCodeAsync(principal, request.EmailOrPhone, request.Code));
+        user.MapPost("update-avatar", async (SparcAuthenticator<T> auth, ClaimsPrincipal principal, [FromBody] UpdateAvatarRequest request) => await auth.UpdateAvatarAsync(principal, request));
     }
 
     private async Task<Language> GetLanguageAsync(ClaimsPrincipal principal, HttpRequest request)
@@ -383,7 +289,7 @@ public class SparcEngineAuthenticator<T> : BlossomDefaultAuthenticator<T>, IBlos
         if (User is null)
             throw new InvalidOperationException("User not initialized");
 
-        Translator.SetLanguage(User, language.Id);
+        TovikTranslator.SetLanguage(User, language.Id);
         await SaveAsync();
         await LoginAsync(principal);
 

@@ -9,7 +9,7 @@ namespace Sparc.Engine;
 
 public static class ServiceCollectionExtensions
 {
-    public static WebApplicationBuilder AddSparcEngineAuthentication<TUser>(this WebApplicationBuilder builder)
+    public static WebApplicationBuilder AddSparcAuthentication<TUser>(this WebApplicationBuilder builder)
         where TUser : BlossomUser, new()
     {
         builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
@@ -22,8 +22,8 @@ public static class ServiceCollectionExtensions
         builder.Services.AddHttpContextAccessor();
 
         builder.Services.AddScoped<AuthenticationStateProvider, BlossomServerAuthenticationStateProvider<TUser>>()
-            .AddScoped<SparcEngineAuthenticator<TUser>>()
-            .AddScoped<IBlossomAuthenticator, SparcEngineAuthenticator<TUser>>();
+            .AddScoped<SparcAuthenticator<TUser>>()
+            .AddScoped<IBlossomAuthenticator, SparcAuthenticator<TUser>>();
 
         builder.Services.AddTransient(s =>
             s.GetRequiredService<IHttpContextAccessor>().HttpContext?.User
@@ -31,7 +31,7 @@ public static class ServiceCollectionExtensions
 
         builder.Services.AddPasswordlessSdk(x =>
         {
-            x.ApiKey = SparcEngineAuthenticator<TUser>.PublicKey;
+            x.ApiKey = "sparcengine:public:63cc565eb9544940ad6f2c387b228677";
             x.ApiSecret = builder.Configuration.GetConnectionString("Passwordless") ?? throw new InvalidOperationException("Passwordless API Secret is not configured.");
         });
 
@@ -41,7 +41,7 @@ public static class ServiceCollectionExtensions
         return builder;
     }
 
-    public static WebApplication UseSparcEngineAuthentication<TUser>(this WebApplication app)
+    public static WebApplication UseSparcAuthentication<TUser>(this WebApplication app)
         where TUser : BlossomUser, new()
     { 
         app.UseCookiePolicy(new() { 
@@ -51,11 +51,11 @@ public static class ServiceCollectionExtensions
         });
         app.UseAuthentication();
         app.UseAuthorization();
-        app.UseMiddleware<SparcEngineAuthenticatorMiddleware>();
+        app.UseMiddleware<SparcAuthenticatorMiddleware>();
 
         using var scope = app.Services.CreateScope();
         var passwordlessAuthenticator =
-            scope.ServiceProvider.GetRequiredService<SparcEngineAuthenticator<TUser>>();
+            scope.ServiceProvider.GetRequiredService<SparcAuthenticator<TUser>>();
 
         passwordlessAuthenticator.Map(app);
 
