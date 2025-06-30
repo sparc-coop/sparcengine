@@ -1,6 +1,6 @@
 ﻿import * as Dexie from './dexie/dexie.mjs';
 
-const db = new Dexie.Dexie('KoriTranslate');
+const db = new Dexie.Dexie('TovikTranslate');
 
 db.version(2).stores({
     translations: 'id',

@@ -29,7 +29,7 @@ export default class SparcEngine {
         document.documentElement.lang = language;
         document.documentElement.setAttribute('dir', newLang.isRightToLeft ? 'rtl' : 'ltr');
         this.userLang = language;
-        document.dispatchEvent(new CustomEvent('kori-language-changed', { detail: language }));
+        document.dispatchEvent(new CustomEvent('tovik-language-changed', { detail: language }));
     }
 
     static idHash(text, lang = null) {

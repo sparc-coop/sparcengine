@@ -58,7 +58,7 @@ scope.ServiceProvider.GetRequiredService<Contents>().Map(app);
 
 if (!string.IsNullOrWhiteSpace(app.Configuration.GetConnectionString("Cognitive")))
 {
-    var translator = scope.ServiceProvider.GetRequiredService<KoriTranslator>();
+    var translator = scope.ServiceProvider.GetRequiredService<TovikTranslator>();
     await translator.GetLanguagesAsync();
 }
 app.Run();

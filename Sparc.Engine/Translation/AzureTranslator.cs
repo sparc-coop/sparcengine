@@ -16,7 +16,7 @@ internal class AzureTranslator(IConfiguration configuration) : ITranslator
         var translatedMessages = new List<TextContent>();
         var azureLanguages = toLanguages.Select(AzureLanguage).Where(x => x != null).ToList();
 
-        var batches = KoriTranslator.Batch(azureLanguages, 10);
+        var batches = TovikTranslator.Batch(azureLanguages, 10);
 
         await ConnectAsync();
         foreach (var batch in batches)

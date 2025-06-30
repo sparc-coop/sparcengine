@@ -1,7 +1,7 @@
-import db from './KoriDb.js';
+import db from './TovikDb.js';
 import SparcEngine from './SparcEngine.js';
 
-export default class KoriTranslateNode extends HTMLElement {
+export default class TovikTranslateNode extends HTMLElement {
     #original;
     #originalLang;
     #translated;
@@ -14,12 +14,12 @@ export default class KoriTranslateNode extends HTMLElement {
         this.#original = this.textContent.trim();
         this.#originalLang = this.lang || document.documentElement.lang;
 
-        document.addEventListener('kori-language-changed', this.#languageChangedCallback);
+        document.addEventListener('tovik-language-changed', this.#languageChangedCallback);
         this.askForTranslation();
     }
 
     disconnectedCallback() {
-        document.removeEventListener('kori-language-changed', this.#languageChangedCallback);
+        document.removeEventListener('tovik-language-changed', this.#languageChangedCallback);
     }
 
     #languageChangedCallback = (event: any) => {
@@ -34,13 +34,13 @@ export default class KoriTranslateNode extends HTMLElement {
                 this.render(translation);
             } else {
                 console.log('not found!', this.#original);
-                this.classList.add('kori-translating');
+                this.classList.add('tovik-translating');
                 SparcEngine.translate(this.#original, this.#originalLang)
                     .then(newTranslation => {
                         this.render(newTranslation);
                         db.translations.put(newTranslation);
                     });
-                this.classList.remove('kori-translating');
+                this.classList.remove('tovik-translating');
             }
         });
     }

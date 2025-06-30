@@ -1,10 +1,8 @@
 ﻿using Sparc.Blossom.Authentication;
-using System.Collections.Concurrent;
-using System.Security.Claims;
 
 namespace Sparc.Engine;
 
-public class KoriTranslator(IEnumerable<ITranslator> translators, IRepository<TextContent> content)
+public class TovikTranslator(IEnumerable<ITranslator> translators, IRepository<TextContent> content)
 {
     internal static List<Language>? Languages;
 

@@ -24,7 +24,7 @@ internal class DeepLTranslator(IConfiguration configuration) : ITranslator
         var fromLanguages = messages.GroupBy(x => SourceLanguage(x.Language));
         var toDeepLLanguages = toLanguages.Select(TargetLanguage).Where(x => x != null).ToList();
 
-        var batches = KoriTranslator.Batch(messages, 50);
+        var batches = TovikTranslator.Batch(messages, 50);
 
         var translatedMessages = new List<TextContent>();
         foreach (var batch in batches)

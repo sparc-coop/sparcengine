@@ -1,7 +1,7 @@
-﻿import db from './KoriDb.js';
+﻿import db from './TovikDb.js';
 import SparcEngine from './SparcEngine.js';
 
-export default class KoriLangSelectElement extends HTMLElement {
+export default class TovikLangSelectElement extends HTMLElement {
     constructor() {
         super();
     }
@@ -26,7 +26,7 @@ export default class KoriLangSelectElement extends HTMLElement {
     renderLanguages(languages) {
         this.innerHTML = '';
         let select = document.createElement('select');
-        select.className = 'kori-ignore';
+        select.translate = false;
 
         languages.forEach(lang => {
             const option = document.createElement('option');

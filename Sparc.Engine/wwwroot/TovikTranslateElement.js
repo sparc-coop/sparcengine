@@ -1,6 +1,6 @@
-import db from './KoriDb.js';
+import db from './TovikDb.js';
 import SparcEngine from './SparcEngine.js';
-export default class KoriTranslateElement extends HTMLElement {
+export default class TovikTranslateElement extends HTMLElement {
     observer;
     #observedElement;
     #originalLang;
@@ -16,7 +16,7 @@ export default class KoriTranslateElement extends HTMLElement {
             this.#observedElement = document.querySelector(selector);
         }
         await this.wrapTextNodes(this.#observedElement);
-        document.addEventListener('kori-language-changed', async (event) => {
+        document.addEventListener('tovik-language-changed', async (event) => {
             await this.wrapTextNodes(this.#observedElement);
         });
         this.observer = new MutationObserver(this.#observer);
@@ -28,7 +28,7 @@ export default class KoriTranslateElement extends HTMLElement {
     }
     async wrapTextNodes(element) {
         var nodes = [];
-        var treeWalker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, this.#koriIgnoreFilter);
+        var treeWalker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, this.#tovikIgnoreFilter);
         while (treeWalker.nextNode()) {
             const node = treeWalker.currentNode;
             if (this.isValid(node)) {
@@ -41,12 +41,12 @@ export default class KoriTranslateElement extends HTMLElement {
         return node
             && node.textContent
             && node.textContent.trim()
-            && !(node.parentElement && node.parentElement.tagName === 'KORI-T');
+            && !(node.parentElement && node.parentElement.tagName === 'TOVIK-T');
     }
     #observer = mutations => {
         for (let mutation of mutations) {
-            if (mutation.target.classList?.contains('kori-ignore')
-                || mutation.target.parentElement?.classList.contains('kori-ignore'))
+            if (!mutation.target.translate === false
+                || mutation.target.parentElement?.translate === false)
                 return;
             if (mutation.type == 'characterData') {
                 console.log('Character data mutation', mutation.target);
@@ -60,11 +60,11 @@ export default class KoriTranslateElement extends HTMLElement {
             }
         }
     };
-    #koriIgnoreFilter = function (node) {
+    #tovikIgnoreFilter = function (node) {
         var approvedNodes = ['#text'];
         if (!approvedNodes.includes(node.nodeName) || node.parentNode.nodeName == 'SCRIPT')
             return NodeFilter.FILTER_SKIP;
-        var closest = node.parentElement.closest('.kori-ignore');
+        var closest = node.parentElement.closest('[translate="no"]');
         if (closest)
             return NodeFilter.FILTER_SKIP;
         return NodeFilter.FILTER_ACCEPT;
@@ -115,4 +115,4 @@ export default class KoriTranslateElement extends HTMLElement {
         }
     }
 }
-//# sourceMappingURL=KoriTranslateElement.js.map
+//# sourceMappingURL=TovikTranslateElement.js.map
