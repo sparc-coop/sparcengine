@@ -17,8 +17,8 @@ internal class DeepLTranslator(IConfiguration configuration) : ITranslator
 
         var options = new TextTranslateOptions
         {
-            SentenceSplittingMode = SentenceSplittingMode.Off,
-            Context = additionalContext
+            Context = additionalContext,
+            ModelType = ModelType.PreferQualityOptimized
         };
 
         var fromLanguages = messages.GroupBy(x => SourceLanguage(x.Language));
