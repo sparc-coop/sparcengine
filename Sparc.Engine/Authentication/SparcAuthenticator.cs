@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Mvc;
 using Passwordless;
 using Sparc.Blossom.Authentication;
 using Sparc.Notifications.Twilio;
@@ -19,7 +18,7 @@ public class SparcAuthenticator<T>(
     public override async Task<ClaimsPrincipal> LoginAsync(ClaimsPrincipal principal)
     {
         var user = await GetAsync(principal);
-        var newPrincipal = user.Login();
+        var newPrincipal = user.ToPrincipal();
         await Users.UpdateAsync((T)user);
 
         var priorUser = BlossomUser.FromPrincipal(principal);
@@ -33,7 +32,7 @@ public class SparcAuthenticator<T>(
         return principal;
     }
 
-    public async Task<BlossomUser> Login(ClaimsPrincipal principal, HttpContext context, string? emailOrToken = null)
+    public async Task<BlossomUser> DoLogin(ClaimsPrincipal principal, string? emailOrToken = null)
     {
         Message = null;
 
@@ -75,7 +74,7 @@ public class SparcAuthenticator<T>(
         return User;
     }
 
-    public async Task<BlossomUser> Logout(ClaimsPrincipal principal, string? emailOrToken = null)
+    public async Task<BlossomUser> DoLogout(ClaimsPrincipal principal, string? emailOrToken = null)
     {
         var user = await GetAsync(principal);
 
@@ -121,24 +120,6 @@ public class SparcAuthenticator<T>(
     private async Task SaveAsync()
     {
         await Users.UpdateAsync((T)User!);
-    }
-
-    public async Task<BlossomUser> AddProductAsync(ClaimsPrincipal principal, string productName)
-    {
-        await base.GetUserAsync(principal);
-
-        if (User is null)
-            throw new InvalidOperationException("User not initialized");
-
-        bool alreadyHasProduct = User.Products.Any(p => p.ProductId.Equals(productName, StringComparison.OrdinalIgnoreCase));
-
-        if (!alreadyHasProduct)
-        {
-            User.AddProduct(productName);
-            await SaveAsync();
-        }
-
-        return User;
     }
 
     public async Task<BlossomUser> UpdateUserAsync(ClaimsPrincipal principal, UpdateUserRequest request)
@@ -253,46 +234,9 @@ public class SparcAuthenticator<T>(
     public void Map(IEndpointRouteBuilder endpoints)
     {
         var auth = endpoints.MapGroup("/auth").RequireCors("Auth");
-        auth.MapPost("login", async (SparcAuthenticator<T> auth, ClaimsPrincipal principal, HttpContext context, string? emailOrToken = null) => await auth.Login(principal, context, emailOrToken));
-        auth.MapPost("logout", async (SparcAuthenticator<T> auth, ClaimsPrincipal principal, string? emailOrToken = null) => await auth.Logout(principal, emailOrToken));
-        auth.MapGet("userinfo", async (SparcAuthenticator<T> auth, ClaimsPrincipal principal) => await auth.GetAsync(principal));
+        auth.MapPost("login", DoLogin);
+        auth.MapPost("logout", DoLogout);
+        auth.MapGet("userinfo", GetAsync);
 
-        var user = endpoints.MapGroup("/user").RequireCors("Auth");
-        user.MapGet("language", async (SparcAuthenticator<T> auth, ClaimsPrincipal principal, HttpRequest request) => await auth.GetLanguageAsync(principal, request));
-        user.MapPost("language", async (SparcAuthenticator<T> auth, ClaimsPrincipal principal, Language language) => await auth.SetLanguageAsync(principal, language));
-        user.MapPost("user-products", async (SparcAuthenticator<T> auth, ClaimsPrincipal principal, [FromBody] AddProductRequest request) => await auth.AddProductAsync(principal, request.ProductName));
-        user.MapPost("update-user", async (SparcAuthenticator<T> auth, ClaimsPrincipal principal, [FromBody] UpdateUserRequest request) => await auth.UpdateUserAsync(principal, request));
-        user.MapPost("verify-code", async (SparcAuthenticator<T> auth, ClaimsPrincipal principal, [FromBody] VerificationRequest request) => await auth.VerifyCodeAsync(principal, request.EmailOrPhone, request.Code));
-        user.MapPost("update-avatar", async (SparcAuthenticator<T> auth, ClaimsPrincipal principal, [FromBody] UpdateAvatarRequest request) => await auth.UpdateAvatarAsync(principal, request));
-    }
-
-    private async Task<Language> GetLanguageAsync(ClaimsPrincipal principal, HttpRequest request)
-    {
-        var language = principal.Get("language");
-        if (language == null && !string.IsNullOrWhiteSpace(request.Headers.AcceptLanguage))
-        {
-            var newLanguage = TovikTranslator.GetLanguage(request.Headers.AcceptLanguage!);
-            if (newLanguage != null)
-            {
-                await SetLanguageAsync(principal, newLanguage);
-                language = newLanguage.Id;
-            }
-        }
-
-        return TovikTranslator.GetLanguage(language!);
-    }
-
-    private async Task<Language> SetLanguageAsync(ClaimsPrincipal principal, Language language)
-    {
-        await base.GetUserAsync(principal);
-
-        if (User is null)
-            throw new InvalidOperationException("User not initialized");
-
-        TovikTranslator.SetLanguage(User, language.Id);
-        await SaveAsync();
-        await LoginAsync(principal);
-
-        return User.PrimaryLanguage ?? language;
     }
 }

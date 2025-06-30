@@ -9,6 +9,14 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <Compile Remove="Communication\**" />
+	  <Content Remove="Communication\**" />
+	  <EmbeddedResource Remove="Communication\**" />
+	  <None Remove="Communication\**" />
+	  <TypeScriptCompile Remove="Communication\**" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<Content Include="Tools\FriendlyId\words_alpha.txt">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
@@ -54,9 +62,5 @@
 		<ProjectReference Include="../../blossom/Sparc.Core/Sparc.Core.csproj" />
 		<ProjectReference Include="../../blossom/Sparc.Blossom/Sparc.Blossom.csproj" />
 		<ProjectReference Include="../../blossom/Sparc.Blossom.Data.Cosmos/Sparc.Blossom.Data.Cosmos.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<Folder Include="Communication\" />
 	</ItemGroup>
 </Project>

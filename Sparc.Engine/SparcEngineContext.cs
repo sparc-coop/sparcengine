@@ -24,7 +24,7 @@ internal class SparcEngineContext(DbContextOptions<SparcEngineContext> options) 
             .HasPartitionKey(x => new { x.Domain, x.LanguageId })
             .HasKey(x => x.Id);
 
-        model.Entity<BlossomDomain>().ToContainer("Domains")
+        model.Entity<SparcDomain>().ToContainer("Domains")
             .HasPartitionKey(x => x.Domain)
             .HasKey(x => x.Id);
     }

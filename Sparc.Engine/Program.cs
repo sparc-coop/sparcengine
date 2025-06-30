@@ -14,7 +14,7 @@ builder.Services.AddScoped<FriendlyId>();
 
 builder.Services.AddCosmos<SparcEngineContext>(builder.Configuration.GetConnectionString("Cosmos")!, "sparc", ServiceLifetime.Scoped);
 
-builder.AddSparcAuthentication<BlossomUser>();
+builder.AddSparcAuthentication<SparcUser>();
 builder.AddSparcEngineTranslation();
 
 builder.Services.AddMediatR(options =>
@@ -38,7 +38,7 @@ builder.Services.Configure<JsonOptions>(options =>
 
 var app = builder.Build();
 app.MapStaticAssets();
-app.UseSparcAuthentication<BlossomUser>();
+app.UseSparcAuthentication<SparcUser>();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

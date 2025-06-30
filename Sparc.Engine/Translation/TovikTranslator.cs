@@ -77,17 +77,6 @@ public class TovikTranslator(IEnumerable<ITranslator> translators, IRepository<T
             ?? throw new Exception($"No translator found for {fromLanguage.Id} to {toLanguage.Id}");
     }
 
-    public static void SetLanguage(BlossomUser user, string? acceptLanguageHeaders)
-    {
-        if (Languages == null || string.IsNullOrWhiteSpace(acceptLanguageHeaders))
-            return;
-
-        // Split the header by comma, then by semicolon to get language codes
-        var match = GetLanguage(acceptLanguageHeaders);
-        if (match != null)
-            user.ChangeLanguage(match);
-    }
-
     internal static Language? GetLanguage(string languageClaim)
     {
         if (Languages == null)

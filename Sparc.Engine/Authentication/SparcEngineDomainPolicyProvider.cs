@@ -6,7 +6,7 @@ using Sparc.Blossom.Data;
 
 namespace Sparc.Engine;
 
-public class SparcEngineDomainPolicyProvider(IRepository<BlossomDomain> domains, HybridCache cache) : ICorsPolicyProvider
+public class SparcEngineDomainPolicyProvider(IRepository<SparcDomain> domains, HybridCache cache) : ICorsPolicyProvider
 {
     static CorsPolicy AllowAll = new CorsPolicyBuilder()
         .AllowAnyOrigin()
@@ -42,7 +42,7 @@ public class SparcEngineDomainPolicyProvider(IRepository<BlossomDomain> domains,
         return _policies[currentDomain];
     }
 
-    async Task<BlossomDomain> GetOrAddDomainAsync(string domain)
+    async Task<SparcDomain> GetOrAddDomainAsync(string domain)
     {
         var existing = await domains.Query
             .Where(d => d.Domain == domain)
