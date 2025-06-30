@@ -8,7 +8,7 @@ public class SparcUser : BlossomUser
 
     public async Task<Language?> GetLanguage(HttpRequest request, SparcAuthenticator<SparcUser> auth)
     {
-        if (PrimaryLanguage == null && !string.IsNullOrWhiteSpace(request.Headers.AcceptLanguage))
+        if (Avatar.Language == null && !string.IsNullOrWhiteSpace(request.Headers.AcceptLanguage))
         {
             var newLanguage = TovikTranslator.GetLanguage(request.Headers.AcceptLanguage!);
             if (newLanguage != null)
@@ -18,7 +18,7 @@ public class SparcUser : BlossomUser
             }
         }
 
-        return PrimaryLanguage == null ? null : TovikTranslator.GetLanguage(PrimaryLanguage.Id);
+        return Avatar.Language == null ? null : TovikTranslator.GetLanguage(Avatar.Language!.Id);
     }
 
     public bool HasProduct(string productName)

@@ -2,7 +2,9 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Passwordless;
 using Sparc.Blossom.Authentication;
+using Sparc.Blossom.Data;
 using Sparc.Notifications.Twilio;
+using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 
 namespace Sparc.Engine;
@@ -40,37 +42,55 @@ public class SparcAuthenticator<T>(
         // If the BlossomUser is already attached to Passwordless, they're logged in because their cookie is valid
         User = await GetAsync(principal);
 
-        if (User.ExternalId != null)
+        if (User.HasIdentity("Passwordless") && emailOrToken == null)
             return User;
 
         // Verify Authentication Token or Register
-        if (emailOrToken != null && emailOrToken.StartsWith("verify"))
+        if (emailOrToken != null)
         {
-            var passwordlessUser = await _passwordlessClient.VerifyAuthenticationTokenAsync(emailOrToken);
-
-            if (passwordlessUser?.Success == true)
+            if (emailOrToken.StartsWith("verify"))
+                return await VerifyTokenAsync(emailOrToken);
+            
+            if (new EmailAddressAttribute().IsValid(emailOrToken))
             {
-                //var parentUser = Users.Query.Where(x => x.ExternalId == User.UserId && x.ParentUserId == null).FirstOrDefault();
-                var parentUser = Users.Query.Where(x => x.ExternalId == passwordlessUser.UserId && x.ParentUserId == null).FirstOrDefault();
-                if (parentUser == null)
+                var identity = User.GetOrCreateIdentity("Email", emailOrToken);
+                if (!identity.IsVerified)
                 {
-                    User.ExternalId = passwordlessUser.UserId;
-
-                    await SaveAsync();
-                    return User;
-                }
-                else
-                {
-                    User.SetParentUser(parentUser);
-
-                    await SaveAsync();
+                    await SendVerificationCodeAsync(identity);
                     return User;
                 }
             }
+
+            var phoneNumber = new PhoneAttribute().
+
         }
 
         var passwordlessToken = await SignUpWithPasswordlessAsync(User);
-        User.SetToken(passwordlessToken);
+        User.GetOrCreateIdentity("Passwordless", passwordlessToken);
+        return User;
+    }
+
+    private async Task<BlossomUser> VerifyTokenAsync(string token)
+    {
+        var verifiedUser = await _passwordlessClient.VerifyAuthenticationTokenAsync(token);
+
+        if (verifiedUser?.Success != true)
+        {
+            Message = "Invalid or expired token.";
+            LoginState = LoginStates.Error;
+            throw new InvalidOperationException(Message);
+        }
+
+        var user = await Users.Query
+            .Where(x => x.Identities.Any(y => y.Type == "Passwordless" && y.Id == verifiedUser.UserId))
+            .CosmosFirstOrDefaultAsync();
+
+        if (user == null)
+            User!.AddIdentity("Passwordless", verifiedUser.UserId);
+        else
+            User = user;
+
+        await SaveAsync();
         return User;
     }
 
@@ -94,16 +114,6 @@ public class SparcAuthenticator<T>(
         return registerToken.Token;
     }
 
-    public override async IAsyncEnumerable<LoginStates> Logout(ClaimsPrincipal principal)
-    {
-        var user = await GetAsync(principal);
-
-        user.Logout();
-        await SaveAsync();
-
-        yield return LoginStates.LoggedOut;
-    }
-
     protected override async Task<BlossomUser> GetUserAsync(ClaimsPrincipal principal)
     {
         await base.GetUserAsync(principal);
@@ -120,116 +130,20 @@ public class SparcAuthenticator<T>(
     private async Task SaveAsync()
     {
         await Users.UpdateAsync((T)User!);
+        await LoginAsync(User!.ToPrincipal());
     }
 
-    public async Task<BlossomUser> UpdateUserAsync(ClaimsPrincipal principal, UpdateUserRequest request)
+    public async Task SendVerificationCodeAsync(BlossomIdentity identity)
     {
-        await base.GetUserAsync(principal);
-        if (User is null)
-            throw new InvalidOperationException("User not initialized");
+        identity.Revoke();
 
-        var shouldSave = false;
-
-        if (!string.IsNullOrWhiteSpace(request.Username) && User.Username != request.Username)
-        {
-            User.Username = request.Username;
-            shouldSave = true;
-        }
-
-        if (!string.IsNullOrWhiteSpace(request.Email) && User.Email != request.Email)
-        {
-            if (request.RequireEmailVerification)
-            {
-                await SendVerificationCodeAsync(principal, request.Email);
-            }
-            else
-            {
-                User.Email = request.Email;
-                shouldSave = true;
-            }
-        }
-
-        if (!string.IsNullOrWhiteSpace(request.PhoneNumber) && User.PhoneNumber != request.PhoneNumber)
-        {
-            if (request.RequirePhoneVerification)
-            {
-                await SendVerificationCodeAsync(principal, request.PhoneNumber);
-            }
-            else
-            {
-                User.PhoneNumber = request.PhoneNumber;
-                shouldSave = true;
-            }
-        }
-
-        if (shouldSave)
-            await SaveAsync();
-
-        return User;
-    }
-
-    public async Task<BlossomUser> UpdateAvatarAsync(ClaimsPrincipal principal, UpdateAvatarRequest request)
-    {
-        await base.GetUserAsync(principal);
-        if (User is null)
-            throw new InvalidOperationException("User not initialized");
-
-        var avatar = new BlossomAvatar(User.Avatar)
-        {
-            Id = User.Id,
-            Name = request.Name ?? User.Avatar.Name,
-            BackgroundColor = request.BackgroundColor ?? User.Avatar.BackgroundColor,
-            Pronouns = request.Pronouns ?? User.Avatar.Pronouns,
-            Description = request.Description ?? User.Avatar.Description,
-            Emoji = request.Emoji ?? User.Avatar.Emoji,
-            Gender = request.Gender ?? User.Avatar.Gender
-        };
-
-        User.UpdateAvatar(avatar);
-        await SaveAsync();
-        return User;
-    }
-
-    public async Task SendVerificationCodeAsync(ClaimsPrincipal principal, string destination)
-    {
-        await base.GetUserAsync(principal);
-
-        if (User is null)
-            throw new InvalidOperationException("User not initialized");
-
-        User.Revoke();
-        User.EmailOrPhone = destination;
-
-        var code = User.GenerateVerificationCode();
+        var code = identity.GenerateVerificationCode();
         var message = $"Your Sparc verification code is: {code}";
         var subject = "Sparc Verification Code";
 
-        await twilio.SendAsync(destination, message, subject);
+        await twilio.SendAsync(identity.Id, message, subject);
         await SaveAsync();
     }
-
-    public async Task<bool> VerifyCodeAsync(ClaimsPrincipal principal, string destination, string code)
-    {
-        await base.GetUserAsync(principal);
-
-        if (User is null)
-            throw new InvalidOperationException("User not initialized");
-
-        var success = User.VerifyCode(code);
-
-        if (success)
-        {
-            if (destination.Contains("@"))
-                User.Email = destination;
-            else
-                User.PhoneNumber = destination;
-
-            await SaveAsync();
-        }
-
-        return success;
-    }
-
 
     public void Map(IEndpointRouteBuilder endpoints)
     {
