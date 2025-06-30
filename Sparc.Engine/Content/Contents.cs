@@ -60,13 +60,26 @@ public class Contents(BlossomAggregateOptions<TextContent> options, KoriTranslat
         var toLanguage = user?.Avatar.Language;
 
         var results = new ConcurrentBag<TextContent>();
-
         await Parallel.ForEachAsync(contents, async (content, _) =>
         {
-            results.Add(await GetOrTranslateAsync(content, toLanguage));
+            var newId = TextContent.IdHash(content.Text, toLanguage);
+            var existing = await Repository.Query
+                .Where(x => x.Domain == content.Domain && x.Id == newId)
+                .CosmosFirstOrDefaultAsync();
+
+            if (existing != null)
+                results.Add(existing);
         });
 
-        return results.ToList();
+        var needsTranslation = contents
+            .Where(content => !results.Any(x => x.Id == TextContent.IdHash(content.Text, toLanguage)))
+            .ToList();
+
+        var additionalContext = string.Join("\n", contents.Select(x => x.Text));
+        var translations = await translator.TranslateAsync(needsTranslation, [toLanguage], additionalContext);
+        await Repository.AddAsync(translations);
+
+        return results.Union(translations).ToList();
     }
 
     public BlossomQuery<TextContent> All(string pageId) => Query().Where(content => content.PageId == pageId && content.SourceContentId == null);
@@ -76,7 +89,7 @@ public class Contents(BlossomAggregateOptions<TextContent> options, KoriTranslat
 
     public void Map(IEndpointRouteBuilder endpoints)
     {
-        var group = endpoints.MapGroup("translate");
+        var group = endpoints.MapGroup("translate").RequireCors("Tovik");
         group.MapPost("", async (HttpRequest request, TextContent content) => await Get(content));
         group.MapGet("languages", Languages).CacheOutput(x => x.Expire(TimeSpan.FromHours(1)));
         group.MapPost("bulk", BulkTranslate);

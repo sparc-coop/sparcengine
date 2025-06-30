@@ -13,14 +13,16 @@ export default class SparcEngine {
         const response = await this.fetch('user/language');
         if (response && response.id) {
             this.userLang = response.id;
+            document.documentElement.setAttribute('dir', response.isRightToLeft ? 'rtl' : 'ltr');
         }
         else {
             return null;
         }
     }
     static async setLanguage(language) {
-        await this.fetch('user/language', { Id: language });
+        var newLang = await this.fetch('user/language', { Id: language });
         document.documentElement.lang = language;
+        document.documentElement.setAttribute('dir', newLang.isRightToLeft ? 'rtl' : 'ltr');
         this.userLang = language;
         document.dispatchEvent(new CustomEvent('kori-language-changed', { detail: language }));
     }

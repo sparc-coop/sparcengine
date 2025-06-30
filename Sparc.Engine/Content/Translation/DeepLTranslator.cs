@@ -1,11 +1,10 @@
 ﻿using DeepL;
-using DeepL.Model;
 
 namespace Sparc.Engine;
 
 internal class DeepLTranslator(IConfiguration configuration) : ITranslator
 {
-    Translator? Client;
+    static Translator? Client;
 
     internal static List<Language> SourceLanguages = [];
     internal static List<Language> TargetLanguages = [];
@@ -25,15 +24,20 @@ internal class DeepLTranslator(IConfiguration configuration) : ITranslator
         var fromLanguages = messages.GroupBy(x => SourceLanguage(x.Language));
         var toDeepLLanguages = toLanguages.Select(TargetLanguage).Where(x => x != null).ToList();
 
+        var batches = KoriTranslator.Batch(messages, 50);
+
         var translatedMessages = new List<TextContent>();
-        foreach (var sourceLanguage in fromLanguages)
+        foreach (var batch in batches)
         {
-            foreach (var targetLanguage in toDeepLLanguages)
+            foreach (var sourceLanguage in fromLanguages)
             {
-                var texts = messages.Select(x => x.Text).Where(x => x != null);
-                var result = await Client.TranslateTextAsync(texts!, sourceLanguage.Key.ToString(), targetLanguage.ToString(), options);
-                var newContent = messages.Zip(result, (message, translation) => new TextContent(message, targetLanguage, translation.Text));
-                translatedMessages.AddRange(newContent);
+                foreach (var targetLanguage in toDeepLLanguages)
+                {
+                    var texts = batch.Select(x => x.Text).Where(x => x != null);
+                    var result = await Client.TranslateTextAsync(texts!, sourceLanguage.Key.ToString(), targetLanguage.ToString(), options);
+                    var newContent = batch.Zip(result, (message, translation) => new TextContent(message, targetLanguage, translation.Text));
+                    translatedMessages.AddRange(newContent);
+                }
             }
         }
 

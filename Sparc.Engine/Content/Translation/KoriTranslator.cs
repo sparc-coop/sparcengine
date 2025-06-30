@@ -39,20 +39,21 @@ public class KoriTranslator(IEnumerable<ITranslator> translators, IRepository<Te
     public async Task<TextContent?> TranslateAsync(TextContent message, Language toLanguage, string? additionalContext = null)
         => (await TranslateAsync([message], [toLanguage], additionalContext)).FirstOrDefault();
 
-    internal async Task<List<TextContent>> TranslateAsync(IEnumerable<TextContent> messages, List<Language> toLanguages, string? additionalContext = null)
+    public async Task<List<TextContent>> TranslateAsync(IEnumerable<TextContent> messages, List<Language> toLanguages, string? additionalContext = null)
     {
-        var translatedMessages = new ConcurrentBag<TextContent>();
+        var translatedMessages = new List<TextContent>();
 
-        var tasks = messages.SelectMany(message =>
-            toLanguages.Select(async toLanguage =>
+        foreach (var toLanguage in toLanguages)
+        {
+            var translators = messages.GroupBy(x => GetBestTranslator(x.Language, toLanguage));
+            foreach (var messageList in translators)
             {
-                var translator = await GetBestTranslatorAsync(message.Language, toLanguage);
-                var translatedMessage = await translator.TranslateAsync([message], [toLanguage], additionalContext);
-                translatedMessages.Add(translatedMessage.First());
-            })
-        );
-
-        await Task.WhenAll(tasks);
+                var result = await messageList.Key.TranslateAsync(messageList.ToList(), [toLanguage], additionalContext);
+                foreach (var message in result)
+                    translatedMessages.Add(message);
+            }
+        }
+        
         return translatedMessages.ToList();
     }
 
@@ -70,7 +71,7 @@ public class KoriTranslator(IEnumerable<ITranslator> translators, IRepository<Te
         return result?.FirstOrDefault()?.Text;
     }
 
-    async Task<ITranslator> GetBestTranslatorAsync(Language fromLanguage, Language toLanguage)
+    internal ITranslator GetBestTranslator(Language fromLanguage, Language toLanguage)
     {
         return Translators
             .OrderBy(x => x.Priority)
@@ -116,5 +117,13 @@ public class KoriTranslator(IEnumerable<ITranslator> translators, IRepository<Te
         }
 
         return null;
+    }
+
+    internal static IEnumerable<IEnumerable<T>> Batch<T>(IEnumerable<T> items,
+                                                       int maxItems)
+    {
+        return items.Select((item, inx) => new { item, inx })
+                    .GroupBy(x => x.inx / maxItems)
+                    .Select(g => g.Select(x => x.item));
     }
 }

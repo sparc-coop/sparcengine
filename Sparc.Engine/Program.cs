@@ -1,5 +1,7 @@
 using MediatR.NotificationPublishers;
+using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Http.Json;
+using Microsoft.Net.Http.Headers;
 using Scalar.AspNetCore;
 using Sparc.Blossom.Authentication;
 using Sparc.Blossom.Data;
@@ -39,6 +41,7 @@ builder.Services.AddCors(options =>
     });
 });
 
+builder.Services.AddHybridCache();
 builder.Services.Configure<JsonOptions>(options =>
 {
     options.SerializerOptions.Converters.Add(new ObjectToInferredTypesConverter());

@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Sparc.Blossom.Authentication;
+﻿using Sparc.Blossom.Authentication;
 
 namespace Sparc.Engine;
 
@@ -26,16 +24,7 @@ public class SparcEngineAuthenticatorMiddleware(RequestDelegate next)
             return;
         }
 
-        var priorUser = BlossomUser.FromPrincipal(context.User);
-        var user = await auth.GetAsync(context.User);
-
-        if (!priorUser.Equals(user))
-        {
-            context.User = await auth.LoginAsync(context.User);
-            await context.SignOutAsync();
-            await context.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, context.User, new() { IsPersistent = true });
-        }
-
+        await auth.LoginAsync(context.User);
         await _next(context);
     }
 }

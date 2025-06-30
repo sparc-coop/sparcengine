@@ -1,8 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Mvc;
 using Passwordless;
+using Polly;
 using Sparc.Blossom.Authentication;
-using System.Security.Claims;
+using Sparc.Engine;
 using Sparc.Notifications.Twilio;
+using System.Security.Claims;
 
 namespace Sparc.Engine;
 
@@ -12,6 +16,7 @@ public class SparcEngineAuthenticator<T> : BlossomDefaultAuthenticator<T>, IBlos
     IPasswordlessClient PasswordlessClient { get; }
     public FriendlyId FriendlyId { get; }
     public KoriTranslator Translator { get; }
+    public IHttpContextAccessor Http { get; }
     public HttpClient Client { get; }
     public const string PublicKey = "sparcengine:public:63cc565eb9544940ad6f2c387b228677";
     public TwilioService Twilio { get; }
@@ -22,13 +27,15 @@ public class SparcEngineAuthenticator<T> : BlossomDefaultAuthenticator<T>, IBlos
         IRepository<T> users,
         TwilioService twilio,
         FriendlyId friendlyId,
-        KoriTranslator translator)
+        KoriTranslator translator,
+        IHttpContextAccessor http)
         : base(users)
     {
         PasswordlessClient = _passwordlessClient;
         Twilio = twilio;
         FriendlyId = friendlyId;
         Translator = translator;
+        Http = http;
         Client = new HttpClient
         {
             BaseAddress = new Uri("https://v4.passwordless.dev/")
@@ -39,8 +46,17 @@ public class SparcEngineAuthenticator<T> : BlossomDefaultAuthenticator<T>, IBlos
     public override async Task<ClaimsPrincipal> LoginAsync(ClaimsPrincipal principal)
     {
         var user = await GetAsync(principal);
-        principal = user.Login();
+        var newPrincipal = user.Login();
         await Users.UpdateAsync((T)user);
+
+        var priorUser = BlossomUser.FromPrincipal(principal);
+        if (Http?.HttpContext != null && priorUser != user)
+        {
+            Http.HttpContext.User = newPrincipal;
+            await Http.HttpContext.SignOutAsync();
+            await Http.HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, newPrincipal, new() { IsPersistent = true });
+        }
+
         return principal;
     }
 
@@ -330,23 +346,13 @@ public class SparcEngineAuthenticator<T> : BlossomDefaultAuthenticator<T>, IBlos
 
     public void Map(IEndpointRouteBuilder endpoints)
     {
-        var auth = endpoints.MapGroup("/auth");
+        var auth = endpoints.MapGroup("/auth").RequireCors("Auth");
         auth.MapPost("login", async (SparcEngineAuthenticator<T> auth, ClaimsPrincipal principal, HttpContext context, string? emailOrToken = null) => await auth.Login(principal, context, emailOrToken));
         auth.MapPost("logout", async (SparcEngineAuthenticator<T> auth, ClaimsPrincipal principal, string? emailOrToken = null) => await auth.Logout(principal, emailOrToken));
         auth.MapGet("userinfo", async (SparcEngineAuthenticator<T> auth, ClaimsPrincipal principal) => await auth.GetAsync(principal));
 
-        var user = endpoints.MapGroup("/user");
-        user.MapGet("language", async (SparcEngineAuthenticator<T> auth, ClaimsPrincipal principal, HttpRequest request) =>
-        {
-            await auth.GetUserAsync(principal);
-            var language = auth.User?.Avatar?.Language;
-            if (language == null && !string.IsNullOrWhiteSpace(request.Headers.AcceptLanguage))
-            {
-                Translator.SetLanguage(auth.User!, request.Headers.AcceptLanguage);
-                await auth.SaveAsync();
-            }
-            return auth.User?.Avatar?.Language;
-        });
+        var user = endpoints.MapGroup("/user").RequireCors("Auth");
+        user.MapGet("language", async (SparcEngineAuthenticator<T> auth, ClaimsPrincipal principal, HttpRequest request) => await auth.GetLanguageAsync(principal, request));
         user.MapPost("language", async (SparcEngineAuthenticator<T> auth, ClaimsPrincipal principal, Language language) => await auth.SetLanguageAsync(principal, language));
         user.MapPost("user-products", async (SparcEngineAuthenticator<T> auth, ClaimsPrincipal principal, [FromBody] AddProductRequest request) => await auth.AddProductAsync(principal, request.ProductName));
         user.MapPost("update-user", async (SparcEngineAuthenticator<T> auth, ClaimsPrincipal principal, [FromBody] UpdateUserRequest request) => await auth.UpdateUserAsync(principal, request));
@@ -354,7 +360,23 @@ public class SparcEngineAuthenticator<T> : BlossomDefaultAuthenticator<T>, IBlos
         user.MapPost("update-avatar", async (SparcEngineAuthenticator<T> auth, ClaimsPrincipal principal, [FromBody] UpdateAvatarRequest request) => await auth.UpdateAvatarAsync(principal, request));
     }
 
-    private async Task<BlossomUser> SetLanguageAsync(ClaimsPrincipal principal, Language language)
+    private async Task<Language> GetLanguageAsync(ClaimsPrincipal principal, HttpRequest request)
+    {
+        var language = principal.Get("language");
+        if (language == null && !string.IsNullOrWhiteSpace(request.Headers.AcceptLanguage))
+        {
+            var newLanguage = KoriTranslator.GetLanguage(request.Headers.AcceptLanguage!);
+            if (newLanguage != null)
+            {
+                await SetLanguageAsync(principal, newLanguage);
+                language = newLanguage.Id;
+            }
+        }
+
+        return KoriTranslator.GetLanguage(language!);
+    }
+
+    private async Task<Language> SetLanguageAsync(ClaimsPrincipal principal, Language language)
     {
         await base.GetUserAsync(principal);
 
@@ -363,7 +385,8 @@ public class SparcEngineAuthenticator<T> : BlossomDefaultAuthenticator<T>, IBlos
 
         Translator.SetLanguage(User, language.Id);
         await SaveAsync();
+        await LoginAsync(principal);
 
-        return User;
+        return User.PrimaryLanguage ?? language;
     }
 }

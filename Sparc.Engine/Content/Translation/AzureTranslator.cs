@@ -5,7 +5,7 @@ namespace Sparc.Engine;
 
 internal class AzureTranslator(IConfiguration configuration) : ITranslator
 {
-    TextTranslationClient? Client;
+    static TextTranslationClient? Client;
 
     internal static List<Language>? Languages;
 
@@ -16,7 +16,7 @@ internal class AzureTranslator(IConfiguration configuration) : ITranslator
         var translatedMessages = new List<TextContent>();
         var azureLanguages = toLanguages.Select(AzureLanguage).Where(x => x != null).ToList();
 
-        var batches = Batch(azureLanguages, 10);
+        var batches = KoriTranslator.Batch(azureLanguages, 10);
 
         await ConnectAsync();
         foreach (var batch in batches)
@@ -63,16 +63,7 @@ internal class AzureTranslator(IConfiguration configuration) : ITranslator
 
         return Languages;
     }
-
-    // from https://stackoverflow.com/a/13731854
-    internal static IEnumerable<IEnumerable<T>> Batch<T>(IEnumerable<T> items,
-                                                       int maxItems)
-    {
-        return items.Select((item, inx) => new { item, inx })
-                    .GroupBy(x => x.inx / maxItems)
-                    .Select(g => g.Select(x => x.item));
-    }
-
+    
     private Task ConnectAsync()
     {
          Client ??= new(new AzureKeyCredential(configuration.GetConnectionString("Cognitive")!),
