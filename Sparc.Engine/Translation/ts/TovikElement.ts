@@ -1,7 +1,7 @@
 ﻿import db from './TovikDb.js';
 import SparcEngine from './SparcEngine.js';
 
-export default class TovikTranslateElement extends HTMLElement {
+export default class TovikElement extends HTMLElement {
     observer;
     #observedElement;
     #originalLang;

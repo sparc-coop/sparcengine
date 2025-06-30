@@ -1,6 +1,6 @@
 import db from './TovikDb.js';
 import SparcEngine from './SparcEngine.js';
-export default class TovikLangSelectElement extends HTMLElement {
+export default class TovikLanguageElement extends HTMLElement {
     constructor() {
         super();
     }
@@ -39,4 +39,4 @@ export default class TovikLangSelectElement extends HTMLElement {
         this.appendChild(select);
     }
 }
-//# sourceMappingURL=TovikLangSelectElement.js.map
+//# sourceMappingURL=TovikLanguageElement.js.map
