@@ -649,14 +649,9 @@
         }
       },
       "ProductKey": {
-        "required": [
-          "productName",
-          "serialNumber",
-          "purchaseDate"
-        ],
         "type": "object",
         "properties": {
-          "productName": {
+          "productId": {
             "type": "string"
           },
           "serialNumber": {
@@ -665,6 +660,14 @@
           "purchaseDate": {
             "type": "string",
             "format": "date-time"
+          },
+          "userId": {
+            "type": "string",
+            "nullable": true
+          },
+          "usageMeter": {
+            "type": "integer",
+            "format": "int32"
           }
         }
       },

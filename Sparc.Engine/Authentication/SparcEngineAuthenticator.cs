@@ -201,18 +201,18 @@ public class SparcEngineAuthenticator<T> : BlossomDefaultAuthenticator<T>, IBlos
         await Users.UpdateAsync((T)User!);
     }
 
-    public async Task<BlossomUser> AddProductAsync(ClaimsPrincipal principal, string productName)
+    public async Task<BlossomUser> AddProductAsync(ClaimsPrincipal principal, string productId)
     {
         await base.GetUserAsync(principal);
 
         if (User is null)
             throw new InvalidOperationException("User not initialized");
 
-        bool alreadyHasProduct = User.Products.Any(p => p.ProductName.Equals(productName, StringComparison.OrdinalIgnoreCase));
+        bool alreadyHasProduct = User.Products.Any(p => p.ProductId.Equals(productId, StringComparison.OrdinalIgnoreCase));
 
         if (!alreadyHasProduct)
         {
-            User.AddProduct(productName);
+            User.AddProduct(productId);
             await SaveAsync();
         }
 
