@@ -1,6 +1,7 @@
 ﻿
 using Sparc.Blossom.Authentication;
 using Sparc.Blossom.Data;
+using System.Collections.Concurrent;
 
 namespace Sparc.Engine;
 
@@ -32,6 +33,11 @@ public class Contents(BlossomAggregateOptions<TextContent> options, KoriTranslat
         var user = await auth.GetAsync(User);
         var toLanguage = user?.Avatar.Language;
 
+        return await GetOrTranslateAsync(content, toLanguage);
+    }
+
+    private async Task<TextContent> GetOrTranslateAsync(TextContent content, Language toLanguage)
+    {
         var newId = TextContent.IdHash(content.Text, toLanguage);
         var existing = await Repository.Query
             .Where(x => x.Domain == content.Domain && x.Id == newId)
@@ -39,13 +45,28 @@ public class Contents(BlossomAggregateOptions<TextContent> options, KoriTranslat
 
         if (existing != null)
             return existing;
-        
+
         var translation = await translator.TranslateAsync(content, toLanguage);
         if (translation == null)
             throw new InvalidOperationException("Translation failed.");
 
         await Repository.AddAsync(translation);
         return translation;
+    }
+
+    public async Task<List<TextContent>> BulkTranslate(List<TextContent> contents)
+    {
+        var user = await auth.GetAsync(User);
+        var toLanguage = user?.Avatar.Language;
+
+        var results = new ConcurrentBag<TextContent>();
+
+        await Parallel.ForEachAsync(contents, async (content, _) =>
+        {
+            results.Add(await GetOrTranslateAsync(content, toLanguage));
+        });
+
+        return results.ToList();
     }
 
     public BlossomQuery<TextContent> All(string pageId) => Query().Where(content => content.PageId == pageId && content.SourceContentId == null);
@@ -58,5 +79,6 @@ public class Contents(BlossomAggregateOptions<TextContent> options, KoriTranslat
         var group = endpoints.MapGroup("translate");
         group.MapPost("", async (HttpRequest request, TextContent content) => await Get(content));
         group.MapGet("languages", Languages).CacheOutput(x => x.Expire(TimeSpan.FromHours(1)));
+        group.MapPost("bulk", BulkTranslate);
     }
 }

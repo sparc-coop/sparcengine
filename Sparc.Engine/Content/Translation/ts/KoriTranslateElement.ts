@@ -4,17 +4,14 @@ import SparcEngine from './SparcEngine.js';
 export default class KoriTranslateElement extends HTMLElement {
     observer;
     #observedElement;
-    #mode;
     #originalLang;
-    #originalText = {};
 
     constructor() {
         super();
     }
 
-    connectedCallback() {
+    async connectedCallback() {
         this.#observedElement = this;
-        this.#mode = 'static';
         this.#originalLang = this.lang || document.documentElement.lang;
 
         // if the attribute 'for' is set, observe the element with that selector
@@ -23,17 +20,14 @@ export default class KoriTranslateElement extends HTMLElement {
             this.#observedElement = document.querySelector(selector);
         }
 
-        if (this.hasAttribute('live')) {
-            this.#mode = 'live';
-        }
+        await this.wrapTextNodes(this.#observedElement);
+        document.addEventListener('kori-language-changed', async (event: any) => {
+            await this.wrapTextNodes(this.#observedElement);
+        });
 
-        this.wrapTextNodes(this.#observedElement);
 
-        if (this.#mode === 'live') {
-            console.log('observing', this.#observedElement);
-            this.observer = new MutationObserver(this.#observer);
-            this.observer.observe(this.#observedElement, { childList: true, characterData: true, subtree: true });
-        }
+        this.observer = new MutationObserver(this.#observer);
+        this.observer.observe(this.#observedElement, { childList: true, characterData: true, subtree: true });
     }
 
     disconnectedCallback() {
@@ -41,7 +35,7 @@ export default class KoriTranslateElement extends HTMLElement {
             this.observer.disconnect();
     }
 
-    wrapTextNodes(element) {
+    async wrapTextNodes(element) {
         var nodes = [];
         var treeWalker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, this.#koriIgnoreFilter);
         while (treeWalker.nextNode()) {
@@ -51,28 +45,7 @@ export default class KoriTranslateElement extends HTMLElement {
             }
         }
 
-        nodes.forEach(node => this.wrapTextNode(node));
-    }
-
-    wrapTextNode(node) {
-        if (this.isValid(node)) {
-            if (this.#mode === 'live') {
-                if (!node.hash) {
-                    var text = node.textContent.trim();
-                    node.hash = SparcEngine.idHash(text, this.#originalLang);
-                    this.#originalText[node.hash] = text;
-                    document.addEventListener('kori-language-changed', (event: any) => {
-                        this.askForTranslation(node);
-                    });
-                    console.log('live node registered', node.textContent);
-                }
-                this.askForTranslation(node);
-            } else if (this.#mode === 'static') {
-                const wrapper = document.createElement('kori-t');
-                wrapper.textContent = node.textContent.trim();
-                node.parentElement.replaceChild(wrapper, node);
-            }
-        }
+        await this.queueForTranslation(nodes);
     }
 
     isValid(node) {
@@ -96,7 +69,7 @@ export default class KoriTranslateElement extends HTMLElement {
                 this.wrapTextNodes(mutation.target);
             }
             else {
-                mutation.addedNodes.forEach(this.wrapTextNode);
+                this.queueForTranslation(mutation.addedNodes);
             }
         }
     }
@@ -114,19 +87,55 @@ export default class KoriTranslateElement extends HTMLElement {
         return NodeFilter.FILTER_ACCEPT;
     }
 
-    askForTranslation(textNode) {
-        const hash = SparcEngine.idHash(textNode.textContent);
+    async queueForTranslation(textNodes) {
+        let pendingTranslations = [];
+        console.log('oh lawd', textNodes);
 
-        db.translations.get(hash).then(translation => {
+        await Promise.all(textNodes.map(async textNode => {
+            if (!textNode.textContent)
+                return;
+
+            if (!textNode.originalText) {
+                textNode.originalText = textNode.textContent.trim();
+            }
+
+            console.log('mapping', textNode.originalText);
+            textNode.hash = SparcEngine.idHash(textNode.originalText);
+            const translation = await db.translations.get(textNode.hash);
             if (translation) {
                 textNode.textContent = translation.text;
             } else {
-                SparcEngine.translate(this.#originalText[textNode.hash], this.#originalLang)
-                    .then(newTranslation => {
-                        textNode.textContent = newTranslation.text;
-                        db.translations.put(newTranslation);
-                    });
+                // Queue for bulk translation if not in cache
+                if (!pendingTranslations.some(node => node.hash === textNode.hash)) {
+                    pendingTranslations.push(textNode);
+                }
             }
-        });
+        }));
+
+        console.log('oh lawd!', pendingTranslations);
+        if (pendingTranslations.length > 0) {
+            await this.processBulkTranslations(pendingTranslations);
+        }
+    }
+
+    async processBulkTranslations(pendingTranslations) {
+        if (pendingTranslations.length === 0) return;
+
+        console.log(`Processing bulk translation for ${pendingTranslations.length} nodes`);
+
+        const textsToTranslate = pendingTranslations.map(node => ({
+            hash: node.hash,
+            text: node.originalText
+        }));
+
+        const newTranslations = await SparcEngine.bulkTranslate(textsToTranslate, this.#originalLang);
+        for (const node of pendingTranslations) {
+            const translation = newTranslations.find(t => t.id === node.hash);
+            console.log('checking for', newTranslations, node.hash, translation);
+            if (translation) {
+                node.textContent = translation.text;
+                db.translations.put(translation);
+            }
+        }
     }
 }

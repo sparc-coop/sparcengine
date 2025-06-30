@@ -1,6 +1,6 @@
 import MD5 from "./MD5.js";
-//const baseUrl = 'https://localhost:7185';
-const baseUrl = 'https://engine.sparc.coop';
+const baseUrl = 'https://localhost:7185';
+//const baseUrl = 'https://engine.sparc.coop';
 export default class SparcEngine {
     static userLang;
     static async hi() {
@@ -38,6 +38,16 @@ export default class SparcEngine {
             Text: text
         };
         return await this.fetch('translate', request, this.userLang);
+    }
+    static async bulkTranslate(items, fromLang) {
+        const requests = items.map(item => ({
+            id: item.hash || this.idHash(item.text, fromLang),
+            Domain: window.location.host,
+            LanguageId: fromLang,
+            Language: { Id: fromLang },
+            Text: item.text
+        }));
+        return await this.fetch('translate/bulk', requests, this.userLang);
     }
     static async fetch(url, body = null, language = null) {
         const options = {
