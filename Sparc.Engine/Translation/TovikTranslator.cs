@@ -1,6 +1,4 @@
-﻿using Sparc.Blossom.Authentication;
-
-namespace Sparc.Engine;
+﻿namespace Sparc.Engine;
 
 public class TovikTranslator(IEnumerable<ITranslator> translators, IRepository<TextContent> content)
 {

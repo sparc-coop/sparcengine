@@ -15,7 +15,7 @@ builder.Services.AddScoped<FriendlyId>();
 builder.Services.AddCosmos<SparcEngineContext>(builder.Configuration.GetConnectionString("Cosmos")!, "sparc", ServiceLifetime.Scoped);
 
 builder.AddSparcAuthentication<SparcUser>();
-builder.AddSparcEngineTranslation();
+builder.AddTovikTranslator();
 
 builder.Services.AddMediatR(options =>
 {

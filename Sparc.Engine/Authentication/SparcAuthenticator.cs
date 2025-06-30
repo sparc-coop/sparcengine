@@ -174,7 +174,7 @@ public class SparcAuthenticator<T>(
         if (User is null)
             throw new InvalidOperationException("User not initialized");
 
-        var avatar = new UserAvatar(User.Avatar)
+        var avatar = new BlossomAvatar(User.Avatar)
         {
             Id = User.Id,
             Name = request.Name ?? User.Avatar.Name,
