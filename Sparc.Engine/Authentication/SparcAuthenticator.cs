@@ -4,7 +4,6 @@ using Passwordless;
 using Sparc.Blossom.Authentication;
 using Sparc.Blossom.Data;
 using Sparc.Blossom.Realtime;
-using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 
 namespace Sparc.Engine;
@@ -20,16 +19,9 @@ public class SparcAuthenticator<T>(
     public override async Task<ClaimsPrincipal> LoginAsync(ClaimsPrincipal principal)
     {
         var user = await GetAsync(principal);
-        var newPrincipal = user.ToPrincipal();
+        user.Login();
         await Users.UpdateAsync((T)user);
-
-        var priorUser = BlossomUser.FromPrincipal(principal);
-        if (http?.HttpContext != null && priorUser != user)
-        {
-            http.HttpContext.User = newPrincipal;
-            await http.HttpContext.SignOutAsync();
-            await http.HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, newPrincipal, new() { IsPersistent = true });
-        }
+        await UpdateFromHttpContextAsync(principal);
 
         return principal;
     }
@@ -147,6 +139,31 @@ public class SparcAuthenticator<T>(
         auth.MapPost("login", DoLogin);
         auth.MapPost("logout", DoLogout);
         auth.MapGet("userinfo", GetAsync);
+    }
 
+    private async Task UpdateFromHttpContextAsync(ClaimsPrincipal principal)
+    {
+        if (http?.HttpContext != null && User != null)
+        {
+            var acceptLanguage = http.HttpContext.Request.Headers.AcceptLanguage;
+            if (User.Avatar.Language == null && !string.IsNullOrWhiteSpace(acceptLanguage))
+            {
+                var newLanguage = TovikTranslator.GetLanguage(acceptLanguage!);
+                if (newLanguage != null)
+                    User.ChangeLanguage(newLanguage);
+
+                var newLocale = TovikTranslator.GetLocale(acceptLanguage!);
+                if (newLocale != null)
+                    User.Avatar.Locale = newLocale;
+            }
+
+            var priorUser = BlossomUser.FromPrincipal(principal);
+            if (priorUser != User)
+            {
+                http.HttpContext.User = User.ToPrincipal();
+                await http.HttpContext.SignOutAsync();
+                await http.HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, http.HttpContext.User, new() { IsPersistent = true });
+            }
+        }
     }
 }

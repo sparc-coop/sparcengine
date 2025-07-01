@@ -6,7 +6,7 @@ public class SparcAuthenticatorMiddleware(RequestDelegate next)
 {
     private readonly RequestDelegate _next = next;
 
-    public async Task InvokeAsync(HttpContext context, IBlossomAuthenticator auth, TovikTranslator translator)
+    public async Task InvokeAsync(HttpContext context, IBlossomAuthenticator auth)
     {
         if (context.Request.Path.StartsWithSegments("/_blazor") 
             || context.Request.Path.StartsWithSegments("/_framework") 

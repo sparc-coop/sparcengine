@@ -8,20 +8,6 @@ public class SparcUser : BlossomUser
 
     public async Task<Language?> GetLanguage(HttpRequest request, SparcAuthenticator<SparcUser> auth)
     {
-        if (Avatar.Language == null && !string.IsNullOrWhiteSpace(request.Headers.AcceptLanguage))
-        {
-            var newLanguage = TovikTranslator.GetLanguage(request.Headers.AcceptLanguage!);
-            if (newLanguage != null)
-                ChangeLanguage(newLanguage);
-
-            var newLocale = TovikTranslator.GetLocale(request.Headers.AcceptLanguage!);
-            if (newLocale != null)
-                Avatar.Locale = newLocale;
-
-            if (newLanguage != null || newLocale != null)
-                await auth.LoginAsync(ToPrincipal());
-        }
-
         return Avatar.Language == null ? null : TovikTranslator.GetLanguage(Avatar.Language!.Id);
     }
 
