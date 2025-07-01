@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Passwordless;
 using Sparc.Blossom.Authentication;
 using Sparc.Blossom.Data;
-using Sparc.Notifications.Twilio;
+using Sparc.Blossom.Realtime;
 using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 
@@ -50,19 +50,14 @@ public class SparcAuthenticator<T>(
         {
             if (emailOrToken.StartsWith("verify"))
                 return await VerifyTokenAsync(emailOrToken);
-            
-            if (new EmailAddressAttribute().IsValid(emailOrToken))
+
+            var authenticationType = new EmailAddressAttribute().IsValid(emailOrToken) ? "Email" : "Phone";
+            var identity = User.GetOrCreateIdentity(authenticationType, emailOrToken);
+            if (!identity.IsVerified)
             {
-                var identity = User.GetOrCreateIdentity("Email", emailOrToken);
-                if (!identity.IsVerified)
-                {
-                    await SendVerificationCodeAsync(identity);
-                    return User;
-                }
+                await SendVerificationCodeAsync(identity);
+                return User;
             }
-
-            var phoneNumber = new PhoneAttribute().
-
         }
 
         var passwordlessToken = await SignUpWithPasswordlessAsync(User);
