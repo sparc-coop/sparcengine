@@ -212,7 +212,7 @@ public class PouchData(CosmosDbSimpleRepository<PouchDatum> data) : IBlossomEndp
         group.MapPost("/{db}/_bulk_docs", UpsertBulkAsync);
 
         group.MapGet("/{db}/{docid}", FindAsync);
-        group.MapPut("/{db}/{docid}", UpsertAsync);
+        group.MapPut("/{db}/{docid}", UpsertBulkAsync);
         group.MapDelete("/{db}/{docid}", DeleteAsync);
 
         group.MapGet("/{db}/_all_docs", GetAllAsync);
