@@ -15,7 +15,7 @@ public class SparcEngineAuthenticator<T> : BlossomDefaultAuthenticator<T>, IBlos
 {
     IPasswordlessClient PasswordlessClient { get; }
     public FriendlyId FriendlyId { get; }
-    public KoriTranslator Translator { get; }
+    public TovikTranslator Translator { get; }
     public IHttpContextAccessor Http { get; }
     public HttpClient Client { get; }
     public const string PublicKey = "sparcengine:public:63cc565eb9544940ad6f2c387b228677";
@@ -27,7 +27,7 @@ public class SparcEngineAuthenticator<T> : BlossomDefaultAuthenticator<T>, IBlos
         IRepository<T> users,
         TwilioService twilio,
         FriendlyId friendlyId,
-        KoriTranslator translator,
+        TovikTranslator translator,
         IHttpContextAccessor http)
         : base(users)
     {
@@ -365,7 +365,7 @@ public class SparcEngineAuthenticator<T> : BlossomDefaultAuthenticator<T>, IBlos
         var language = principal.Get("language");
         if (language == null && !string.IsNullOrWhiteSpace(request.Headers.AcceptLanguage))
         {
-            var newLanguage = KoriTranslator.GetLanguage(request.Headers.AcceptLanguage!);
+            var newLanguage = TovikTranslator.GetLanguage(request.Headers.AcceptLanguage!);
             if (newLanguage != null)
             {
                 await SetLanguageAsync(principal, newLanguage);
@@ -373,7 +373,7 @@ public class SparcEngineAuthenticator<T> : BlossomDefaultAuthenticator<T>, IBlos
             }
         }
 
-        return KoriTranslator.GetLanguage(language!);
+        return TovikTranslator.GetLanguage(language!);
     }
 
     private async Task<Language> SetLanguageAsync(ClaimsPrincipal principal, Language language)

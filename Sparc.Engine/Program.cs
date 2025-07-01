@@ -29,17 +29,8 @@ builder.Services.AddMediatR(options =>
 
 builder.Services.AddTwilio(builder.Configuration);
 
-builder.Services.AddCors(options =>
-{
-    options.AddDefaultPolicy(policy =>
-    {
-        policy.WithOrigins("http://localhost:7022")
-              .AllowAnyMethod()
-              .AllowAnyHeader()
-              .SetIsOriginAllowed((string x) => true)
-              .AllowCredentials();
-    });
-});
+builder.Services.AddScoped<ICorsPolicyProvider, SparcEngineDomainPolicyProvider>();
+builder.Services.AddCors();
 
 builder.Services.AddHybridCache();
 builder.Services.Configure<JsonOptions>(options =>
@@ -70,7 +61,7 @@ scope.ServiceProvider.GetRequiredService<Contents>().Map(app);
 
 if (!string.IsNullOrWhiteSpace(app.Configuration.GetConnectionString("Cognitive")))
 {
-    var translator = scope.ServiceProvider.GetRequiredService<KoriTranslator>();
+    var translator = scope.ServiceProvider.GetRequiredService<TovikTranslator>();
     await translator.GetLanguagesAsync();
 }
 app.Run();
