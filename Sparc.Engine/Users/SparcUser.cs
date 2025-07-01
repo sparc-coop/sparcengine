@@ -12,10 +12,14 @@ public class SparcUser : BlossomUser
         {
             var newLanguage = TovikTranslator.GetLanguage(request.Headers.AcceptLanguage!);
             if (newLanguage != null)
-            {
                 ChangeLanguage(newLanguage);
+
+            var newLocale = TovikTranslator.GetLocale(request.Headers.AcceptLanguage!);
+            if (newLocale != null)
+                Avatar.Locale = newLocale;
+
+            if (newLanguage != null || newLocale != null)
                 await auth.LoginAsync(ToPrincipal());
-            }
         }
 
         return Avatar.Language == null ? null : TovikTranslator.GetLanguage(Avatar.Language!.Id);

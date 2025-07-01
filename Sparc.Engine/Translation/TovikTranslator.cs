@@ -1,4 +1,6 @@
-﻿namespace Sparc.Engine;
+﻿using System.Globalization;
+
+namespace Sparc.Engine;
 
 public class TovikTranslator(IEnumerable<ITranslator> translators, IRepository<TextContent> content)
 {
@@ -102,6 +104,31 @@ public class TovikTranslator(IEnumerable<ITranslator> translators, IRepository<T
         }
 
         return null;
+    }
+
+    internal static RegionInfo? GetLocale(string languageClaim)
+    {
+        var languages = languageClaim
+            .Split(',')
+            .Select(l => l.Split(';')[0].Trim())
+            .Where(l => !string.IsNullOrWhiteSpace(l))
+            .ToList();
+
+        if (languages.Count == 0)
+            return null;
+
+        try
+        {
+            return languages
+                .Where(x => x.Contains('-'))
+                .Select(x => x.Split('-').Last())
+                .Select(region => new RegionInfo(region))
+                .FirstOrDefault();
+        }
+        catch
+        {
+            return null;
+        }
     }
 
     internal static IEnumerable<IEnumerable<T>> Batch<T>(IEnumerable<T> items,
