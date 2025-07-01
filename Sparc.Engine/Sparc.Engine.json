@@ -46,7 +46,7 @@
     "/auth/login": {
       "post": {
         "tags": [
-          "Sparc.Engine"
+          "SparcAuthenticator`1"
         ],
         "parameters": [
           {
@@ -75,7 +75,7 @@
     "/auth/logout": {
       "post": {
         "tags": [
-          "Sparc.Engine"
+          "SparcAuthenticator`1"
         ],
         "parameters": [
           {
@@ -104,170 +104,8 @@
     "/auth/userinfo": {
       "get": {
         "tags": [
-          "Sparc.Engine"
+          "BlossomDefaultAuthenticator`1"
         ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/BlossomUser"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/user/language": {
-      "get": {
-        "tags": [
-          "Sparc.Engine"
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Language2"
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "Sparc.Engine"
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Language2"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Language2"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/user/user-products": {
-      "post": {
-        "tags": [
-          "Sparc.Engine"
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/AddProductRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/BlossomUser"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/user/update-user": {
-      "post": {
-        "tags": [
-          "Sparc.Engine"
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateUserRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/BlossomUser"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/user/verify-code": {
-      "post": {
-        "tags": [
-          "Sparc.Engine"
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/VerificationRequest"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "boolean"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/user/update-avatar": {
-      "post": {
-        "tags": [
-          "Sparc.Engine"
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateAvatarRequest"
-              }
-            }
-          },
-          "required": true
-        },
         "responses": {
           "200": {
             "description": "OK",
@@ -371,17 +209,6 @@
   },
   "components": {
     "schemas": {
-      "AddProductRequest": {
-        "required": [
-          "productName"
-        ],
-        "type": "object",
-        "properties": {
-          "productName": {
-            "type": "string"
-          }
-        }
-      },
       "AudioContent": {
         "required": [
           "url",
@@ -410,37 +237,191 @@
         },
         "nullable": true
       },
+      "BlossomAvatar": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "initials": {
+            "type": "string",
+            "nullable": true
+          },
+          "isOnline": {
+            "type": "boolean"
+          },
+          "backgroundColor": {
+            "type": "string"
+          },
+          "foregroundColor": {
+            "type": "string",
+            "nullable": true
+          },
+          "locale": {
+            "$ref": "#/components/schemas/BlossomRegion"
+          },
+          "language": {
+            "$ref": "#/components/schemas/Language"
+          },
+          "languagesSpoken": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Language2"
+            }
+          },
+          "emoji": {
+            "type": "string",
+            "nullable": true
+          },
+          "skinTone": {
+            "type": "string",
+            "nullable": true
+          },
+          "pronouns": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "gender": {
+            "type": "string",
+            "nullable": true
+          },
+          "hearOthers": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "muteMe": {
+            "type": "boolean",
+            "nullable": true
+          }
+        }
+      },
+      "BlossomAvatar2": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "initials": {
+            "type": "string",
+            "nullable": true
+          },
+          "isOnline": {
+            "type": "boolean"
+          },
+          "backgroundColor": {
+            "type": "string"
+          },
+          "foregroundColor": {
+            "type": "string",
+            "nullable": true
+          },
+          "locale": {
+            "$ref": "#/components/schemas/BlossomRegion"
+          },
+          "language": {
+            "$ref": "#/components/schemas/Language"
+          },
+          "languagesSpoken": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Language2"
+            }
+          },
+          "emoji": {
+            "type": "string",
+            "nullable": true
+          },
+          "skinTone": {
+            "type": "string",
+            "nullable": true
+          },
+          "pronouns": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "gender": {
+            "type": "string",
+            "nullable": true
+          },
+          "hearOthers": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "muteMe": {
+            "type": "boolean",
+            "nullable": true
+          }
+        },
+        "nullable": true
+      },
+      "BlossomIdentity": {
+        "required": [
+          "id",
+          "type"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "type": {
+            "type": "string"
+          },
+          "isVerified": {
+            "type": "boolean"
+          },
+          "isLoggedIn": {
+            "type": "boolean"
+          },
+          "lastLoginDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "lastVerifiedDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        }
+      },
+      "BlossomRegion": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "nativeName": {
+            "type": "string"
+          },
+          "currencyNativeName": {
+            "type": "string"
+          }
+        },
+        "nullable": true
+      },
       "BlossomUser": {
         "type": "object",
         "properties": {
           "username": {
             "type": "string"
           },
-          "email": {
-            "type": "string",
-            "nullable": true
-          },
-          "phoneNumber": {
-            "type": "string",
-            "nullable": true
-          },
           "userId": {
             "type": "string"
-          },
-          "authenticationType": {
-            "type": "string"
-          },
-          "externalId": {
-            "type": "string",
-            "nullable": true
-          },
-          "token": {
-            "type": "string",
-            "nullable": true
-          },
-          "parentUserId": {
-            "type": "string",
-            "nullable": true
           },
           "dateCreated": {
             "type": "string",
@@ -450,34 +431,19 @@
             "type": "string",
             "format": "date-time"
           },
+          "lastLogin": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
           "avatar": {
-            "$ref": "#/components/schemas/UserAvatar"
+            "$ref": "#/components/schemas/BlossomAvatar"
           },
-          "languagesSpoken": {
+          "identities": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/Language2"
+              "$ref": "#/components/schemas/BlossomIdentity"
             }
-          },
-          "products": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ProductKey"
-            }
-          },
-          "emailOrPhone": {
-            "type": "string",
-            "nullable": true
-          },
-          "isVerified": {
-            "type": "boolean"
-          },
-          "verificationHash": {
-            "type": "string",
-            "nullable": true
-          },
-          "primaryLanguage": {
-            "$ref": "#/components/schemas/Language"
           },
           "genericId": { },
           "id": {
@@ -565,29 +531,6 @@
           }
         }
       },
-      "ProductKey": {
-        "type": "object",
-        "properties": {
-          "productId": {
-            "type": "string"
-          },
-          "serialNumber": {
-            "type": "string"
-          },
-          "purchaseDate": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "userId": {
-            "type": "string",
-            "nullable": true
-          },
-          "usageMeter": {
-            "type": "integer",
-            "format": "int32"
-          }
-        }
-      },
       "TextContent": {
         "type": "object",
         "properties": {
@@ -626,7 +569,7 @@
             "nullable": true
           },
           "user": {
-            "$ref": "#/components/schemas/UserAvatar2"
+            "$ref": "#/components/schemas/BlossomAvatar2"
           },
           "audio": {
             "$ref": "#/components/schemas/AudioContent"
@@ -657,197 +600,6 @@
           }
         }
       },
-      "UpdateAvatarRequest": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "default": null,
-            "nullable": true
-          },
-          "backgroundColor": {
-            "type": "string",
-            "default": null,
-            "nullable": true
-          },
-          "pronouns": {
-            "type": "string",
-            "default": null,
-            "nullable": true
-          },
-          "description": {
-            "type": "string",
-            "default": null,
-            "nullable": true
-          },
-          "emoji": {
-            "type": "string",
-            "default": null,
-            "nullable": true
-          },
-          "gender": {
-            "type": "string",
-            "default": null,
-            "nullable": true
-          }
-        }
-      },
-      "UpdateUserRequest": {
-        "type": "object",
-        "properties": {
-          "username": {
-            "type": "string",
-            "default": null,
-            "nullable": true
-          },
-          "email": {
-            "type": "string",
-            "default": null,
-            "nullable": true
-          },
-          "phoneNumber": {
-            "type": "string",
-            "default": null,
-            "nullable": true
-          },
-          "requireEmailVerification": {
-            "type": "boolean",
-            "default": false
-          },
-          "requirePhoneVerification": {
-            "type": "boolean",
-            "default": false
-          }
-        }
-      },
-      "UserAvatar": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "name": {
-            "type": "string"
-          },
-          "initials": {
-            "type": "string",
-            "nullable": true
-          },
-          "isOnline": {
-            "type": "boolean"
-          },
-          "backgroundColor": {
-            "type": "string"
-          },
-          "foregroundColor": {
-            "type": "string",
-            "nullable": true
-          },
-          "language": {
-            "$ref": "#/components/schemas/Language"
-          },
-          "emoji": {
-            "type": "string",
-            "nullable": true
-          },
-          "skinTone": {
-            "type": "string",
-            "nullable": true
-          },
-          "pronouns": {
-            "type": "string",
-            "nullable": true
-          },
-          "description": {
-            "type": "string",
-            "nullable": true
-          },
-          "gender": {
-            "type": "string",
-            "nullable": true
-          },
-          "hearOthers": {
-            "type": "boolean",
-            "nullable": true
-          },
-          "muteMe": {
-            "type": "boolean",
-            "nullable": true
-          }
-        }
-      },
-      "UserAvatar2": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "name": {
-            "type": "string"
-          },
-          "initials": {
-            "type": "string",
-            "nullable": true
-          },
-          "isOnline": {
-            "type": "boolean"
-          },
-          "backgroundColor": {
-            "type": "string"
-          },
-          "foregroundColor": {
-            "type": "string",
-            "nullable": true
-          },
-          "language": {
-            "$ref": "#/components/schemas/Language"
-          },
-          "emoji": {
-            "type": "string",
-            "nullable": true
-          },
-          "skinTone": {
-            "type": "string",
-            "nullable": true
-          },
-          "pronouns": {
-            "type": "string",
-            "nullable": true
-          },
-          "description": {
-            "type": "string",
-            "nullable": true
-          },
-          "gender": {
-            "type": "string",
-            "nullable": true
-          },
-          "hearOthers": {
-            "type": "boolean",
-            "nullable": true
-          },
-          "muteMe": {
-            "type": "boolean",
-            "nullable": true
-          }
-        },
-        "nullable": true
-      },
-      "VerificationRequest": {
-        "required": [
-          "emailOrPhone",
-          "code"
-        ],
-        "type": "object",
-        "properties": {
-          "emailOrPhone": {
-            "type": "string"
-          },
-          "code": {
-            "type": "string"
-          }
-        }
-      },
       "Word": {
         "required": [
           "offset",
@@ -874,6 +626,12 @@
   "tags": [
     {
       "name": "Sparc.Engine"
+    },
+    {
+      "name": "SparcAuthenticator`1"
+    },
+    {
+      "name": "BlossomDefaultAuthenticator`1"
     },
     {
       "name": "Contents"

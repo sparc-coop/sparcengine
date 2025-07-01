@@ -31,7 +31,10 @@ public class Contents(BlossomAggregateOptions<TextContent> options, TovikTransla
     public async Task<TextContent> Get(TextContent content)
     {
         var user = await auth.GetAsync(User);
-        var toLanguage = user?.Avatar.Language;
+        var toLanguage = user.Avatar.Language;
+
+        if (toLanguage == null)
+            return content;
 
         return await GetOrTranslateAsync(content, toLanguage);
     }
@@ -57,7 +60,10 @@ public class Contents(BlossomAggregateOptions<TextContent> options, TovikTransla
     public async Task<List<TextContent>> BulkTranslate(List<TextContent> contents)
     {
         var user = await auth.GetAsync(User);
+
         var toLanguage = user?.Avatar.Language;
+        if (toLanguage == null)
+            return contents;
 
         var results = new ConcurrentBag<TextContent>();
         await Parallel.ForEachAsync(contents, async (content, _) =>

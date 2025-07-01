@@ -8,7 +8,7 @@ internal class SparcEngineContext(DbContextOptions<SparcEngineContext> options) 
 {
     protected override void OnModelCreating(ModelBuilder model)
     {
-        model.Entity<BlossomUser>().ToContainer("Users")
+        model.Entity<SparcUser>().ToContainer("Users")
             .HasPartitionKey(x => x.UserId);
 
         
