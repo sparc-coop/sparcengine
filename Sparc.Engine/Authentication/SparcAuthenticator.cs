@@ -51,7 +51,7 @@ public class SparcAuthenticator<T>(
             if (emailOrToken.StartsWith("verify"))
                 return await VerifyTokenAsync(emailOrToken);
 
-            var authenticationType = new EmailAddressAttribute().IsValid(emailOrToken) ? "Email" : "Phone";
+            var authenticationType = TwilioService.IsValidEmail(emailOrToken) ? "Email" : "Phone";
             var identity = User.GetOrCreateIdentity(authenticationType, emailOrToken);
             if (!identity.IsVerified)
             {
@@ -101,11 +101,12 @@ public class SparcAuthenticator<T>(
 
     private async Task<string> SignUpWithPasswordlessAsync(BlossomUser user)
     {
-        var registerToken = await _passwordlessClient.CreateRegisterTokenAsync(new RegisterOptions(user.Id, user.Username)
+        var options = new RegisterOptions(user.Id, user.Username)
         {
             Aliases = [user.Username]
-        });
+        };
 
+        var registerToken = await _passwordlessClient.CreateRegisterTokenAsync(options);
         return registerToken.Token;
     }
 
