@@ -93,9 +93,9 @@ public class SparcAuthenticator<T>(
 
     private async Task<string> SignUpWithPasswordlessAsync(BlossomUser user)
     {
-        var options = new RegisterOptions(user.Id, user.Username)
+        var options = new RegisterOptions(user.Id, user.Avatar.Username)
         {
-            Aliases = [user.Username]
+            Aliases = [user.Avatar.Username]
         };
 
         var registerToken = await _passwordlessClient.CreateRegisterTokenAsync(options);
@@ -106,7 +106,7 @@ public class SparcAuthenticator<T>(
     {
         await base.GetUserAsync(principal);
 
-        if (User!.Username == null)
+        if (User!.Avatar.Username == null)
         {
             User.ChangeUsername(friendlyId.Create(1, 2));
             await SaveAsync();

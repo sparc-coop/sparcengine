@@ -7,11 +7,11 @@ import SparcEngine from './SparcEngine.js';
 SparcEngine.hi().then(() => {
     customElements.define('tovik-t', TovikNode);
     customElements.define('tovik-language', TovikLanguageElement);
-    customElements.define('tovik', TovikElement);
+    customElements.define('tovik-translate', TovikElement);
 
     // If the document does not have a <tovik-translate> element, create one and point it to the body
-    if (!document.querySelector('tovik')) {
-        var bodyElement = document.createElement('tovik');
+    if (!document.querySelector('tovik-translate')) {
+        var bodyElement = document.createElement('tovik-translate');
         bodyElement.setAttribute('for', 'body');
         document.body.appendChild(bodyElement);
     }
