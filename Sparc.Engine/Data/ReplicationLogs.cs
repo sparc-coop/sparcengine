@@ -8,7 +8,7 @@ public class ReplicationLogs(CosmosDbSimpleRepository<ReplicationLog> logs) : IB
 {
     public async Task<IResult> GetAsync(string db, string id)
     {
-        var log = await logs.Query(db).Where(x => x.PouchId == id).CosmosFirstOrDefaultAsync();
+        var log = await logs.Query(db).Where(x => x.PouchId == id).FirstOrDefaultAsync();
         if (log == null)
         {
             var dictionary = new Dictionary<string, string>

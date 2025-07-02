@@ -44,7 +44,7 @@ public class Contents(BlossomAggregateOptions<TextContent> options, TovikTransla
         var newId = TextContent.IdHash(content.Text, toLanguage);
         var existing = await Repository.Query
             .Where(x => x.Domain == content.Domain && x.Id == newId)
-            .CosmosFirstOrDefaultAsync();
+            .FirstOrDefaultAsync();
 
         if (existing != null)
             return existing;
@@ -71,7 +71,7 @@ public class Contents(BlossomAggregateOptions<TextContent> options, TovikTransla
             var newId = TextContent.IdHash(content.Text, toLanguage);
             var existing = await Repository.Query
                 .Where(x => x.Domain == content.Domain && x.Id == newId)
-                .CosmosFirstOrDefaultAsync();
+                .FirstOrDefaultAsync();
 
             if (existing != null)
                 results.Add(existing);

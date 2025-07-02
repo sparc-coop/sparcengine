@@ -17,7 +17,7 @@ public class PouchData(CosmosDbSimpleRepository<PouchDatum> data) : IBlossomEndp
             .Where(x => x.Seq != null)
             .OrderByDescending(x => x.Seq)
             .Select(x => x.Seq)
-            .CosmosFirstOrDefaultAsync();
+            .FirstOrDefaultAsync();
 
         // Return the response
         return new(db, count, 0, lastUpdateSequence ?? "0");
@@ -25,7 +25,7 @@ public class PouchData(CosmosDbSimpleRepository<PouchDatum> data) : IBlossomEndp
 
     public async Task<IResult> FindAsync(string db, string docid)
     {
-        var doc = await data.Query(db).Where(x => x.PouchId == docid).CosmosFirstOrDefaultAsync();
+        var doc = await data.Query(db).Where(x => x.PouchId == docid).FirstOrDefaultAsync();
         if (doc == null)
             return Results.NotFound(new { error = "not_found", reason = "missing" });
 
@@ -34,7 +34,7 @@ public class PouchData(CosmosDbSimpleRepository<PouchDatum> data) : IBlossomEndp
 
     public async Task UpsertAsync<T>(string db, T item) where T : BlossomEntity<string>
     {
-        var doc = await data.Query(db).Where(x => x.PouchId == item.Id).CosmosFirstOrDefaultAsync();
+        var doc = await data.Query(db).Where(x => x.PouchId == item.Id).FirstOrDefaultAsync();
         if (doc == null)
         {
             doc = PouchDatum.Create(db, item);
@@ -52,7 +52,7 @@ public class PouchData(CosmosDbSimpleRepository<PouchDatum> data) : IBlossomEndp
         if (!body.ContainsKey("_rev"))
             return Results.Ok(new { ok = true, id = docid });
 
-        var doc = await data.Query(db).Where(x => x.PouchId == docid).CosmosFirstOrDefaultAsync();
+        var doc = await data.Query(db).Where(x => x.PouchId == docid).FirstOrDefaultAsync();
         if (doc == null)
             doc = new PouchDatum(db, body);
         else
@@ -65,7 +65,7 @@ public class PouchData(CosmosDbSimpleRepository<PouchDatum> data) : IBlossomEndp
 
     public async Task<IResult> DeleteAsync(string db, string docid, string rev)
     {
-        var doc = await data.Query(db).Where(x => x.PouchId == docid && x.Rev == rev).CosmosFirstOrDefaultAsync();
+        var doc = await data.Query(db).Where(x => x.PouchId == docid && x.Rev == rev).FirstOrDefaultAsync();
         if (doc == null)
             return Results.NotFound();
 
@@ -80,7 +80,7 @@ public class PouchData(CosmosDbSimpleRepository<PouchDatum> data) : IBlossomEndp
     public record GetChangesResponse(string last_seq, List<GetChangesResult> results);
     public async Task<IResult> GetAllAsync(string db)
     {
-        var docs = await data.Query(db).Where(x => !x.Deleted).ToListAsync();
+        var docs = await EntityFrameworkQueryableExtensions.ToListAsync(data.Query(db).Where(x => !x.Deleted));
         var rows = docs.Select(d => new
         {
             id = d.Id,
@@ -124,7 +124,7 @@ public class PouchData(CosmosDbSimpleRepository<PouchDatum> data) : IBlossomEndp
         if (request.limit.HasValue)
             query = query.Take(request.limit.Value);
 
-        var results = await query.ToCosmosAsync();
+        var results = await query.ToListAsync();
         var last_seq = (results.LastOrDefault()?.Seq ?? request.since) ?? "0";
 
         var output = results
@@ -147,7 +147,7 @@ public class PouchData(CosmosDbSimpleRepository<PouchDatum> data) : IBlossomEndp
         var existingRevisions = await data.Query(db)
                .Where(x => ids.Contains(x.Id))
                .Select(x => new { x.PouchId, x.Rev })
-               .ToCosmosAsync();
+               .ToListAsync();
 
         foreach (var id in revisions.Keys)
         {
@@ -171,7 +171,7 @@ public class PouchData(CosmosDbSimpleRepository<PouchDatum> data) : IBlossomEndp
         var ids = payload.Docs.Select(x => $"{x.Id}:{x.Rev}").ToList();
         var docs = await data.Query(db)
             .Where(x => ids.Contains(x.Id))
-            .ToCosmosAsync();
+            .ToListAsync();
 
         var results = docs.Select(d => new
         {

@@ -46,7 +46,7 @@ public class SparcEngineDomainPolicyProvider(IRepository<SparcDomain> domains, H
     {
         var existing = await domains.Query
             .Where(d => d.Domain == domain)
-            .CosmosFirstOrDefaultAsync();
+            .FirstOrDefaultAsync();
 
         if (existing == null)
         {

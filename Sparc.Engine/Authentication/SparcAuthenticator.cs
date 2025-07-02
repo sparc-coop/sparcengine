@@ -70,7 +70,7 @@ public class SparcAuthenticator<T>(
 
         var user = await Users.Query
             .Where(x => x.Identities.Any(y => y.Type == "Passwordless" && y.Id == verifiedUser.UserId))
-            .CosmosFirstOrDefaultAsync();
+            .FirstOrDefaultAsync();
 
         if (user == null)
             User!.AddIdentity("Passwordless", verifiedUser.UserId);
