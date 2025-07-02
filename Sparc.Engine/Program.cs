@@ -5,6 +5,7 @@ using Scalar.AspNetCore;
 using Sparc.Blossom.Data;
 using Sparc.Blossom.Realtime;
 using Sparc.Engine;
+using Sparc.Engine.Billing;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddOpenApi();
@@ -13,6 +14,7 @@ builder.Services.AddScoped<FriendlyId>();
 builder.Services.AddCosmos<SparcEngineContext>(builder.Configuration.GetConnectionString("Cosmos")!, "sparc", ServiceLifetime.Scoped);
 
 builder.AddSparcAuthentication<SparcUser>();
+builder.AddSparcEngineBilling();
 builder.AddTovikTranslator();
 
 builder.Services.AddMediatR(options =>
@@ -37,6 +39,7 @@ builder.Services.Configure<JsonOptions>(options =>
 var app = builder.Build();
 app.MapStaticAssets();
 app.UseSparcAuthentication<SparcUser>();
+app.UseSparcEngineBilling();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
