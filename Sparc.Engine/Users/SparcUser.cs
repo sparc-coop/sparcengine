@@ -4,7 +4,7 @@ namespace Sparc.Engine;
 
 public class SparcUser : BlossomUser
 {
-    public List<ProductKey> Products { get; set; } = [];
+    public List<SparcProduct> Products { get; set; } = [];
 
     public bool HasProduct(string productName)
     {
@@ -17,6 +17,12 @@ public class SparcUser : BlossomUser
             return;
 
         var serial = Guid.NewGuid().ToString();
-        Products.Add(new ProductKey(productName, serial, DateTime.UtcNow, Id));
+        Products.Add(new SparcProduct(productName, serial, DateTime.UtcNow, Id));
+    }
+
+    public override void RegisterClaims()
+    {
+        foreach (var product in Products)
+            AddClaim("product", product.ProductId);
     }
 }

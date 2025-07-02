@@ -1,8 +1,8 @@
 ﻿namespace Sparc.Engine;
 
-public class ProductKey(string productId, string serialNumber, DateTime purchaseDate, string? userId)
+public class SparcProduct(string productId, string serialNumber, DateTime purchaseDate, string? userId)
 {
-    public ProductKey() : this("", "", DateTime.UtcNow, "")
+    public SparcProduct() : this("", "", DateTime.UtcNow, "")
     {
     }
 

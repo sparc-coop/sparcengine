@@ -243,6 +243,9 @@
           "id": {
             "type": "string"
           },
+          "username": {
+            "type": "string"
+          },
           "name": {
             "type": "string"
           },
@@ -306,6 +309,9 @@
         "type": "object",
         "properties": {
           "id": {
+            "type": "string"
+          },
+          "username": {
             "type": "string"
           },
           "name": {
@@ -417,9 +423,6 @@
       "BlossomUser": {
         "type": "object",
         "properties": {
-          "username": {
-            "type": "string"
-          },
           "userId": {
             "type": "string"
           },
