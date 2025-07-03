@@ -29,6 +29,8 @@ public static class ServiceCollectionExtensions
             s.GetRequiredService<IHttpContextAccessor>().HttpContext?.User
             ?? new ClaimsPrincipal(new ClaimsIdentity()));
 
+        builder.Services.AddTransient(s => BlossomUser.FromPrincipal(s.GetRequiredService<ClaimsPrincipal>()));
+
         builder.Services.AddPasswordlessSdk(x =>
         {
             x.ApiKey = "sparcengine:public:63cc565eb9544940ad6f2c387b228677";
