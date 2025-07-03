@@ -30,6 +30,20 @@ namespace Sparc.Engine.Billing
             return paymentIntent.ClientSecret;
         }
 
+        public async Task<string> CreateOrderAsync(CreateOrderRequest request)
+        {
+            var paymentIntent = await CreatePaymentIntentAsync(
+                amount: request.Amount,
+                currency: request.Currency,
+                customerId: request.CustomerId,
+                receiptEmail: request.ReceiptEmail,
+                metadata: request.Metadata,
+                setupFutureUsage: request.SetupFutureUsage
+            );
+
+            return paymentIntent.ClientSecret;
+        }
+
         public async Task<GetProductResponse> GetProductAsync(string productId)
         {
             var product = await base.GetProductAsync(productId);
