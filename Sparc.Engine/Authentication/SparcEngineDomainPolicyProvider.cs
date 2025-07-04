@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Net.Http.Headers;
-using Sparc.Blossom.Authentication;
 using Sparc.Blossom.Data;
 
 namespace Sparc.Engine;

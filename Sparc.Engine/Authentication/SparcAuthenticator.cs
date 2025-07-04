@@ -24,6 +24,7 @@ public class SparcAuthenticator<T>(
         await UpdateFromHttpContextAsync(principal);
 
         return principal;
+
     }
 
     public async Task<BlossomUser> DoLogin(ClaimsPrincipal principal, string? emailOrToken = null)
