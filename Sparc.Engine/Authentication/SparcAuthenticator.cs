@@ -160,7 +160,6 @@ public class SparcAuthenticator<T>(
             if (priorUser != User)
             {
                 http.HttpContext.User = User.ToPrincipal();
-                await http.HttpContext.SignOutAsync();
                 await http.HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, http.HttpContext.User, new() { IsPersistent = true });
             }
         }

@@ -1,5 +1,5 @@
 ﻿let client = {};
-function initSparcEngineAuthenticator(apiKey) {
+function initSparcAuthenticator(apiKey) {
     console.log("initializing passwordless client...");
     client = new Passwordless.Client({
         apiKey: apiKey
@@ -51,7 +51,7 @@ async function signUpWithPasskey(registerToken) {
 
 //export { init, signInWithPasskey, signUpWithPasskey };
 
-window.initSparcEngineAuthenticator = initSparcEngineAuthenticator;
+window.initSparcAuthenticator = initSparcAuthenticator;
 window.signInWithPasskey = signInWithPasskey;
 window.signUpWithPasskey = signUpWithPasskey;
 

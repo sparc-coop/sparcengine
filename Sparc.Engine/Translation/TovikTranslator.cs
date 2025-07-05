@@ -80,7 +80,7 @@ public class TovikTranslator(IEnumerable<ITranslator> translators, IRepository<T
 
     internal static Language? GetLanguage(string languageClaim)
     {
-        if (Languages == null)
+        if (Languages == null || string.IsNullOrWhiteSpace(languageClaim))
             return null;
 
         var languages = languageClaim

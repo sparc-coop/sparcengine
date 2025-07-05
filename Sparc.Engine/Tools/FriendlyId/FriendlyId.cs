@@ -4,12 +4,14 @@ namespace Sparc.Engine;
 public class FriendlyId
 {
     public string WordsPath { get; }
-    public static IEnumerable<string> UnsafeWords { get; private set; } = [];
+    public static List<string> UnsafeWords { get; private set; } = [];
 
     public FriendlyId(IWebHostEnvironment env)
     {
         WordsPath = Path.Combine(env.ContentRootPath, "Tools/FriendlyId/words_alpha.txt");
-        UnsafeWords = File.ReadLines(Path.Combine(env.ContentRootPath, "Tools/FriendlyId/words_officesafe.txt"));
+        UnsafeWords = File.ReadLines(Path.Combine(env.ContentRootPath, "Tools/FriendlyId/words_officesafe.txt"))
+            .Select(x => x.ToLower())
+            .ToList();
     }
 
     public string Create(int wordCount = 2, int numberCount = 0)
@@ -31,7 +33,7 @@ public class FriendlyId
             .ToLower();
 
         // Check against office-unsafe words
-        if (UnsafeWords.Any(x => x.ToLower() == word))
+        if (UnsafeWords.Any(x => x == word))
             return GetRandomWord();
 
         return word;

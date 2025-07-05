@@ -215,6 +215,52 @@
         }
       }
     },
+    "/translate/language": {
+      "get": {
+        "tags": [
+          "Sparc.Engine"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Language2"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Contents"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Language2"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Language2"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/translate/bulk": {
       "post": {
         "tags": [
