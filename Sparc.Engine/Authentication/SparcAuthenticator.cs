@@ -16,11 +16,13 @@ public class SparcAuthenticator<T>(
     IHttpContextAccessor http) : BlossomDefaultAuthenticator<T>(users), IBlossomEndpoints
     where T : BlossomUser, new()
 {
+    T? SparcUser;
+
     public override async Task<ClaimsPrincipal> LoginAsync(ClaimsPrincipal principal)
     {
-        var user = await GetAsync(principal);
-        user.Login();
-        await Users.UpdateAsync((T)user);
+        SparcUser = await GetUserAsync(principal);
+        SparcUser.Login();
+        await Users.UpdateAsync(SparcUser);
         await UpdateFromHttpContextAsync(principal);
 
         return principal;
@@ -33,29 +35,32 @@ public class SparcAuthenticator<T>(
 
         // 1. Convert the ClaimsPrincipal from the cookie into a BlossomUser
         // If the BlossomUser is already attached to Passwordless, they're logged in because their cookie is valid
-        User = await GetAsync(principal);
+        SparcUser = await GetUserAsync(principal);
 
-        if (User.HasIdentity("Passwordless") && emailOrToken == null)
-            return User;
+        if (emailOrToken == null)
+            return SparcUser;
 
         // Verify Authentication Token or Register
-        if (emailOrToken != null)
-        {
-            if (emailOrToken.StartsWith("verify"))
-                return await VerifyTokenAsync(emailOrToken);
+        if (emailOrToken.StartsWith("verify"))
+            return await VerifyTokenAsync(emailOrToken);
 
-            var authenticationType = TwilioService.IsValidEmail(emailOrToken) ? "Email" : "Phone";
-            var identity = User.GetOrCreateIdentity(authenticationType, emailOrToken);
-            if (!identity.IsVerified)
-            {
-                await SendVerificationCodeAsync(identity);
-                return User;
-            }
-        }
+        var authenticationType = TwilioService.IsValidEmail(emailOrToken) ? "Email" : "Phone";
+        var identity = SparcUser.GetOrCreateIdentity(authenticationType, emailOrToken);
+        if (!identity.IsVerified)
+            await SendVerificationCodeAsync(identity);
 
-        var passwordlessToken = await SignUpWithPasswordlessAsync(User);
-        User.GetOrCreateIdentity("Passwordless", passwordlessToken);
-        return User;
+        return SparcUser;
+    }
+
+    public async Task<BlossomUser> Register(ClaimsPrincipal principal)
+    {
+        SparcUser = await GetUserAsync(principal);
+        if (SparcUser.HasIdentity("Passwordless"))
+            return SparcUser;
+
+        var passwordlessToken = await SignUpWithPasswordlessAsync(SparcUser);
+        SparcUser.GetOrCreateIdentity("Passwordless", passwordlessToken);
+        return SparcUser;
     }
 
     private async Task<BlossomUser> VerifyTokenAsync(string token)
@@ -74,12 +79,12 @@ public class SparcAuthenticator<T>(
             .FirstOrDefaultAsync();
 
         if (user == null)
-            User!.AddIdentity("Passwordless", verifiedUser.UserId);
+            SparcUser!.AddIdentity("Passwordless", verifiedUser.UserId);
         else
-            User = user;
+            SparcUser = user;
 
         await SaveAsync();
-        return User;
+        return SparcUser;
     }
 
     public async Task<BlossomUser> DoLogout(ClaimsPrincipal principal, string? emailOrToken = null)
@@ -103,23 +108,11 @@ public class SparcAuthenticator<T>(
         return registerToken.Token;
     }
 
-    protected override async Task<BlossomUser> GetUserAsync(ClaimsPrincipal principal)
-    {
-        await base.GetUserAsync(principal);
-
-        if (User!.Avatar.Username == null)
-        {
-            User.ChangeUsername(friendlyId.Create(1, 2));
-            await SaveAsync();
-        }
-
-        return User;
-    }
-
     private async Task SaveAsync()
     {
-        await Users.UpdateAsync((T)User!);
-        await LoginAsync(User!.ToPrincipal());
+        await Users.UpdateAsync(SparcUser!);
+        await LoginAsync(SparcUser!.ToPrincipal());
+        User = SparcUser;
     }
 
     public async Task SendVerificationCodeAsync(BlossomIdentity identity)
@@ -137,8 +130,8 @@ public class SparcAuthenticator<T>(
     public void Map(IEndpointRouteBuilder endpoints)
     {
         var auth = endpoints.MapGroup("/auth").RequireCors("Auth");
-        auth.MapPost("login", DoLogin);
-        auth.MapPost("logout", DoLogout);
+        auth.MapGet("login", DoLogin);
+        auth.MapGet("logout", DoLogout);
         auth.MapGet("userinfo", GetAsync);
     }
 
@@ -146,6 +139,11 @@ public class SparcAuthenticator<T>(
     {
         if (http?.HttpContext != null && User != null)
         {
+            if (string.IsNullOrWhiteSpace(User.Avatar.Username))
+            {
+                User.ChangeUsername(friendlyId.Create(1, 2));
+            }
+
             var acceptLanguage = http.HttpContext.Request.Headers.AcceptLanguage;
             if (User.Avatar.Language == null && !string.IsNullOrWhiteSpace(acceptLanguage))
             {
