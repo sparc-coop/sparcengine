@@ -529,6 +529,10 @@
             "format": "date-time",
             "nullable": true
           },
+          "lastPageVisited": {
+            "type": "string",
+            "nullable": true
+          },
           "avatar": {
             "$ref": "#/components/schemas/BlossomAvatar"
           },

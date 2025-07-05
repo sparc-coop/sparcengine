@@ -15,6 +15,7 @@ public static class ServiceCollectionExtensions
         builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
             .AddCookie(options => {
                 options.Cookie.SameSite = SameSiteMode.None;
+                options.Cookie.Name = ".Sparc.Cookie";
                 options.ExpireTimeSpan = TimeSpan.FromDays(30);
                 });
 

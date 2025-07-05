@@ -138,6 +138,8 @@ public class SparcAuthenticator<T>(
     {
         if (http?.HttpContext != null && User != null)
         {
+            User.LastPageVisited = http.HttpContext.Request.Path;
+
             if (string.IsNullOrWhiteSpace(User.Avatar.Username))
             {
                 User.ChangeUsername(friendlyId.Create(1, 2));
