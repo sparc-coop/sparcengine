@@ -22,10 +22,18 @@ public class SparcAuthenticator<T>(
     {
         SparcUser = await GetUserAsync(principal);
         SparcUser.Login();
-        await users.UpdateAsync(SparcUser);
-        await UpdateFromHttpContextAsync(principal);
+        UpdateFromHttpContext(principal);
+        await users.UpdateAsync(SparcUser!);
 
-        return principal;
+        var priorUser = BlossomUser.FromPrincipal(principal);
+        var newPrincipal = SparcUser.ToPrincipal();
+        if (priorUser != User && http.HttpContext != null)
+        {
+            http.HttpContext.User = newPrincipal;
+            await http.HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, newPrincipal, new() { IsPersistent = true });
+        }
+
+        return newPrincipal;
 
     }
 
@@ -110,7 +118,6 @@ public class SparcAuthenticator<T>(
 
     private async Task SaveAsync()
     {
-        await users.UpdateAsync(SparcUser!);
         await LoginAsync(SparcUser!.ToPrincipal());
         User = SparcUser;
     }
@@ -127,7 +134,7 @@ public class SparcAuthenticator<T>(
         await SaveAsync();
     }
 
-    private async Task UpdateFromHttpContextAsync(ClaimsPrincipal principal)
+    private void UpdateFromHttpContext(ClaimsPrincipal principal)
     {
         if (http?.HttpContext != null && User != null)
         {
@@ -147,15 +154,9 @@ public class SparcAuthenticator<T>(
                 if (newLocale != null)
                     User.Avatar.Locale = newLocale;
             }
-
-            var priorUser = BlossomUser.FromPrincipal(principal);
-            if (priorUser != User)
-            {
-                http.HttpContext.User = User.ToPrincipal();
-                await http.HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, http.HttpContext.User, new() { IsPersistent = true });
-            }
         }
     }
+
     public void Map(IEndpointRouteBuilder endpoints)
     {
         var auth = endpoints.MapGroup("/auth").RequireCors("Auth");
