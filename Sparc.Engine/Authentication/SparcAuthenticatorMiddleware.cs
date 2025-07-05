@@ -8,11 +8,7 @@ public class SparcAuthenticatorMiddleware(RequestDelegate next)
 
     public async Task InvokeAsync(HttpContext context, IBlossomAuthenticator auth)
     {
-        if (context.Request.Path.StartsWithSegments("/_blazor") 
-            || context.Request.Path.StartsWithSegments("/_framework") 
-            || context.Request.Method == "OPTIONS"
-            || context.Request.Path.Value?.EndsWith("js") == true
-            || context.Request.Path.Value?.EndsWith("js.map") == true)
+        if (context.IsStaticFileRequest())
         {
             await _next(context);
             return;

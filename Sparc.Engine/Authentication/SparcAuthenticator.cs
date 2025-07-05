@@ -22,7 +22,7 @@ public class SparcAuthenticator<T>(
     {
         SparcUser = await GetUserAsync(principal);
         SparcUser.Login();
-        await Users.UpdateAsync(SparcUser);
+        await users.UpdateAsync(SparcUser);
         await UpdateFromHttpContextAsync(principal);
 
         return principal;
@@ -74,7 +74,7 @@ public class SparcAuthenticator<T>(
             throw new InvalidOperationException(Message);
         }
 
-        var user = await Users.Query
+        var user = await users.Query
             .Where(x => x.Identities.Any(y => y.Type == "Passwordless" && y.Id == verifiedUser.UserId))
             .FirstOrDefaultAsync();
 
@@ -110,7 +110,7 @@ public class SparcAuthenticator<T>(
 
     private async Task SaveAsync()
     {
-        await Users.UpdateAsync(SparcUser!);
+        await users.UpdateAsync(SparcUser!);
         await LoginAsync(SparcUser!.ToPrincipal());
         User = SparcUser;
     }
@@ -125,14 +125,6 @@ public class SparcAuthenticator<T>(
 
         await twilio.SendAsync(identity.Id, message, subject);
         await SaveAsync();
-    }
-
-    public void Map(IEndpointRouteBuilder endpoints)
-    {
-        var auth = endpoints.MapGroup("/auth").RequireCors("Auth");
-        auth.MapGet("login", DoLogin);
-        auth.MapGet("logout", DoLogout);
-        auth.MapGet("userinfo", GetAsync);
     }
 
     private async Task UpdateFromHttpContextAsync(ClaimsPrincipal principal)
@@ -163,5 +155,12 @@ public class SparcAuthenticator<T>(
                 await http.HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, http.HttpContext.User, new() { IsPersistent = true });
             }
         }
+    }
+    public void Map(IEndpointRouteBuilder endpoints)
+    {
+        var auth = endpoints.MapGroup("/auth").RequireCors("Auth");
+        auth.MapGet("login", DoLogin);
+        auth.MapGet("logout", DoLogout);
+        auth.MapGet("userinfo", GetAsync);
     }
 }
