@@ -2,6 +2,7 @@ using MediatR.NotificationPublishers;
 using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Http.Json;
 using Scalar.AspNetCore;
+using Sparc.Aura;
 using Sparc.Blossom.Data;
 using Sparc.Blossom.Realtime;
 using Sparc.Engine;
@@ -11,9 +12,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddOpenApi();
 builder.Services.AddScoped<FriendlyId>();
 
-builder.Services.AddCosmos<SparcEngineContext>(builder.Configuration.GetConnectionString("Cosmos")!, "sparc", ServiceLifetime.Scoped);
+builder.Services.AddCosmos<SparcAuraContext>(builder.Configuration.GetConnectionString("Cosmos")!, "sparc", ServiceLifetime.Scoped);
 
-builder.AddSparcAuthentication<SparcUser>();
+builder.AddSparcAura<SparcUser>();
 builder.AddSparcEngineBilling();
 builder.AddTovikTranslator();
 
@@ -27,7 +28,7 @@ builder.Services.AddMediatR(options =>
 
 builder.Services.AddTwilio(builder.Configuration);
 
-builder.Services.AddScoped<ICorsPolicyProvider, SparcEngineDomainPolicyProvider>();
+builder.Services.AddScoped<ICorsPolicyProvider, SparcAuraDomainPolicyProvider>();
 builder.Services.AddCors();
 
 builder.Services.AddHybridCache();
@@ -38,7 +39,7 @@ builder.Services.Configure<JsonOptions>(options =>
 
 var app = builder.Build();
 app.MapStaticAssets();
-app.UseSparcAuthentication<SparcUser>();
+app.UseSparcAura<SparcUser>();
 app.UseSparcEngineBilling();
 
 // Configure the HTTP request pipeline.

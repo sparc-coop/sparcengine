@@ -5,10 +5,11 @@ using Sparc.Blossom.Authentication;
 using Sparc.Blossom.Data;
 using Sparc.Blossom.Realtime;
 using System.Security.Claims;
+using Sparc.Engine;
 
-namespace Sparc.Engine;
+namespace Sparc.Aura;
 
-public class SparcAuthenticator<T>(
+public class SparcAura<T>(
     IPasswordlessClient _passwordlessClient,
     IRepository<T> users,
     TwilioService twilio,

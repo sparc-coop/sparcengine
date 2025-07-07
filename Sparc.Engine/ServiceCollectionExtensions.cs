@@ -1,15 +1,14 @@
 ﻿using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Components.Authorization;
-using Passwordless;
 using Sparc.Blossom.Authentication;
 using Sparc.Blossom.Platforms.Server;
 using System.Security.Claims;
 
-namespace Sparc.Engine;
+namespace Sparc.Aura;
 
 public static class ServiceCollectionExtensions
 {
-    public static WebApplicationBuilder AddSparcAuthentication<TUser>(this WebApplicationBuilder builder)
+    public static WebApplicationBuilder AddSparcAura<TUser>(this WebApplicationBuilder builder)
         where TUser : BlossomUser, new()
     {
         builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
@@ -23,8 +22,8 @@ public static class ServiceCollectionExtensions
         builder.Services.AddHttpContextAccessor();
 
         builder.Services.AddScoped<AuthenticationStateProvider, BlossomServerAuthenticationStateProvider<TUser>>()
-            .AddScoped<SparcAuthenticator<TUser>>()
-            .AddScoped<IBlossomAuthenticator, SparcAuthenticator<TUser>>();
+            .AddScoped<SparcAura<TUser>>()
+            .AddScoped<IBlossomAuthenticator, SparcAura<TUser>>();
 
         builder.Services.AddTransient(s =>
             s.GetRequiredService<IHttpContextAccessor>().HttpContext?.User
@@ -44,7 +43,7 @@ public static class ServiceCollectionExtensions
         return builder;
     }
 
-    public static WebApplication UseSparcAuthentication<TUser>(this WebApplication app)
+    public static WebApplication UseSparcAura<TUser>(this WebApplication app)
         where TUser : BlossomUser, new()
     { 
         app.UseCookiePolicy(new() { 
@@ -54,11 +53,11 @@ public static class ServiceCollectionExtensions
         });
         app.UseAuthentication();
         app.UseAuthorization();
-        app.UseMiddleware<SparcAuthenticatorMiddleware>();
+        app.UseMiddleware<SparcAuraMiddleware>();
 
         using var scope = app.Services.CreateScope();
         var passwordlessAuthenticator =
-            scope.ServiceProvider.GetRequiredService<SparcAuthenticator<TUser>>();
+            scope.ServiceProvider.GetRequiredService<SparcAura<TUser>>();
 
         passwordlessAuthenticator.Map(app);
 

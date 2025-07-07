@@ -3,9 +3,9 @@ using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Net.Http.Headers;
 using Sparc.Blossom.Data;
 
-namespace Sparc.Engine;
+namespace Sparc.Aura;
 
-public class SparcEngineDomainPolicyProvider(IRepository<SparcDomain> domains, HybridCache cache) : ICorsPolicyProvider
+public class SparcAuraDomainPolicyProvider(IRepository<SparcDomain> domains, HybridCache cache) : ICorsPolicyProvider
 {
     static CorsPolicy AllowAll = new CorsPolicyBuilder()
         .AllowAnyOrigin()

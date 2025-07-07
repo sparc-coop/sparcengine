@@ -1,8 +1,8 @@
 ﻿using Sparc.Blossom.Authentication;
 
-namespace Sparc.Engine;
+namespace Sparc.Aura;
 
-public class SparcAuthenticatorMiddleware(RequestDelegate next)
+public class SparcAuraMiddleware(RequestDelegate next)
 {
     private readonly RequestDelegate _next = next;
 
