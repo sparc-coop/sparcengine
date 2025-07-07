@@ -9,14 +9,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <Compile Remove="Communication\**" />
-	  <Content Remove="Communication\**" />
-	  <EmbeddedResource Remove="Communication\**" />
-	  <None Remove="Communication\**" />
-	  <TypeScriptCompile Remove="Communication\**" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<Content Include="Tools\FriendlyId\words_alpha.txt">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
@@ -32,10 +24,6 @@
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="Microsoft.Extensions.Caching.Hybrid" Version="9.6.0" />
-		<PackageReference Include="Microsoft.TypeScript.MSBuild" Version="5.8.3">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
 		<PackageReference Include="Passwordless" Version="2.0.0" />
 		<PackageReference Include="Scalar.AspNetCore" Version="2.5.0" />
 		<PackageReference Include="Markdig" Version="0.41.3" />
