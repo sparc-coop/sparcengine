@@ -31,14 +31,10 @@ public class Contents(BlossomAggregateOptions<TextContent> options, SparcAuthent
 
     public BlossomQuery<TextContent> All(string pageId) => Query().Where(content => content.PageId == pageId && content.SourceContentId == null);
 
-    public async Task<IEnumerable<Language>> Languages()
-        => await translator.GetLanguagesAsync();
-
     public void Map(IEndpointRouteBuilder endpoints)
     {
         var group = endpoints.MapGroup("translate").RequireCors("Tovik");
         group.MapPost("", async (HttpRequest request, TextContent content) => await Get(content));
-        group.MapGet("languages", Languages).CacheOutput(x => x.Expire(TimeSpan.FromHours(1)));
         group.MapGet("language", (ClaimsPrincipal principal, HttpRequest request) => TovikTranslator.GetLanguage(principal.Get("language") ?? request.Headers.AcceptLanguage));
         group.MapPost("language", async (ClaimsPrincipal principal, Language language) =>
         {

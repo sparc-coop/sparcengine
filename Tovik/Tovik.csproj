@@ -8,16 +8,8 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <None Include="wwwroot\dexie\dexie.js" />
-	  <None Include="wwwroot\dexie\dexie.js.map" />
-	  <None Include="wwwroot\dexie\dexie.min.js" />
-	  <None Include="wwwroot\dexie\dexie.min.js.map" />
-	  <None Include="wwwroot\dexie\dexie.mjs" />
-	  <None Include="wwwroot\dexie\dexie.mjs.map" />
-	  <None Include="wwwroot\dexie\modern\dexie.min.mjs" />
-	  <None Include="wwwroot\dexie\modern\dexie.min.mjs.map" />
-	  <None Include="wwwroot\dexie\modern\dexie.mjs" />
-	  <None Include="wwwroot\dexie\modern\dexie.mjs.map" />
+	  <Content Include="Translation\Client\dexie\dexie.mjs" />
+	  <Content Include="Translation\Client\dexie\dexie.mjs.map" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -31,7 +23,6 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-
 	</ItemGroup>
 
 </Project>

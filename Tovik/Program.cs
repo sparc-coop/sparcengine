@@ -1,27 +1,19 @@
 using Sparc.Blossom;
 using Sparc.Blossom.Data;
 using Sparc.Engine;
-using System.Security.Claims;
 using Tovik;
+using Tovik.Languages;
 
 var builder = BlossomApplication.CreateBuilder<Html>(args);
 
 builder.Services.AddCosmos<TovikContext>(builder.Configuration.GetConnectionString("Cosmos")!, "sparc", ServiceLifetime.Scoped);
 builder.Services.AddSparcEngine();
 
+builder.Services.AddScoped<IRepository<Language>, BlossomInMemoryRepository<Language>>();
+
 var app = builder.Build();
 
-var group = app.MapGroup("translate").RequireCors("Tovik");
-group.MapPost("", async (HttpRequest request, TextContent content) => await TranslateAsync(content));
-group.MapGet("languages", GetLanguagesAsync).CacheOutput(x => x.Expire(TimeSpan.FromHours(1)));
-group.MapGet("language", (ClaimsPrincipal principal, HttpRequest request) => GetLanguage(principal.Get("language") ?? request.Headers.AcceptLanguage));
-group.MapPost("language", async (ClaimsPrincipal principal, Language language) =>
-{
-    var user = await auth.GetAsync(principal);
-    user.Avatar.Language = language;
-    await auth.UpdateAsync(principal, user.Avatar);
-    return language;
-});
-group.MapPost("bulk", BulkTranslate);
+var languages = app.Services.GetRequiredService<Languages>();
+await languages.InitializeAsync(app.Services.GetRequiredService<IEnumerable<ITranslator>>());
 
 await app.RunAsync<Html>();
