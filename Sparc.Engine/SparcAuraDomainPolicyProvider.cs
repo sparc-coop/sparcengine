@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Net.Http.Headers;
 using Sparc.Blossom.Data;
+using Sparc.Engine;
 
 namespace Sparc.Aura;
 

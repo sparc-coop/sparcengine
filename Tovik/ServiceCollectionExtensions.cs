@@ -1,4 +1,6 @@
-﻿namespace Sparc.Engine;
+﻿using Sparc.Blossom;
+
+namespace Sparc.Engine;
 
 public static class ContentServiceCollectionExtensions
 {
@@ -9,9 +11,7 @@ public static class ContentServiceCollectionExtensions
             .AddScoped<ITranslator, DeepLTranslator>()
             .AddScoped<TovikTranslator>()
             .AddScoped<BlossomAggregateOptions<TextContent>>()
-            .AddScoped<BlossomAggregate<TextContent>>()
-            .AddScoped<Contents>();
-
+            .AddScoped<BlossomAggregate<TextContent>>();
         return builder;
     }
 

@@ -9,12 +9,13 @@ using Sparc.Engine;
 
 namespace Sparc.Aura;
 
-public class SparcAura<T>(
+public class SparcAuraAuthenticator<T>(
     IPasswordlessClient _passwordlessClient,
     IRepository<T> users,
     TwilioService twilio,
     FriendlyId friendlyId,
-    IHttpContextAccessor http) : BlossomDefaultAuthenticator<T>(users), IBlossomEndpoints
+    IHttpContextAccessor http) 
+    : BlossomDefaultAuthenticator<T>(users), IBlossomEndpoints
     where T : BlossomUser, new()
 {
     T? SparcUser;
@@ -24,7 +25,7 @@ public class SparcAura<T>(
         SparcUser = await GetUserAsync(principal);
         SparcUser.Login();
         UpdateFromHttpContext(principal);
-        await users.UpdateAsync(SparcUser!);
+        await Users.UpdateAsync(SparcUser!);
 
         var priorUser = BlossomUser.FromPrincipal(principal);
         var newPrincipal = SparcUser.ToPrincipal();
@@ -83,7 +84,7 @@ public class SparcAura<T>(
             throw new InvalidOperationException(Message);
         }
 
-        var user = await users.Query
+        var user = await Users.Query
             .Where(x => x.Identities.Any(y => y.Type == "Passwordless" && y.Id == verifiedUser.UserId))
             .FirstOrDefaultAsync();
 
@@ -135,7 +136,7 @@ public class SparcAura<T>(
         await SaveAsync();
     }
 
-    private void UpdateFromHttpContext(ClaimsPrincipal principal)
+    protected void UpdateFromHttpContext(ClaimsPrincipal principal)
     {
         if (http?.HttpContext != null && User != null)
         {
@@ -144,18 +145,6 @@ public class SparcAura<T>(
             if (string.IsNullOrWhiteSpace(User.Avatar.Username))
             {
                 User.ChangeUsername(friendlyId.Create(1, 2));
-            }
-
-            var acceptLanguage = http.HttpContext.Request.Headers.AcceptLanguage;
-            if (User.Avatar.Language == null && !string.IsNullOrWhiteSpace(acceptLanguage))
-            {
-                var newLanguage = TovikTranslator.GetLanguage(acceptLanguage!);
-                if (newLanguage != null)
-                    User.ChangeLanguage(newLanguage);
-
-                var newLocale = TovikTranslator.GetLocale(acceptLanguage!);
-                if (newLocale != null)
-                    User.Avatar.Locale = newLocale;
             }
         }
     }

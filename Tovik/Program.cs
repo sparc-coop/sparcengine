@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Cors.Infrastructure;
+using Sparc.Aura;
 using Sparc.Blossom;
 using Sparc.Blossom.Data;
 using Sparc.Engine;
@@ -10,6 +12,9 @@ builder.Services.AddCosmos<TovikContext>(builder.Configuration.GetConnectionStri
 builder.Services.AddSparcEngine();
 
 builder.Services.AddScoped<IRepository<Language>, BlossomInMemoryRepository<Language>>();
+
+builder.Services.AddCors();
+builder.Services.AddScoped<ICorsPolicyProvider, SparcAuraDomainPolicyProvider>();
 
 var app = builder.Build();
 

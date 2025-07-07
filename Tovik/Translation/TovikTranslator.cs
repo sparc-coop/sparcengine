@@ -54,10 +54,9 @@ public class TovikTranslator(
         if (existing != null)
             return existing;
 
-        var translation = await TranslateAsync(content, toLanguage);
-        if (translation == null)
-            throw new InvalidOperationException("Translation failed.");
-
+        var translation = await TranslateAsync(content, toLanguage) 
+            ?? throw new InvalidOperationException("Translation failed.");
+        
         await Repository.AddAsync(translation);
         return translation;
     }

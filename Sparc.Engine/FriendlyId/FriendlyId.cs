@@ -8,8 +8,8 @@ public class FriendlyId
 
     public FriendlyId(IWebHostEnvironment env)
     {
-        WordsPath = Path.Combine(env.ContentRootPath, "Tools/FriendlyId/words_alpha.txt");
-        UnsafeWords = File.ReadLines(Path.Combine(env.ContentRootPath, "Tools/FriendlyId/words_officesafe.txt"))
+        WordsPath = Path.Combine(env.ContentRootPath, "FriendlyId/words_alpha.txt");
+        UnsafeWords = File.ReadLines(Path.Combine(env.ContentRootPath, "FriendlyId/words_officesafe.txt"))
             .Select(x => x.ToLower())
             .ToList();
     }

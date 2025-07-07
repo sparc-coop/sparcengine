@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\blossom\Sparc.Blossom.Data.Cosmos\Sparc.Blossom.Data.Cosmos.csproj" />
+    <ProjectReference Include="..\..\blossom\Sparc.Blossom\Sparc.Blossom.csproj" />
+    <ProjectReference Include="..\..\blossom\Sparc.Core\Sparc.Core.csproj" />
+  </ItemGroup>
+
+</Project>
