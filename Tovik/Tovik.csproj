@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>e913e5c2-dccd-4398-967c-bb7bb7e40ab2</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\blossom\Sparc.Blossom.Data.Cosmos\Sparc.Blossom.Data.Cosmos.csproj" />
+    <ProjectReference Include="..\..\blossom\Sparc.Blossom\Sparc.Blossom.csproj" />
+    <ProjectReference Include="..\..\blossom\Sparc.Core\Sparc.Core.csproj" />
+  </ItemGroup>
+
+</Project>
