@@ -1,15 +1,20 @@
-﻿using Sparc.Blossom;
+﻿using DeepL;
+using Sparc.Blossom;
 using Sparc.Blossom.Authentication;
+using Sparc.Blossom.Data;
+using System.Collections.Concurrent;
 using System.Globalization;
 
 namespace Sparc.Engine;
 
-public class TovikTranslator(IEnumerable<ITranslator> translators, IRepository<TextContent> content)
+public class TovikTranslator(
+    BlossomAggregateOptions<TextContent> options, 
+    IEnumerable<ITranslator> translators) 
+    : BlossomAggregate<TextContent>(options)
 {
     internal static List<Language>? Languages;
 
     internal IEnumerable<ITranslator> Translators { get; } = translators;
-    public IRepository<TextContent> Content { get; } = content;
 
     public async Task<List<Language>> GetLanguagesAsync()
     {
@@ -36,8 +41,59 @@ public class TovikTranslator(IEnumerable<ITranslator> translators, IRepository<T
         return languages.FirstOrDefault(x => x.Id == language);
     }
 
+    public async Task<TextContent> TranslateAsync(TextContent content)
+    {
+        var toLanguage = GetLanguage(User.Get("language"));
+        if (toLanguage == null)
+            return content;
+
+        var newId = TextContent.IdHash(content.Text, toLanguage);
+        var existing = await Repository.Query
+            .Where(x => x.Domain == content.Domain && x.Id == newId)
+            .FirstOrDefaultAsync();
+
+        if (existing != null)
+            return existing;
+
+        var translation = await TranslateAsync(content, toLanguage);
+        if (translation == null)
+            throw new InvalidOperationException("Translation failed.");
+
+        await Repository.AddAsync(translation);
+        return translation;
+    }
+
     public async Task<TextContent?> TranslateAsync(TextContent message, Language toLanguage, string? additionalContext = null)
         => (await TranslateAsync([message], [toLanguage], additionalContext)).FirstOrDefault();
+
+    public async Task<List<TextContent>> TranslateAsync(IEnumerable<TextContent> contents)
+    {
+        var results = new ConcurrentBag<TextContent>();
+        var toLanguage = GetLanguage(User.Get("language"));
+        if (toLanguage == null)
+            return [.. contents];
+
+        await Parallel.ForEachAsync(contents, async (content, _) =>
+        {
+            var newId = TextContent.IdHash(content.Text, toLanguage);
+            var existing = await Repository.Query
+                .Where(x => x.Domain == content.Domain && x.Id == newId)
+                .FirstOrDefaultAsync();
+
+            if (existing != null)
+                results.Add(existing);
+        });
+
+        var needsTranslation = contents
+            .Where(content => !results.Any(x => x.Id == TextContent.IdHash(content.Text, toLanguage)))
+            .ToList();
+
+        var additionalContext = string.Join("\n", contents.Select(x => x.Text));
+        var translations = await TranslateAsync(needsTranslation, [toLanguage], additionalContext);
+        await Repository.AddAsync(translations);
+
+        return [.. results.Union(translations)];
+    }
 
     public async Task<List<TextContent>> TranslateAsync(IEnumerable<TextContent> messages, List<Language> toLanguages, string? additionalContext = null)
     {
@@ -79,7 +135,7 @@ public class TovikTranslator(IEnumerable<ITranslator> translators, IRepository<T
             ?? throw new Exception($"No translator found for {fromLanguage.Id} to {toLanguage.Id}");
     }
 
-    internal static Language? GetLanguage(string languageClaim)
+    internal static Language? GetLanguage(string? languageClaim)
     {
         if (Languages == null || string.IsNullOrWhiteSpace(languageClaim))
             return null;

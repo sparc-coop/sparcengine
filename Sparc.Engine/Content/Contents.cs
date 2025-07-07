@@ -6,7 +6,7 @@ using System.Security.Claims;
 
 namespace Sparc.Engine;
 
-public class Contents(BlossomAggregateOptions<TextContent> options, TovikTranslator translator, SparcAuthenticator<SparcUser> auth) 
+public class Contents(BlossomAggregateOptions<TextContent> options, SparcAuthenticator<SparcUser> auth) 
     : BlossomAggregate<TextContent>(options), IBlossomEndpoints
 {
     public BlossomQuery<TextContent> Search(string searchTerm) => Query().Where(content =>
@@ -28,66 +28,6 @@ public class Contents(BlossomAggregateOptions<TextContent> options, TovikTransla
 
     //    return [];
     //}
-
-    public async Task<TextContent> Get(TextContent content)
-    {
-        var user = await auth.GetAsync(User);
-        var toLanguage = user.Avatar.Language;
-
-        if (toLanguage == null)
-            return content;
-
-        return await GetOrTranslateAsync(content, toLanguage);
-    }
-
-    private async Task<TextContent> GetOrTranslateAsync(TextContent content, Language toLanguage)
-    {
-        var newId = TextContent.IdHash(content.Text, toLanguage);
-        var existing = await Repository.Query
-            .Where(x => x.Domain == content.Domain && x.Id == newId)
-            .FirstOrDefaultAsync();
-
-        if (existing != null)
-            return existing;
-
-        var translation = await translator.TranslateAsync(content, toLanguage);
-        if (translation == null)
-            throw new InvalidOperationException("Translation failed.");
-
-        await Repository.AddAsync(translation);
-        return translation;
-    }
-
-    public async Task<List<TextContent>> BulkTranslate(List<TextContent> contents)
-    {
-        var user = await auth.GetAsync(User);
-
-        var toLanguage = user?.Avatar.Language;
-        if (toLanguage == null)
-            return contents;
-
-        var results = new ConcurrentBag<TextContent>();
-        await Parallel.ForEachAsync(contents, async (content, _) =>
-        {
-            var newId = TextContent.IdHash(content.Text, toLanguage);
-            var existing = await Repository.Query
-                .Where(x => x.Domain == content.Domain && x.Id == newId)
-                .FirstOrDefaultAsync();
-
-            if (existing != null)
-                results.Add(existing);
-        });
-
-        var needsTranslation = contents
-            .Where(content => !results.Any(x => x.Id == TextContent.IdHash(content.Text, toLanguage)))
-            .ToList();
-
-        var additionalContext = string.Join("\n", contents.Select(x => x.Text));
-        var translations = await translator.TranslateAsync(needsTranslation, [toLanguage], additionalContext);
-        await Repository.AddAsync(translations);
-
-        return results.Union(translations).ToList();
-    }
 
     public BlossomQuery<TextContent> All(string pageId) => Query().Where(content => content.PageId == pageId && content.SourceContentId == null);
 
