@@ -8,11 +8,24 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="BuildWebCompiler" Version="1.12.405" />
     <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" Version="9.0.6" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.6" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="9.0.6" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.6" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="9.0.6" />
+  </ItemGroup>
+	
+  <ItemGroup>
+    <ProjectReference Include="..\..\blossom\Sparc.Blossom.Data.Cosmos\Sparc.Blossom.Data.Cosmos.csproj" />
+    <ProjectReference Include="..\..\blossom\Sparc.Blossom.Realtime.Twilio\Sparc.Blossom.Realtime.Twilio.csproj" />
+    <ProjectReference Include="..\..\blossom\Sparc.Blossom\Sparc.Blossom.csproj" />
+    <ProjectReference Include="..\..\blossom\Sparc.Core\Sparc.Core.csproj" />
+    <ProjectReference Include="..\Sparc.Engine\Sparc.Engine.csproj" />
+  </ItemGroup>
+	    
+  <ItemGroup>
+    <Folder Include="Shared\Components\" />
   </ItemGroup>
 
 </Project>

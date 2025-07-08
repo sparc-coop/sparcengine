@@ -1,0 +1,77 @@
+﻿@import "variables.scss";
+
+html, body {
+  font-size: 62.5%;
+  font-family: "articulat-heavy-cf", sans-serif;
+  margin: 0;
+  position: relative;
+  background: var(--blue-700);
+  overflow-x: hidden;
+}
+
+html ::-webkit-scrollbar, body ::-webkit-scrollbar {
+  display: none;
+}
+
+html.modal-open, body.modal-open {
+  overflow: hidden;
+}
+
+h1, h2, h3, h4, h5, h6, h7 {
+  margin: 0;
+  padding: 0;
+  font-family: "brother-1816-printed", sans-serif;
+}
+
+p, ul, li {
+  margin: 0;
+  padding: 0;
+}
+
+button, input, select, textarea {
+  font-family: "neue-haas-grotesk-display", Helvetica, sans-serif;
+}
+
+a {
+  text-decoration: none;
+}
+
+a:visited {
+  color: var(--gray-600, #6B6B6B);
+}
+
+button {
+  padding: 0;
+  border: 1px solid transparent;
+  background: none;
+  font-family: "neue-haas-grotesk-display", Helvetica, sans-serif;
+  font-size: 1.4rem;
+  font-weight: 600;
+  line-height: 120%; /* 16.8px */
+  letter-spacing: -0.14px;
+  cursor: pointer;
+
+  > * {
+      cursor: pointer;
+  }
+}
+
+input {
+    width: calc(100% - 32px);
+    display: flex;
+    padding: 16px;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+    align-self: stretch;
+    border-radius: 20px;
+    border: 1px solid var(--blue-500, #376880);
+    background: var(--blue-600, #1F5068);
+    color: var(--white, #FFF);
+    font-family: var(--articulat);
+    font-size: 1.6rem;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    opacity: 0.5;
+}

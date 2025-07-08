@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sparc.Blossom.Data.Cosmos",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sparc.Tovik.Razor", "Sparc.Tovik.Razor\Sparc.Tovik.Razor.csproj", "{73CE20B2-A26C-4653-A5DF-367559091A88}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sparc.Blossom.Realtime.Twilio", "..\blossom\Sparc.Blossom.Realtime.Twilio\Sparc.Blossom.Realtime.Twilio.csproj", "{93EA97D5-D611-FA53-E96A-A77524F60EC1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -49,6 +51,10 @@ Global
 		{73CE20B2-A26C-4653-A5DF-367559091A88}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{73CE20B2-A26C-4653-A5DF-367559091A88}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{73CE20B2-A26C-4653-A5DF-367559091A88}.Release|Any CPU.Build.0 = Release|Any CPU
+		{93EA97D5-D611-FA53-E96A-A77524F60EC1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{93EA97D5-D611-FA53-E96A-A77524F60EC1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{93EA97D5-D611-FA53-E96A-A77524F60EC1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{93EA97D5-D611-FA53-E96A-A77524F60EC1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -59,6 +65,7 @@ Global
 		{37E3276A-635C-3080-B16F-F824D7E61428} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{3159DDC7-2CED-C92F-025B-BB7AEDA7B672} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{73CE20B2-A26C-4653-A5DF-367559091A88} = {38BB0E90-032E-41C4-BE2A-823A0D2C51F6}
+		{93EA97D5-D611-FA53-E96A-A77524F60EC1} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {14EBE511-5AF5-47E6-9C22-168C3C928AEE}

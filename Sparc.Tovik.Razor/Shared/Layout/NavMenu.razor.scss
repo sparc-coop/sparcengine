@@ -1,0 +1,35 @@
+nav {
+    display: flex;
+    flex-direction: row;
+    justify-content: end;
+    height: 28px;
+    padding: 16px;
+    background: var(--orange-100);
+    position: relative;
+    z-index: 100;
+
+    .right {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        gap: 4px;
+        position: absolute;
+        bottom: -30px;
+        right: 16px;
+        background: var(--orange-100);
+        border-bottom-left-radius: 32px;
+        border-bottom-right-radius: 32px;
+
+        button {
+            height: 65px;
+            width: 65px;
+            padding: 8px;
+            border-radius: 30px;
+        }
+    }
+
+    .nav-mask {
+        display: none;
+    }
+}
