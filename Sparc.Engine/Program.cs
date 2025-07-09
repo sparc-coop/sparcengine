@@ -1,4 +1,5 @@
 using MediatR.NotificationPublishers;
+using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Http.Json;
 using Refit;
 using Scalar.AspNetCore;
@@ -25,6 +26,8 @@ builder.Services.AddMediatR(options =>
 
 builder.Services.AddTwilio(builder.Configuration);
 
+builder.Services.AddCors();
+builder.Services.AddScoped<ICorsPolicyProvider, SparcAuraDomainPolicyProvider>();
 
 builder.Services.AddHybridCache();
 builder.Services.Configure<JsonOptions>(options =>
@@ -44,6 +47,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseCors();
 
 app.MapGet("/tools/friendlyid", (FriendlyId friendlyId) => friendlyId.Create());
 app.MapGet("/hi", () => "Hi from Sparc!");

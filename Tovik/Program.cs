@@ -13,12 +13,15 @@ builder.Services.AddSparcEngine();
 
 builder.Services.AddScoped<IRepository<Language>, BlossomInMemoryRepository<Language>>();
 
+builder.Services.AddHybridCache();
+
 builder.Services.AddCors();
 builder.Services.AddScoped<ICorsPolicyProvider, SparcAuraDomainPolicyProvider>();
 
 var app = builder.Build();
 
-var languages = app.Services.GetRequiredService<Languages>();
-await languages.InitializeAsync(app.Services.GetRequiredService<IEnumerable<ITranslator>>());
+using var scope = app.Services.CreateScope();
+var languages = scope.ServiceProvider.GetRequiredService<Languages>();
+await languages.InitializeAsync(scope.ServiceProvider.GetRequiredService<IEnumerable<ITranslator>>());
 
 await app.RunAsync<Html>();
