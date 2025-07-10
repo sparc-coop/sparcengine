@@ -17,13 +17,15 @@
   --orange-200: #FFB48E;
   --orange-100: #FFD4BF;
   --app-width: calc(100vw - 32px);
+  --container-width: calc(100% - 32px);
   --brother-printed: "brother-1816-printed", sans-serif;
   --articulat: "articulat-cf", sans-serif;
 }
 
 html, body {
   font-size: 62.5%;
-  font-family: "articulat-heavy-cf", sans-serif;
+  font-family: var(--articulat), Helvetica, sans-serif;
+  color: var(--blue-50, #EFF7F9);
   margin: 0;
   position: relative;
   background: var(--blue-700);
@@ -41,31 +43,33 @@ html.modal-open, body.modal-open {
 h1, h2, h3, h4, h5, h6, h7 {
   margin: 0;
   padding: 0;
-  font-family: "brother-1816-printed", sans-serif;
+  font-family: var(--brother-printed), sans-serif;
 }
 
 p, ul, li {
   margin: 0;
   padding: 0;
+  font-family: var(--articulat);
 }
 
 button, input, select, textarea {
-  font-family: "neue-haas-grotesk-display", Helvetica, sans-serif;
+  font-family: var(--articulat), Helvetica, sans-serif;
 }
 
 a {
   text-decoration: none;
+  color: white;
 }
 
 a:visited {
-  color: var(--gray-600, #6B6B6B);
+  color: white;
 }
 
 button {
   padding: 0;
   border: 1px solid transparent;
   background: none;
-  font-family: "neue-haas-grotesk-display", Helvetica, sans-serif;
+  font-family: var(--articulat), Helvetica, sans-serif;
   font-size: 1.4rem;
   font-weight: 600;
   line-height: 120%; /* 16.8px */
@@ -75,9 +79,57 @@ button {
 button > * {
   cursor: pointer;
 }
+button.primary-btn {
+  display: flex;
+  width: 100%;
+  height: 48px;
+  padding: 16px 24px;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  align-self: stretch;
+  border-radius: 20px;
+  border: 1px solid var(--orange-300, #FF945E);
+  background: var(--orange-300, #FF945E);
+  color: var(--blue-700, #07374F);
+  /* Body/Regular/Medium */
+  font-family: var(--articulat);
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+}
+button.secondary-btn {
+  height: 48px;
+  padding: 16px 24px;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  border-radius: 20px;
+  border: 1px solid var(--blue-600, #1F5068);
+  background: var(--blue-700, #07374F);
+  color: var(--white, #FFF);
+}
+button.icon-btn {
+  aspect-ratio: 1/1;
+  display: flex;
+  width: 44px;
+  height: 44px;
+  justify-content: center;
+  align-items: center;
+  border-radius: 20px;
+  border: 1px solid var(--blue-600, #1F5068);
+  background: var(--blue-700, #07374F);
+}
+button.icon-btn ::deep svg {
+  height: 100%;
+  width: auto;
+}
 
 input {
-  width: calc(100% - 32px);
+  width: var(--container-width);
   display: flex;
   padding: 16px;
   align-items: center;
@@ -93,5 +145,25 @@ input {
   font-style: normal;
   font-weight: 400;
   line-height: normal;
-  opacity: 0.5;
+}
+
+.code-container {
+  display: flex;
+  padding: 8px;
+  align-items: center;
+  gap: 8px;
+  align-self: stretch;
+  border-radius: 24px;
+  background: var(--blue-700, #07374F);
+}
+.code-container code.text-code {
+  color: var(--blue-50, #EFF7F9);
+  leading-trim: both;
+  text-edge: cap;
+  /* Code */
+  font-family: "Courier New";
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
 }

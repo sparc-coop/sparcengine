@@ -4,6 +4,7 @@
 
 <article class="home">
     <div class="page-container">
+
         <section class="word-usage">
             <header>
                 <h3>Word Usage</h3>
@@ -13,26 +14,26 @@
                 <h4>Remaining words</h4>
             </div>
             <div class="btn-container">
-                <button classs="purchase-btn">Purchase a Word Pack</button>
+                <button class="purchase-btn primary-btn">Purchase a Word Pack</button>
             </div>
         </section>
+
         <section class="add-domain">
+            <header>
+                <h3>Add a Domain</h3>
+                <p class="subheader">There’s no limit to the number of domains you can add.</p>
+            </header>
+
             <form @onsubmit="AddDomain">
-                <header>
-                    <h3>Add a Domain</h3>
-                    <p class="subheader">There’s no limit to the number of domains you can add.</p>
-                </header>
-                <div>
-                    <label>
-                        <input type="text" placeholder="Enter a domain name" @bind="NewDomain.Domain" />
-                    </label>
-                </div>
+                <label>
+                    <input type="text" placeholder="Enter a domain name" @bind="NewDomain.Domain" />
+                </label>
                 <div class="btn-container">
-                    <button class="add-btn">Add Domain</button>
+                    <button class="add-btn primary-btn">Add Domain</button>
                 </div>
             </form>
-
         </section>
+
         <section class="manage-domains">
             <header>
                 <h3>Manage Domains</h3>
@@ -41,31 +42,20 @@
             <table class="domains-table">
                 <thead>
                     <tr>
-                        <th>Your Domain</th>
-                        <th>Usage</th>
-                        <th><!-- actions --></th>
+                        <td>Your Domain</td>
+                        <td>Usage</td>
+                        <td></td>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach (var domain in Domains)
                     {
-                        <tr>
-                            <td>
-                                @domain.Domain
-                                <i class="fa-solid fa-circle-check verified-icon" aria-label="verified"></i>
-                            </td>
-                            <td>24,168</td>
-                            <td class="actions">
-                                <button class="btn btn-manage">Manage</button>
-                                <button class="btn btn-manage">Edit</button>
-                                <button @onclick="() => DeleteDomain(domain)" class="btn btn-manage">Delete</button>
-                            </td>
-                        </tr>
+                        <DomainCard Domain=domain PageType="home" OnDelete=DeleteDomain />
                     }
-
                 </tbody>
             </table>
         </section>
+
     </div>
 </article>
 
@@ -73,6 +63,8 @@
 @code {
     private List<SparcDomain> Domains = new();
     private SparcDomain NewDomain = new SparcDomain("");
+
+
     protected override async Task OnInitializedAsync()
     {
         await LoadDomains();

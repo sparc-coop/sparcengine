@@ -12,5 +12,5 @@
     <ProjectReference Include="..\..\blossom\Sparc.Blossom\Sparc.Blossom.csproj" />
     <ProjectReference Include="..\..\blossom\Sparc.Core\Sparc.Core.csproj" />
   </ItemGroup>
-
+	
 </Project>

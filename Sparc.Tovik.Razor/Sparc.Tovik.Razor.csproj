@@ -23,9 +23,5 @@
     <ProjectReference Include="..\..\blossom\Sparc.Core\Sparc.Core.csproj" />
     <ProjectReference Include="..\Sparc.Engine\Sparc.Engine.csproj" />
   </ItemGroup>
-	    
-  <ItemGroup>
-    <Folder Include="Shared\Components\" />
-  </ItemGroup>
 
 </Project>
