@@ -21,8 +21,6 @@
 		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="9.0.7" />
 		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.6" />
 		<PackageReference Include="Microsoft.Extensions.Caching.Hybrid" Version="9.6.0" />
-		<PackageReference Include="OpenIddict.AspNetCore" Version="7.0.0" />
-		<PackageReference Include="OpenIddict.EntityFrameworkCore" Version="7.0.0" />
 		<PackageReference Include="Passwordless" Version="2.0.0" />
 		<PackageReference Include="Scalar.AspNetCore" Version="2.5.0" />
 	</ItemGroup>
@@ -42,6 +40,7 @@
 		<ProjectReference Include="../../blossom/Sparc.Core/Sparc.Core.csproj" />
 		<ProjectReference Include="../../blossom/Sparc.Blossom/Sparc.Blossom.csproj" />
 		<ProjectReference Include="../../blossom/Sparc.Blossom.Data.SqlServer/Sparc.Blossom.Data.SqlServer.csproj" />
+		<ProjectReference Include="../../blossom/Sparc.Blossom.Data.Cosmos/Sparc.Blossom.Data.Cosmos.csproj" />
 		<ProjectReference Include="..\..\blossom\Sparc.Blossom.Realtime.Twilio\Sparc.Blossom.Realtime.Twilio.csproj" />
 	</ItemGroup>
 </Project>

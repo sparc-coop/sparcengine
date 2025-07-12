@@ -4,7 +4,7 @@ using Sparc.Aura.Users;
 
 namespace Sparc.Aura;
 
-internal class SparcAuraContext(DbContextOptions<SparcAuraContext> options) : IdentityDbContext<SparcAuraUser>(options)
+internal class SparcUserContext(DbContextOptions<SparcUserContext> options) : IdentityDbContext<SparcUser>(options)
 {
     protected override void OnModelCreating(ModelBuilder model)
     {

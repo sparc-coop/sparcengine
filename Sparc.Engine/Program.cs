@@ -1,8 +1,9 @@
-using Microsoft.AspNetCore.Http.Json;
-using Refit;
+using Microsoft.AspNetCore.Cors.Infrastructure;
 using Scalar.AspNetCore;
 using Sparc.Aura;
+using Sparc.Blossom.Authentication;
 using Sparc.Blossom.Realtime;
+using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,10 +12,9 @@ builder.AddSparcAura();
 
 builder.Services.AddTwilio(builder.Configuration);
 builder.Services.AddHybridCache();
-builder.Services.Configure<JsonOptions>(options =>
-{
-    options.SerializerOptions.Converters.Add(new ObjectToInferredTypesConverter());
-});
+
+builder.Services.AddCors();
+builder.Services.AddScoped<ICorsPolicyProvider, SparcAuraDomainPolicyProvider>();
 
 var app = builder.Build();
 app.UseSparcAura();
@@ -27,10 +27,12 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference();
 }
 
-
+app.UseCors("auth");
 
 app.MapGet("/tools/friendlyid", (FriendlyId friendlyId) => friendlyId.Create());
-app.MapGet("/hi", () => "Hi from Sparc!");
-app.MapMethods("/authorize", ["GET", "POST"], async (SparcAuraAuthenticator auth) => await auth.Authorize());
+app.MapMethods("/hi", ["GET", "POST"], async (SparcAuraPresenceHub auth) => await auth.Hi());
+app.MapGet("/me", async (SparcAuraPresenceHub auth, ClaimsPrincipal principal) => await auth.Me(principal)).RequireAuthorization();
+app.MapPatch("/me", async (SparcAuraPresenceHub auth, ClaimsPrincipal principal, SparcAura aura) => await auth.Update(principal, aura)).RequireAuthorization();
+app.MapMethods("/bye", ["GET", "POST"], async (SparcAuraPresenceHub auth) => await auth.Bye()).RequireAuthorization();
 
 app.Run();
