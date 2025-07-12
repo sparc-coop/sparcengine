@@ -2,11 +2,13 @@ using Sparc.Blossom;
 using Sparc.Blossom.Data;
 using Sparc.Engine;
 using Tovik;
+using Tovik.Services;
 
 var builder = BlossomApplication.CreateBuilder<Html>(args);
 
 builder.Services.AddCosmos<TovikContext>(builder.Configuration.GetConnectionString("Cosmos")!, "sparc", ServiceLifetime.Scoped);
 builder.Services.AddSparcEngine();
+builder.Services.AddScoped<TovikDomainService>();
 
 var app = builder.Build();
 
