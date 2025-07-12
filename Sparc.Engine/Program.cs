@@ -1,59 +1,13 @@
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http.Json;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using OpenIddict.Abstractions;
 using Refit;
 using Scalar.AspNetCore;
 using Sparc.Aura;
-using Sparc.Aura.Users;
 using Sparc.Blossom.Realtime;
-using System.Security;
-using static OpenIddict.Abstractions.OpenIddictConstants;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddOpenApi();
-builder.Services.AddScoped<FriendlyId>()
-    .AddScoped<SparcAuraAuthenticator>()
-    .AddHttpContextAccessor();
-
-builder.Services.AddDbContext<SparcAuraContext>(options =>
-{
-    options.UseSqlServer(builder.Configuration.GetConnectionString("Aura"));
-    options.UseOpenIddict();
-});
-
-builder.Services.AddAuthorization()
-    .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-    .AddCookie();
-
-builder.Services.AddIdentityCore<SparcUser>()
-    .AddEntityFrameworkStores<SparcAuraContext>()
-    .AddDefaultTokenProviders();
-
-builder.Services.AddOpenIddict()
-    .AddCore(options =>
-    {
-        options.UseEntityFrameworkCore().UseDbContext<SparcAuraContext>();
-    })
-    .AddServer(options =>
-    {
-        options.SetAuthorizationEndpointUris("authorize")
-            .SetTokenEndpointUris("token");
-
-        options.AllowAuthorizationCodeFlow()
-            .AllowRefreshTokenFlow();
-
-        options.AddDevelopmentEncryptionCertificate()
-            .AddDevelopmentSigningCertificate();
-
-        options.UseAspNetCore()
-            .EnableAuthorizationEndpointPassthrough()
-            .EnableUserInfoEndpointPassthrough();
-    });
-
-// builder.AddSparcAura<BlossomUser>();
+builder.AddSparcAura();
 
 builder.Services.AddTwilio(builder.Configuration);
 builder.Services.AddHybridCache();
@@ -63,7 +17,7 @@ builder.Services.Configure<JsonOptions>(options =>
 });
 
 var app = builder.Build();
-//app.UseSparcAura<BlossomUser>();
+app.UseSparcAura();
 app.MapStaticAssets();
 
 // Configure the HTTP request pipeline.
@@ -73,46 +27,7 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference();
 }
 
-app.UseHttpsRedirection();
-app.UseForwardedHeaders();
-app.UseRouting();
-app.UseAuthentication();
-app.UseAuthorization();
 
-using var scope = app.Services.CreateScope();
-await scope.ServiceProvider.GetRequiredService<SparcAuraContext>().Database.EnsureCreatedAsync();
-
-// add Tovik client
-var manager = scope.ServiceProvider.GetRequiredService<IOpenIddictApplicationManager>();
-if (await manager.FindByClientIdAsync("tovik") is null)
-{
-    var application = new OpenIddictApplicationDescriptor
-    {
-        ClientId = "tovik",
-        DisplayName = "Tovik",
-        ClientType = ClientTypes.Public,
-        ApplicationType = ApplicationTypes.Web,
-        ConsentType = ConsentTypes.Implicit,
-        PostLogoutRedirectUris =
-        {
-            new Uri("https://tovik.app/"),
-            new Uri("https://localhost:7194/")
-        },
-        RedirectUris =
-        {
-            new Uri("https://tovik.app/"),
-            new Uri("https://localhost:7194")
-        },
-        Permissions =
-        {
-            Permissions.Endpoints.Authorization,
-            Permissions.Endpoints.Token,
-            Permissions.GrantTypes.AuthorizationCode,
-            Permissions.ResponseTypes.Code
-        }
-    };
-    await manager.CreateAsync(application);
-}
 
 app.MapGet("/tools/friendlyid", (FriendlyId friendlyId) => friendlyId.Create());
 app.MapGet("/hi", () => "Hi from Sparc!");

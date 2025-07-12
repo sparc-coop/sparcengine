@@ -8,7 +8,7 @@ using Sparc.Aura.Users;
 namespace Sparc.Aura;
 
 internal class SparcAuraAuthenticator(IHttpContextAccessor http, 
-    UserManager<SparcUser> users,
+    UserManager<SparcAuraUser> users,
     IOpenIddictApplicationManager apps)
 {
     public async Task<IResult> Authorize()
@@ -20,10 +20,10 @@ internal class SparcAuraAuthenticator(IHttpContextAccessor http,
 
         var result = await http.HttpContext!.AuthenticateAsync();
 
-        SparcUser? user;
+        SparcAuraUser? user;
         if (!result.Succeeded && isNoLogin)
         {
-            user = new SparcUser();
+            user = new SparcAuraUser();
             var created = await users.CreateAsync(user);
             if (!created.Succeeded)
             {

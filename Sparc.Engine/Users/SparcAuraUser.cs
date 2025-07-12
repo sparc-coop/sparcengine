@@ -5,9 +5,9 @@ using static OpenIddict.Abstractions.OpenIddictConstants;
 
 namespace Sparc.Aura.Users;
 
-public class SparcUser : IdentityUser
+public class SparcAuraUser : IdentityUser
 {
-    public SparcUser()
+    public SparcAuraUser()
     {
         Id = Guid.NewGuid().ToString();
         UserName = FriendlyId.CreateFakeWord(6, 2);

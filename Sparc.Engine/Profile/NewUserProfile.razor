@@ -184,10 +184,9 @@
     [Parameter] public bool SpillBackground { get; set; }
     [Parameter] public EventCallback<string> OnEmojiChanged { get; set; }
 
-    public BlossomAvatar UserAvatar { get; set; } = new BlossomAvatar();
-    BlossomUser? BlossomUser;
+    public SparcUser User { get; set; } = new SparcUser();
 
-    bool HasEmoji => !string.IsNullOrWhiteSpace(UserAvatar.Emoji);
+    bool HasEmoji => !string.IsNullOrWhiteSpace(User.Emoji);
 
     private string VerificationCode { get; set; } = "";
     private bool IsVerified;
@@ -203,11 +202,10 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var user = await SparcEngine.UserInfo();
-        UserAvatar = user.Avatar;
+        User = await SparcEngine.UserInfo();
 
-        HasPasskey = user?.HasIdentity("Passwordless") ?? false;
-        IsAuthenticated = user?.Identities.Any(i => i.Type == "Passwordless" && i.IsLoggedIn) ?? false;
+        HasPasskey = User?.HasIdentity("Passwordless") ?? false;
+        IsAuthenticated = User?.Identities.Any(i => i.Type == "Passwordless" && i.IsLoggedIn) ?? false;
 
         UpdateUIFlags();
         Console.WriteLine($"HasPasskey: {HasPasskey}, IsAuthenticated: {IsAuthenticated}");

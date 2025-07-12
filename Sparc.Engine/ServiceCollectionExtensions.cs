@@ -1,34 +1,57 @@
 ﻿using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using OpenIddict.Abstractions;
 using Sparc.Aura.Users;
 using Sparc.Blossom.Authentication;
-using Sparc.Blossom.Platforms.Server;
 using System.Security.Claims;
+using Twilio.Rest.Api.V2010.Account.Usage.Record;
+using static OpenIddict.Abstractions.OpenIddictConstants;
 
 namespace Sparc.Aura;
 
 public static class ServiceCollectionExtensions
 {
-    public static WebApplicationBuilder AddSparcAura<TUser>(this WebApplicationBuilder builder)
-        where TUser : BlossomUser, new()
+    public static WebApplicationBuilder AddSparcAura(this WebApplicationBuilder builder)
     {
-        builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-            .AddCookie(options => {
-                options.Cookie.SameSite = SameSiteMode.None;
-                options.Cookie.Name = ".Sparc.Cookie";
-                options.ExpireTimeSpan = TimeSpan.FromDays(30);
-                });
+        builder.Services.AddScoped<FriendlyId>()
+            .AddScoped<SparcAuraAuthenticator>()
+            .AddHttpContextAccessor();
 
-        builder.Services.AddAuthorization();
-        builder.Services.AddHttpContextAccessor();
+        builder.Services.AddDbContext<SparcAuraContext>(options =>
+        {
+            options.UseSqlServer(builder.Configuration.GetConnectionString("Aura"));
+            options.UseOpenIddict();
+        });
 
-        builder.Services.AddScoped<AuthenticationStateProvider, BlossomServerAuthenticationStateProvider<TUser>>()
-            .AddScoped<SparcAuraLegacyAuthenticator<TUser>>()
-            .AddScoped<IBlossomAuthenticator, SparcAuraLegacyAuthenticator<TUser>>();
+        builder.Services.AddAuthorization()
+            .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+            .AddCookie();
 
-        builder.Services.AddTransient(s =>
-            s.GetRequiredService<IHttpContextAccessor>().HttpContext?.User
-            ?? new ClaimsPrincipal(new ClaimsIdentity()));
+        builder.Services.AddIdentityCore<SparcAuraUser>()
+            .AddEntityFrameworkStores<SparcAuraContext>()
+            .AddDefaultTokenProviders();
+
+        builder.Services.AddOpenIddict()
+            .AddCore(options =>
+            {
+                options.UseEntityFrameworkCore().UseDbContext<SparcAuraContext>();
+            })
+            .AddServer(options =>
+            {
+                options.SetAuthorizationEndpointUris("authorize")
+                    .SetTokenEndpointUris("token");
+
+                options.AllowAuthorizationCodeFlow()
+                    .AllowRefreshTokenFlow();
+
+                options.AddDevelopmentEncryptionCertificate()
+                    .AddDevelopmentSigningCertificate();
+
+                options.UseAspNetCore()
+                    .EnableAuthorizationEndpointPassthrough()
+                    .EnableUserInfoEndpointPassthrough();
+            });
 
         builder.Services.AddTransient(s => BlossomUser.FromPrincipal(s.GetRequiredService<ClaimsPrincipal>()));
 
@@ -38,36 +61,63 @@ public static class ServiceCollectionExtensions
             x.ApiSecret = builder.Configuration.GetConnectionString("Passwordless") ?? throw new InvalidOperationException("Passwordless API Secret is not configured.");
         });
 
-        //builder.Services.AddScoped<BlossomPasswordlessAuthenticator<TUser>>()
-        //    .AddScoped<IBlossomAuthenticator, BlossomPasswordlessAuthenticator<TUser>>();
-
         return builder;
     }
 
-    public static WebApplication UseSparcAura<TUser>(this WebApplication app)
-        where TUser : BlossomUser, new()
-    { 
-        app.UseCookiePolicy(new() { 
+    public static WebApplication UseSparcAura(this WebApplication app)
+    {
+        app.UseCookiePolicy(new()
+        {
             MinimumSameSitePolicy = SameSiteMode.None,
             HttpOnly = Microsoft.AspNetCore.CookiePolicy.HttpOnlyPolicy.Always,
             Secure = CookieSecurePolicy.Always
         });
+
+        app.UseHttpsRedirection();
+        app.UseForwardedHeaders();
+        app.UseRouting();
         app.UseAuthentication();
         app.UseAuthorization();
-        app.UseMiddleware<SparcAuraMiddleware>();
-
-        using var scope = app.Services.CreateScope();
-        var passwordlessAuthenticator =
-            scope.ServiceProvider.GetRequiredService<SparcAuraLegacyAuthenticator<TUser>>();
-
-        passwordlessAuthenticator.Map(app);
-
-        //var auth = app.MapGroup("/auth");
-        //auth.MapPost("login", async (BlossomPasswordlessAuthenticator<TUser> auth, ClaimsPrincipal principal, HttpContext context, string? emailOrToken = null) => await auth.Login(principal, context, emailOrToken));
-        //auth.MapPost("logout", async (BlossomPasswordlessAuthenticator<TUser> auth, ClaimsPrincipal principal, string? emailOrToken = null) => await auth.Logout(principal, emailOrToken));
-        //auth.MapGet("userinfo", async (BlossomPasswordlessAuthenticator<TUser> auth, ClaimsPrincipal principal) => await auth.GetAsync(principal));
 
         return app;
+    }
+
+    public static async Task InitializeSparcAura(this WebApplication app)
+    {
+        using var scope = app.Services.CreateScope();
+        await scope.ServiceProvider.GetRequiredService<SparcAuraContext>().Database.EnsureCreatedAsync();
+
+        // add Tovik client
+        var manager = scope.ServiceProvider.GetRequiredService<IOpenIddictApplicationManager>();
+        if (await manager.FindByClientIdAsync("tovik") is null)
+        {
+            var application = new OpenIddictApplicationDescriptor
+            {
+                ClientId = "tovik",
+                DisplayName = "Tovik",
+                ClientType = ClientTypes.Public,
+                ApplicationType = ApplicationTypes.Web,
+                ConsentType = ConsentTypes.Implicit,
+                PostLogoutRedirectUris =
+        {
+            new Uri("https://tovik.app/"),
+            new Uri("https://localhost:7194/")
+        },
+                RedirectUris =
+        {
+            new Uri("https://tovik.app/"),
+            new Uri("https://localhost:7194")
+        },
+                Permissions =
+        {
+            Permissions.Endpoints.Authorization,
+            Permissions.Endpoints.Token,
+            Permissions.GrantTypes.AuthorizationCode,
+            Permissions.ResponseTypes.Code
+        }
+            };
+            await manager.CreateAsync(application);
+        }
     }
 
 }
