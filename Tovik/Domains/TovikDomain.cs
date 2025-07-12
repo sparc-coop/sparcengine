@@ -1,7 +1,7 @@
 ﻿using Bogus;
 using Sparc.Blossom;
 
-public class SparcDomain(string domain) : BlossomEntity<string>(Guid.NewGuid().ToString())
+public class TovikDomain(string domain) : BlossomEntity<string>(Guid.NewGuid().ToString())
 {
     public string Domain { get; set; } = domain;
     public List<SparcProduct> Products { get; set; } = [];
@@ -11,9 +11,9 @@ public class SparcDomain(string domain) : BlossomEntity<string>(Guid.NewGuid().T
 
     public bool HasProduct(string policyName) => policyName == "Auth" || Products.Any(p => p.ProductId == policyName);
 
-    public static IEnumerable<SparcDomain> Generate(int qty)
+    public static IEnumerable<TovikDomain> Generate(int qty)
     {
-        var faker = new Faker<SparcDomain>()
+        var faker = new Faker<TovikDomain>()
             .CustomInstantiator(f => new SparcDomain(
                 f.Lorem.Sentence(3)
             ));

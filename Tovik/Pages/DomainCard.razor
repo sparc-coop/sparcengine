@@ -27,9 +27,9 @@
 </tr>
 
 @code {
-    [Parameter] public SparcDomain Domain { get; set; }
+    [Parameter] public TovikDomain Domain { get; set; }
     [Parameter] public string? PageType { get; set; }
-    [Parameter] public EventCallback<SparcDomain> OnDelete { get; set; }
+    [Parameter] public EventCallback<TovikDomain> OnDelete { get; set; }
 
     bool showDomainActions = false;
     int? num;

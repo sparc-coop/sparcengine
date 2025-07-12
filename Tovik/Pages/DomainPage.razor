@@ -72,13 +72,13 @@
     </div>
 </article>
 
-@inject IRepository<SparcDomain> SparcDomains
+@inject IRepository<TovikDomain> SparcDomains
 
 @code {
     [Parameter] public string? Id { get; set; }
 
-    private List<SparcDomain> Domains = new();
-    SparcDomain? Domain;
+    private List<TovikDomain> Domains = new();
+    TovikDomain? Domain;
 
     private List<string> Glossaries = new();
 

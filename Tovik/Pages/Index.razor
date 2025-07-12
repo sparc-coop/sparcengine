@@ -60,11 +60,11 @@
     </div>
 </article>
 
-@inject IRepository<SparcDomain> SparcDomains
+@inject IRepository<TovikDomain> SparcDomains
 @inject Tovik.Services.TovikDomainService TovikDomainService
 @code {
-    private List<SparcDomain> Domains = new();
-    private SparcDomain NewDomain = new SparcDomain("");
+    private List<TovikDomain> Domains = new();
+    private TovikDomain NewDomain = new TovikDomain("");
 
 
     protected override async Task OnInitializedAsync()
@@ -86,11 +86,11 @@
             return;
         }
         await SparcDomains.AddAsync(NewDomain);
-        NewDomain = new SparcDomain("");
+        NewDomain = new TovikDomain("");
         await LoadDomains();
     }
 
-    private async Task DeleteDomain(SparcDomain domain)
+    private async Task DeleteDomain(TovikDomain domain)
     {
         await SparcDomains.DeleteAsync(domain);
         await LoadDomains();

@@ -6,7 +6,7 @@ internal class TovikContext(DbContextOptions<TovikContext> options) : DbContext(
 {
     protected override void OnModelCreating(ModelBuilder model)
     {
-        model.Entity<SparcDomain>().ToContainer("Domains")
+        model.Entity<TovikDomain>().ToContainer("Domains")
             .HasPartitionKey(x => x.Domain)
             .HasKey(x => x.Id);
 

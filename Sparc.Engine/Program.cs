@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http.Json;
 using Refit;
 using Scalar.AspNetCore;
 using Sparc.Aura;
+using Sparc.Blossom.Authentication;
 using Sparc.Blossom.Data;
 using Sparc.Blossom.Realtime;
 using Sparc.Engine;
@@ -14,7 +15,7 @@ builder.Services.AddScoped<FriendlyId>();
 
 builder.Services.AddCosmos<SparcAuraContext>(builder.Configuration.GetConnectionString("Cosmos")!, "sparc", ServiceLifetime.Scoped);
 
-builder.AddSparcAura<SparcUser>();
+builder.AddSparcAura<BlossomUser>();
 
 builder.Services.AddMediatR(options =>
 {
@@ -26,8 +27,6 @@ builder.Services.AddMediatR(options =>
 
 builder.Services.AddTwilio(builder.Configuration);
 
-builder.Services.AddCors();
-builder.Services.AddScoped<ICorsPolicyProvider, SparcAuraDomainPolicyProvider>();
 
 builder.Services.AddHybridCache();
 builder.Services.Configure<JsonOptions>(options =>
@@ -36,7 +35,7 @@ builder.Services.Configure<JsonOptions>(options =>
 });
 
 var app = builder.Build();
-app.UseSparcAura<SparcUser>();
+app.UseSparcAura<BlossomUser>();
 app.MapStaticAssets();
 
 // Configure the HTTP request pipeline.

@@ -4,9 +4,9 @@ using Microsoft.Net.Http.Headers;
 using Sparc.Blossom.Data;
 using Sparc.Engine;
 
-namespace Sparc.Aura;
+namespace Tovik.Domains;
 
-public class SparcAuraDomainPolicyProvider(IRepository<SparcDomain> domains, HybridCache cache) : ICorsPolicyProvider
+public class TovikDomainPolicyProvider(IRepository<TovikDomain> domains, HybridCache cache) : ICorsPolicyProvider
 {
     static CorsPolicy AllowAll = new CorsPolicyBuilder()
         .AllowAnyOrigin()
@@ -42,7 +42,7 @@ public class SparcAuraDomainPolicyProvider(IRepository<SparcDomain> domains, Hyb
         return _policies[currentDomain];
     }
 
-    async Task<SparcDomain> GetOrAddDomainAsync(string domain)
+    async Task<TovikDomain> GetOrAddDomainAsync(string domain)
     {
         var existing = await domains.Query
             .Where(d => d.Domain == domain)

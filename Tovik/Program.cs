@@ -4,6 +4,7 @@ using Sparc.Blossom;
 using Sparc.Blossom.Data;
 using Sparc.Engine;
 using Tovik;
+using Tovik.Domains;
 using Tovik.Languages;
 
 var builder = BlossomApplication.CreateBuilder<Html>(args);
@@ -17,7 +18,7 @@ builder.Services.AddScoped<IRepository<Language>, BlossomInMemoryRepository<Lang
 builder.Services.AddHybridCache();
 
 builder.Services.AddCors();
-builder.Services.AddScoped<ICorsPolicyProvider, SparcAuraDomainPolicyProvider>();
+builder.Services.AddScoped<ICorsPolicyProvider, TovikDomainPolicyProvider>();
 
 var app = builder.Build();
 
