@@ -1,5 +1,5 @@
 ﻿
-namespace Sparc.Engine;
+namespace Sparc.Aura;
 
 public class FriendlyId
 {

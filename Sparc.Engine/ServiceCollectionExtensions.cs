@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Components.Authorization;
+using Sparc.Aura.Users;
 using Sparc.Blossom.Authentication;
 using Sparc.Blossom.Platforms.Server;
 using System.Security.Claims;

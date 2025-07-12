@@ -5,9 +5,8 @@ using Sparc.Blossom.Authentication;
 using Sparc.Blossom.Data;
 using Sparc.Blossom.Realtime;
 using System.Security.Claims;
-using Sparc.Engine;
 
-namespace Sparc.Aura;
+namespace Sparc.Aura.Users;
 
 public class SparcAuraAuthenticator<T>(
     IPasswordlessClient _passwordlessClient,

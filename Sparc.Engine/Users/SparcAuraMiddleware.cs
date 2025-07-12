@@ -1,6 +1,6 @@
 ﻿using Sparc.Blossom.Authentication;
 
-namespace Sparc.Aura;
+namespace Sparc.Aura.Users;
 
 public class SparcAuraMiddleware(RequestDelegate next)
 {

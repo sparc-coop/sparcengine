@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Sparc.Blossom.Authentication;
-using Sparc.Engine;
+
+namespace Sparc.Aura;
 
 internal class SparcAuraContext(DbContextOptions<SparcAuraContext> options) : DbContext(options)
 {

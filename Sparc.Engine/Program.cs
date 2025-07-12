@@ -1,5 +1,4 @@
 using MediatR.NotificationPublishers;
-using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Http.Json;
 using Refit;
 using Scalar.AspNetCore;
@@ -7,7 +6,6 @@ using Sparc.Aura;
 using Sparc.Blossom.Authentication;
 using Sparc.Blossom.Data;
 using Sparc.Blossom.Realtime;
-using Sparc.Engine;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddOpenApi();
