@@ -27,7 +27,7 @@ async function signInWithPasskey(alias) {
 
     } catch (e) {
         console.error("Things went really bad: ", e);
-        Status("Things went bad, check console");
+        //Status("Things went bad, check console");
     }
 }
 
