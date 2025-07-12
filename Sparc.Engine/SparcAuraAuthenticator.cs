@@ -1,14 +1,14 @@
 ﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Identity;
 using OpenIddict.Abstractions;
 using OpenIddict.Server.AspNetCore;
 using Sparc.Aura.Users;
-using Sparc.Blossom.Authentication;
 
 namespace Sparc.Aura;
 
 internal class SparcAuraAuthenticator(IHttpContextAccessor http, 
-    SparcAuraContext users,
+    UserManager<SparcUser> users,
     IOpenIddictApplicationManager apps)
 {
     public async Task<IResult> Authorize()
@@ -24,11 +24,15 @@ internal class SparcAuraAuthenticator(IHttpContextAccessor http,
         if (!result.Succeeded && isNoLogin)
         {
             user = new SparcUser();
-            await users.AddAsync(user);
+            var created = await users.CreateAsync(user);
+            if (!created.Succeeded)
+            {
+                return Results.BadRequest(created.Errors.Select(e => e.Description));
+            }
         }
         else if (isNoLogin)
         {
-            user = await users.FindAsync<SparcUser>(result.Principal.Id());
+            user = await users.GetUserAsync(result.Principal!);
             if (user == null)
                 return Results.Forbid(authenticationSchemes: [OpenIddictServerAspNetCoreDefaults.AuthenticationScheme]);
         }

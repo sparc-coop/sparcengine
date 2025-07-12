@@ -5,11 +5,12 @@ using static OpenIddict.Abstractions.OpenIddictConstants;
 
 namespace Sparc.Aura.Users;
 
-public class SparcUser : IdentityUser<string>
+public class SparcUser : IdentityUser
 {
     public SparcUser()
     {
         Id = Guid.NewGuid().ToString();
+        UserName = FriendlyId.CreateFakeWord(6, 2);
     }
 
     public ClaimsPrincipal ToPrincipal()
