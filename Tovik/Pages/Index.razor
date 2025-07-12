@@ -61,6 +61,7 @@
 </article>
 
 @inject IRepository<SparcDomain> SparcDomains
+@inject Tovik.Services.TovikDomainService TovikDomainService
 @code {
     private List<SparcDomain> Domains = new();
     private SparcDomain NewDomain = new SparcDomain("");
@@ -69,6 +70,7 @@
     protected override async Task OnInitializedAsync()
     {
         await LoadDomains();
+        //await TovikDomainService.UpdateWordCountForDomains();
     }
 
     private async Task LoadDomains()
