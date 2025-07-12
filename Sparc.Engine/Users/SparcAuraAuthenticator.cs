@@ -152,8 +152,11 @@ public class SparcAuraAuthenticator<T>(
     public void Map(IEndpointRouteBuilder endpoints)
     {
         var auth = endpoints.MapGroup("/auth").RequireCors("Auth");
-        auth.MapGet("login", DoLogin);
-        auth.MapGet("logout", DoLogout);
+        //auth.MapGet("login", DoLogin);
+        //auth.MapGet("logout", DoLogout);
+        auth.MapPost("register", Register);
+        auth.MapPost("login", DoLogin);
+        auth.MapPost("logout", DoLogout);
         auth.MapGet("userinfo", GetAsync);
     }
 }
