@@ -1,0 +1,48 @@
+﻿<tr id="@Domain.Id" class="domain-card @("domain-card__" + PageType)">
+    @if (Domain != null)
+    {
+        @if (PageType == "home")
+        {
+            <td class="domain-name" @onclick='() => Nav.NavigateTo($"/domains/{Domain.Id}")'>@Domain.Domain <VerifiedIcon /></td>
+            <td class="domain-usage">@Domain.TotalUsage.ToString("N").Replace(".00", "")</td>
+            <td class="domain-actions">
+                <button class="actions-btn icon-btn @(showDomainActions ? "rotate" : "")" data-id="@Domain.Id" @onclick=ToggleDomainActions><ChevronRightIcon /></button>
+                <div id="@Domain.Id-actions" class="actions-menu @(showDomainActions ? "show" : "")">
+                    <button class="edit-btn secondary-btn"><EditIcon />Edit</button>
+                    <button @onclick="DeleteDomain" class="delete-btn secondary-btn"><TrashIcon />Delete</button>
+                </div>
+            </td>
+        }
+
+        @if (PageType == "domain")
+        {
+            <td class="domain-name">@Domain.Domain</td>
+            <td class="domain-usage">@Domain.TotalUsage.ToString("N").Replace(".00", "")</td>
+            <td class="domain-actions">
+                <button class="edit-btn secondary-btn"><EditIcon /></button>
+                <button @onclick="DeleteDomain" class="delete-btn secondary-btn"><TrashIcon /></button>
+            </td>
+        }
+    }
+</tr>
+
+@code {
+    [Parameter] public SparcDomain Domain { get; set; }
+    [Parameter] public string? PageType { get; set; }
+    [Parameter] public EventCallback<SparcDomain> OnDelete { get; set; }
+
+    bool showDomainActions = false;
+    int? num;
+
+    private void ToggleDomainActions()
+    {
+        Js.InvokeVoidAsync("hideAllDomainActions");
+        showDomainActions = !showDomainActions;
+    }
+
+    private void DeleteDomain()
+    {
+        OnDelete.InvokeAsync(Domain);
+        showDomainActions = false;
+    }
+}

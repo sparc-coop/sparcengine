@@ -1,0 +1,42 @@
+.domain-page {
+    .page-container {
+        table {
+            font-family: var(--articulat);
+            color: var(--blue-50);
+
+            tbody {
+                font-weight: 500;
+            }
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .glossary-list {
+            table {
+                tbody {
+                    tr {
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                    }
+                }
+            }
+
+            .glossary-actions {
+                display: flex;
+                flex-direction: row;
+                gap: 8px;
+
+                button {
+                    aspect-ratio: 1/1;
+                    height: 48px;
+                    padding: 0;
+                }
+            }
+        }
+    }
+}

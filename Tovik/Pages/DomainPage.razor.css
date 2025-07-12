@@ -1,0 +1,27 @@
+﻿.domain-page .page-container table {
+  font-family: var(--articulat);
+  color: var(--blue-50);
+}
+.domain-page .page-container table tbody {
+  font-weight: 500;
+}
+.domain-page .page-container form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.domain-page .page-container .glossary-list table tbody tr {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.domain-page .page-container .glossary-list .glossary-actions {
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+}
+.domain-page .page-container .glossary-list .glossary-actions button {
+  aspect-ratio: 1/1;
+  height: 48px;
+  padding: 0;
+}
