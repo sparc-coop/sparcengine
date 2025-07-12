@@ -75,6 +75,14 @@ main ::deep article .page-container section header .subheader {
   font-weight: 400;
   line-height: normal;
 }
+main ::deep article .page-container section header aside {
+  color: var(--orange-300, #FF945E);
+  font-family: var(--brother-printed);
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+}
 main ::deep article .page-container section h4 {
   color: #FFF;
   font-family: var(--brother-printed);

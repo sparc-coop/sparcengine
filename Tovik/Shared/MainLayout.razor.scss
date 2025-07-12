@@ -84,6 +84,15 @@ main {
                         font-weight: 400;
                         line-height: normal;
                     }
+
+                    aside {
+                        color: var(--orange-300, #FF945E);
+                        font-family: var(--brother-printed);
+                        font-size: 16px;
+                        font-style: normal;
+                        font-weight: 700;
+                        line-height: normal;
+                    }
                 }
 
                 h4 {

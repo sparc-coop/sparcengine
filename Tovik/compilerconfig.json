@@ -22,5 +22,13 @@
   {
     "outputFile": "Pages/DomainCard.razor.css",
     "inputFile": "Pages/DomainCard.razor.scss"
+  },
+  {
+    "outputFile": "Pages/Install.razor.css",
+    "inputFile": "Pages/Install.razor.scss"
+  },
+  {
+    "outputFile": "Pages/CodeBlock.razor.css",
+    "inputFile": "Pages/CodeBlock.razor.scss"
   }
 ]

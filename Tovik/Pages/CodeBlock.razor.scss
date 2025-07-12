@@ -1,0 +1,59 @@
+.code-block {
+    pre {
+        width: 100%;
+        margin: 0;
+        padding: 0;
+        text-wrap: wrap;
+
+        code {
+            display: flex;
+            flex-direction: column;
+            justify-content: start;
+            color: var(--blue-50);
+            font-family: "Courier New";
+            font-size: 16px;
+            font-style: normal;
+            font-weight: 400;
+            line-height: normal;
+            text-align: start;
+        }
+    }
+
+    &.can-copy {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: start;
+        gap: 16px;
+        padding: 16px 8px;
+
+        .btn-container {
+            position: relative;
+
+            .copy-btn {
+            }
+
+            .copy-msg {
+                position: absolute;
+                bottom: -18px;
+                left: 50%;
+                transform: translateX(-50%);
+                font-size: 1rem;
+                opacity: 0;
+                transition: opacity .3s ease-in-out;
+            }
+
+            &.copied {
+                .copy-msg {
+                    opacity: 1 !important;
+                }
+            }
+
+            &:hover {
+                .copy-msg {
+                    opacity: 1 !important;
+                }
+            }
+        }
+    }
+}

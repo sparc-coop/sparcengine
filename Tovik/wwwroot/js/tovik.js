@@ -14,6 +14,40 @@
 //    }
 //});
 
+//function copyToClipboard(text) {
+//    console.log("copying");
+//    navigator.clipboard.writeText(text);
+//}
+
+function copyToClipboard(html) {
+    console.log("copying to clipboard");
+    var text = html.innerHTML.toString().replace(/<!--!-->/g, '') // get rid of blazor debug comments
+
+    navigator.clipboard.writeText(text);
+}
+
+function highlight(codeBlock) {
+    hljs.highlightElement(codeBlock);
+}
+
+function populatePreviewCode(previewBlock, codeBlock) {
+    if (!previewBlock?.innerHTML)
+        return;
+
+    var htmlWithBetterLineBreaks = previewBlock.innerHTML.replace(/>([^\r\n])/g, function (match, $1) { return '>\r\n' + $1 })
+        .replace(/([^\s])</g, function (match, $1) { return $1 + '\r\n<' })
+        .replace(/\r\n\s*\r\n/g, '\r\n');
+
+    var encodedHtml = html_beautify(htmlWithBetterLineBreaks, { indent_size: 2 })
+        .replace(/<!--!-->/g, '') // get rid of blazor debug comments
+        .replace(/[\u00A0-\u9999<>\&]/g, function (i) { // switch to html entities
+            return '&#' + i.charCodeAt(0) + ';';
+        });
+
+    codeBlock.innerHTML = encodedHtml;
+    hljs.highlightElement(codeBlock);
+}
+
 function hideAllDomainActions() {
     var menus = document.querySelectorAll('.actions-menu');
     menus.forEach(menu => {
