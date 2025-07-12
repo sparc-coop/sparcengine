@@ -1,17 +1,45 @@
 ﻿using Microsoft.AspNetCore;
-using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Identity;
 using OpenIddict.Abstractions;
 using OpenIddict.Server.AspNetCore;
-using System.Security.Claims;
+using Sparc.Blossom.Authentication;
 
 namespace Sparc.Aura;
 
-public class SparcAuraAuthenticator(HttpContext context, IOpenIddictScopeManager scopes)
+public class SparcAuraAuthenticator(HttpContext context, 
+    UserManager<BlossomUser> users,
+    IOpenIddictApplicationManager apps)
 {
     public async Task<IResult> Authorize()
     {
-        var request = context.GetOpenIddictServerRequest();
-        var principal = new ClaimsPrincipal(new ClaimsIdentity());
+        var request = context.GetOpenIddictServerRequest()
+            ?? throw new InvalidOperationException("The OpenID Connect request cannot be retrieved.");
+
+        var isNoLogin = request.Prompt == null || request.HasPromptValue(OpenIddictConstants.PromptValues.None);
+
+        var result = await context.AuthenticateAsync();
+
+        BlossomUser? user;
+        if (!result.Succeeded && isNoLogin)
+        {
+            user = new BlossomUser();
+            await users.CreateAsync(user);
+        }
+        else if (isNoLogin)
+        {
+            user = await users.GetUserAsync(result.Principal);
+            if (user == null)
+                return Results.Forbid(authenticationSchemes: [OpenIddictServerAspNetCoreDefaults.AuthenticationScheme]);
+        }
+        else
+        {
+            return Results.Redirect("/Login?returnUrl=" + request.RedirectUri);
+        }
+
+        var app = await apps.FindByClientIdAsync(request.ClientId!);
+
+        var principal = user.ToPrincipal();
         return Results.SignIn(principal, null, OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
     }
 }

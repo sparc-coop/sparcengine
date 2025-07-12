@@ -1,21 +1,32 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http.Json;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Refit;
 using Scalar.AspNetCore;
 using Sparc.Aura;
+using Sparc.Blossom.Authentication;
 using Sparc.Blossom.Realtime;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddOpenApi();
-builder.Services.AddScoped<FriendlyId>();
+builder.Services.AddScoped<FriendlyId>()
+    .AddScoped<SparcAuraAuthenticator>();
 
 builder.Services.AddDbContext<SparcAuraContext>(options =>
 {
     options.UseCosmos(builder.Configuration.GetConnectionString("Cosmos")!, "sparc");
     options.UseOpenIddict();
 });
+
+builder.Services.AddAuthorization()
+    .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie();
+
+builder.Services.AddIdentityCore<BlossomUser>()
+    .AddEntityFrameworkStores<SparcAuraContext>()
+    .AddDefaultTokenProviders();
 
 builder.Services.AddOpenIddict()
     .AddCore(options =>
@@ -35,10 +46,6 @@ builder.Services.AddOpenIddict()
 
         options.UseAspNetCore().EnableTokenEndpointPassthrough();
     });
-
-builder.Services.AddAuthorization()
-    .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-    .AddCookie();
 
 // builder.AddSparcAura<BlossomUser>();
 
@@ -69,5 +76,6 @@ app.UseAuthorization();
 
 app.MapGet("/tools/friendlyid", (FriendlyId friendlyId) => friendlyId.Create());
 app.MapGet("/hi", () => "Hi from Sparc!");
+app.MapMethods("/authorize", ["GET", "POST"], async (SparcAuraAuthenticator auth) => await auth.Authorize());
 
 app.Run();

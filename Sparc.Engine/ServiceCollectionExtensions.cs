@@ -23,8 +23,8 @@ public static class ServiceCollectionExtensions
         builder.Services.AddHttpContextAccessor();
 
         builder.Services.AddScoped<AuthenticationStateProvider, BlossomServerAuthenticationStateProvider<TUser>>()
-            .AddScoped<SparcAuraAuthenticator<TUser>>()
-            .AddScoped<IBlossomAuthenticator, SparcAuraAuthenticator<TUser>>();
+            .AddScoped<SparcAuraLegacyAuthenticator<TUser>>()
+            .AddScoped<IBlossomAuthenticator, SparcAuraLegacyAuthenticator<TUser>>();
 
         builder.Services.AddTransient(s =>
             s.GetRequiredService<IHttpContextAccessor>().HttpContext?.User
@@ -58,7 +58,7 @@ public static class ServiceCollectionExtensions
 
         using var scope = app.Services.CreateScope();
         var passwordlessAuthenticator =
-            scope.ServiceProvider.GetRequiredService<SparcAuraAuthenticator<TUser>>();
+            scope.ServiceProvider.GetRequiredService<SparcAuraLegacyAuthenticator<TUser>>();
 
         passwordlessAuthenticator.Map(app);
 

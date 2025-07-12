@@ -1,9 +1,10 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using Sparc.Blossom.Authentication;
 
 namespace Sparc.Aura;
 
-internal class SparcAuraContext(DbContextOptions<SparcAuraContext> options) : DbContext(options)
+internal class SparcAuraContext(DbContextOptions<SparcAuraContext> options) : IdentityDbContext(options)
 {
     protected override void OnModelCreating(ModelBuilder model)
     {

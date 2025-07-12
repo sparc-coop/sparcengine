@@ -8,7 +8,7 @@ using System.Security.Claims;
 
 namespace Sparc.Aura.Users;
 
-public class SparcAuraAuthenticator<T>(
+public class SparcAuraLegacyAuthenticator<T>(
     IPasswordlessClient _passwordlessClient,
     IRepository<T> users,
     TwilioService twilio,
