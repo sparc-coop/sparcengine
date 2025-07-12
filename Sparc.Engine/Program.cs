@@ -2,11 +2,14 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using OpenIddict.Abstractions;
 using Refit;
 using Scalar.AspNetCore;
 using Sparc.Aura;
 using Sparc.Aura.Users;
 using Sparc.Blossom.Realtime;
+using System.Security;
+using static OpenIddict.Abstractions.OpenIddictConstants;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -78,6 +81,38 @@ app.UseAuthorization();
 
 using var scope = app.Services.CreateScope();
 await scope.ServiceProvider.GetRequiredService<SparcAuraContext>().Database.EnsureCreatedAsync();
+
+// add Tovik client
+var manager = scope.ServiceProvider.GetRequiredService<IOpenIddictApplicationManager>();
+if (await manager.FindByClientIdAsync("tovik") is null)
+{
+    var application = new OpenIddictApplicationDescriptor
+    {
+        ClientId = "tovik",
+        DisplayName = "Tovik",
+        ClientType = ClientTypes.Public,
+        ApplicationType = ApplicationTypes.Web,
+        ConsentType = ConsentTypes.Implicit,
+        PostLogoutRedirectUris =
+        {
+            new Uri("https://tovik.app/"),
+            new Uri("https://localhost:7194/")
+        },
+        RedirectUris =
+        {
+            new Uri("https://tovik.app/"),
+            new Uri("https://localhost:7194")
+        },
+        Permissions =
+        {
+            Permissions.Endpoints.Authorization,
+            Permissions.Endpoints.Token,
+            Permissions.GrantTypes.AuthorizationCode,
+            Permissions.ResponseTypes.Code
+        }
+    };
+    await manager.CreateAsync(application);
+}
 
 app.MapGet("/tools/friendlyid", (FriendlyId friendlyId) => friendlyId.Create());
 app.MapGet("/hi", () => "Hi from Sparc!");
