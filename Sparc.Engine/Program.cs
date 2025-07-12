@@ -1,31 +1,48 @@
-using MediatR.NotificationPublishers;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http.Json;
+using Microsoft.EntityFrameworkCore;
 using Refit;
 using Scalar.AspNetCore;
 using Sparc.Aura;
-using Sparc.Blossom.Authentication;
-using Sparc.Blossom.Data;
 using Sparc.Blossom.Realtime;
 
 var builder = WebApplication.CreateBuilder(args);
+
 builder.Services.AddOpenApi();
 builder.Services.AddScoped<FriendlyId>();
 
-builder.Services.AddCosmos<SparcAuraContext>(builder.Configuration.GetConnectionString("Cosmos")!, "sparc", ServiceLifetime.Scoped);
-
-builder.AddSparcAura<BlossomUser>();
-
-builder.Services.AddMediatR(options =>
+builder.Services.AddDbContext<SparcAuraContext>(options =>
 {
-    options.RegisterServicesFromAssemblyContaining<Program>();
-    options.RegisterServicesFromAssemblyContaining<BlossomEvent>();
-    options.NotificationPublisher = new TaskWhenAllPublisher();
-    options.NotificationPublisherType = typeof(TaskWhenAllPublisher);
+    options.UseCosmos(builder.Configuration.GetConnectionString("Cosmos")!, "sparc");
+    options.UseOpenIddict();
 });
 
+builder.Services.AddOpenIddict()
+    .AddCore(options =>
+    {
+        options.UseEntityFrameworkCore().UseDbContext<SparcAuraContext>();
+    })
+    .AddServer(options =>
+    {
+        options.SetAuthorizationEndpointUris("authorize")
+            .SetTokenEndpointUris("token");
+
+        options.AllowAuthorizationCodeFlow()
+            .AllowRefreshTokenFlow();
+
+        options.AddDevelopmentEncryptionCertificate()
+            .AddDevelopmentSigningCertificate();
+
+        options.UseAspNetCore().EnableTokenEndpointPassthrough();
+    });
+
+builder.Services.AddAuthorization()
+    .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie();
+
+// builder.AddSparcAura<BlossomUser>();
+
 builder.Services.AddTwilio(builder.Configuration);
-
-
 builder.Services.AddHybridCache();
 builder.Services.Configure<JsonOptions>(options =>
 {
@@ -33,7 +50,7 @@ builder.Services.Configure<JsonOptions>(options =>
 });
 
 var app = builder.Build();
-app.UseSparcAura<BlossomUser>();
+//app.UseSparcAura<BlossomUser>();
 app.MapStaticAssets();
 
 // Configure the HTTP request pipeline.
@@ -44,7 +61,11 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseForwardedHeaders();
+app.UseRouting();
 app.UseCors();
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapGet("/tools/friendlyid", (FriendlyId friendlyId) => friendlyId.Create());
 app.MapGet("/hi", () => "Hi from Sparc!");
