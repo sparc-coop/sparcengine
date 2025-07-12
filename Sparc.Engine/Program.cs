@@ -5,18 +5,19 @@ using Microsoft.EntityFrameworkCore;
 using Refit;
 using Scalar.AspNetCore;
 using Sparc.Aura;
-using Sparc.Blossom.Authentication;
+using Sparc.Aura.Users;
 using Sparc.Blossom.Realtime;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddOpenApi();
 builder.Services.AddScoped<FriendlyId>()
-    .AddScoped<SparcAuraAuthenticator>();
+    .AddScoped<SparcAuraAuthenticator>()
+    .AddHttpContextAccessor();
 
 builder.Services.AddDbContext<SparcAuraContext>(options =>
 {
-    options.UseCosmos(builder.Configuration.GetConnectionString("Cosmos")!, "sparc");
+    options.UseSqlServer(builder.Configuration.GetConnectionString("Aura"));
     options.UseOpenIddict();
 });
 
@@ -24,7 +25,7 @@ builder.Services.AddAuthorization()
     .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie();
 
-builder.Services.AddIdentityCore<BlossomUser>()
+builder.Services.AddIdentityCore<SparcUser>()
     .AddEntityFrameworkStores<SparcAuraContext>()
     .AddDefaultTokenProviders();
 
@@ -44,7 +45,9 @@ builder.Services.AddOpenIddict()
         options.AddDevelopmentEncryptionCertificate()
             .AddDevelopmentSigningCertificate();
 
-        options.UseAspNetCore().EnableTokenEndpointPassthrough();
+        options.UseAspNetCore()
+            .EnableAuthorizationEndpointPassthrough()
+            .EnableUserInfoEndpointPassthrough();
     });
 
 // builder.AddSparcAura<BlossomUser>();
@@ -70,9 +73,11 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.UseForwardedHeaders();
 app.UseRouting();
-app.UseCors();
 app.UseAuthentication();
 app.UseAuthorization();
+
+using var scope = app.Services.CreateScope();
+await scope.ServiceProvider.GetRequiredService<SparcAuraContext>().Database.EnsureCreatedAsync();
 
 app.MapGet("/tools/friendlyid", (FriendlyId friendlyId) => friendlyId.Create());
 app.MapGet("/hi", () => "Hi from Sparc!");

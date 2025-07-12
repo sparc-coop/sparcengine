@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.EntityFrameworkCore;
 using Passwordless;
 using Sparc.Blossom.Authentication;
 using Sparc.Blossom.Data;

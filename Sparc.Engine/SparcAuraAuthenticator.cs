@@ -1,34 +1,33 @@
 ﻿using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Identity;
 using OpenIddict.Abstractions;
 using OpenIddict.Server.AspNetCore;
 using Sparc.Blossom.Authentication;
 
 namespace Sparc.Aura;
 
-public class SparcAuraAuthenticator(HttpContext context, 
-    UserManager<BlossomUser> users,
+internal class SparcAuraAuthenticator(IHttpContextAccessor http, 
+    SparcAuraContext users,
     IOpenIddictApplicationManager apps)
 {
     public async Task<IResult> Authorize()
     {
-        var request = context.GetOpenIddictServerRequest()
+        var request = http.HttpContext!.GetOpenIddictServerRequest()
             ?? throw new InvalidOperationException("The OpenID Connect request cannot be retrieved.");
 
         var isNoLogin = request.Prompt == null || request.HasPromptValue(OpenIddictConstants.PromptValues.None);
 
-        var result = await context.AuthenticateAsync();
+        var result = await http.HttpContext!.AuthenticateAsync();
 
         BlossomUser? user;
         if (!result.Succeeded && isNoLogin)
         {
             user = new BlossomUser();
-            await users.CreateAsync(user);
+            await users.AddAsync(user);
         }
         else if (isNoLogin)
         {
-            user = await users.GetUserAsync(result.Principal);
+            user = await users.FindAsync<BlossomUser>(result.Principal.Id());
             if (user == null)
                 return Results.Forbid(authenticationSchemes: [OpenIddictServerAspNetCoreDefaults.AuthenticationScheme]);
         }

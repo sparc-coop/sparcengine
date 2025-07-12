@@ -41,7 +41,7 @@
 	<ItemGroup>
 		<ProjectReference Include="../../blossom/Sparc.Core/Sparc.Core.csproj" />
 		<ProjectReference Include="../../blossom/Sparc.Blossom/Sparc.Blossom.csproj" />
-		<ProjectReference Include="../../blossom/Sparc.Blossom.Data.Cosmos/Sparc.Blossom.Data.Cosmos.csproj" />
+		<ProjectReference Include="../../blossom/Sparc.Blossom.Data.SqlServer/Sparc.Blossom.Data.SqlServer.csproj" />
 		<ProjectReference Include="..\..\blossom\Sparc.Blossom.Realtime.Twilio\Sparc.Blossom.Realtime.Twilio.csproj" />
 	</ItemGroup>
 </Project>

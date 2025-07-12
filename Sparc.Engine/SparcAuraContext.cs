@@ -1,14 +1,14 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore;
-using Sparc.Blossom.Authentication;
+﻿using Microsoft.EntityFrameworkCore;
+using Sparc.Aura.Users;
 
 namespace Sparc.Aura;
 
-internal class SparcAuraContext(DbContextOptions<SparcAuraContext> options) : IdentityDbContext(options)
+internal class SparcAuraContext(DbContextOptions<SparcAuraContext> options) : DbContext(options)
 {
     protected override void OnModelCreating(ModelBuilder model)
     {
-        model.Entity<BlossomUser>().ToContainer("Users")
-            .HasPartitionKey(x => x.UserId);
+        base.OnModelCreating(model);
+
+        model.Entity<SparcUser>().ToTable("Users");
     }
 }
