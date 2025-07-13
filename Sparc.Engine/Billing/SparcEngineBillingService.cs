@@ -21,11 +21,11 @@ public class SparcEngineBillingService(ExchangeRates rates, IConfiguration confi
             async (SparcEngineBillingService svc, string productId, string? currency = null) =>
             {
                 var product = await svc.GetProductAsync(productId);
-                var price = currency == null 
+                var price = string.IsNullOrWhiteSpace(currency) && product.DefaultPrice != null
                 ? product.DefaultPrice.UnitAmountDecimal 
                 : await svc.GetPriceAsync(productId, currency ?? "USD");
                 
-                return Results.Ok(new GetProductResponse(productId, product.Name, price ?? 0, currency));
+                return Results.Ok(new GetProductResponse(productId, product.Name, price ?? 0, currency ?? "USD"));
             });
     }
 }
