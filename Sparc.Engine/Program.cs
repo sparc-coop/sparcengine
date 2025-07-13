@@ -2,6 +2,7 @@ using MediatR.NotificationPublishers;
 using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Http.Json;
 using Scalar.AspNetCore;
+using Sparc.Blossom.Authentication;
 using Sparc.Blossom.Data;
 using Sparc.Blossom.Realtime;
 using Sparc.Engine;
@@ -13,7 +14,7 @@ builder.Services.AddScoped<FriendlyId>();
 
 builder.Services.AddCosmos<SparcEngineContext>(builder.Configuration.GetConnectionString("Cosmos")!, "sparc", ServiceLifetime.Scoped);
 
-builder.AddSparcAuthentication<SparcUser>();
+builder.AddSparcAuthentication<BlossomUser>();
 builder.AddSparcBilling();
 builder.AddTovikTranslator();
 
@@ -38,7 +39,7 @@ builder.Services.Configure<JsonOptions>(options =>
 
 var app = builder.Build();
 app.MapStaticAssets();
-app.UseSparcAuthentication<SparcUser>();
+app.UseSparcAuthentication<BlossomUser>();
 app.UseSparcBilling();
 
 // Configure the HTTP request pipeline.

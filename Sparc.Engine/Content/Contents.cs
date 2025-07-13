@@ -6,7 +6,7 @@ using System.Security.Claims;
 
 namespace Sparc.Engine;
 
-public class Contents(BlossomAggregateOptions<TextContent> options, TovikTranslator translator, SparcAuthenticator<SparcUser> auth) 
+public class Contents(BlossomAggregateOptions<TextContent> options, TovikTranslator translator, SparcAuthenticator<BlossomUser> auth) 
     : BlossomAggregate<TextContent>(options), IBlossomEndpoints
 {
     public BlossomQuery<TextContent> Search(string searchTerm) => Query().Where(content =>

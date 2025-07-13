@@ -161,7 +161,7 @@
         }
       }
     },
-    "/billing/get-product/{productId}": {
+    "/billing/products/{productId}": {
       "get": {
         "tags": [
           "Sparc.Engine"
@@ -565,6 +565,12 @@
               "$ref": "#/components/schemas/BlossomIdentity"
             }
           },
+          "products": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SparcProduct"
+            }
+          },
           "genericId": { },
           "id": {
             "type": "string"
@@ -668,6 +674,25 @@
           "isRightToLeft": {
             "type": "boolean",
             "nullable": true
+          }
+        }
+      },
+      "SparcProduct": {
+        "type": "object",
+        "properties": {
+          "productId": {
+            "type": "string"
+          },
+          "serialNumber": {
+            "type": "string"
+          },
+          "purchaseDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "usageMeter": {
+            "type": "integer",
+            "format": "int32"
           }
         }
       },

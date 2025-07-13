@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Sparc.Blossom.Authentication;
 using Sparc.Blossom.Data;
 using Sparc.Blossom.Data.Pouch;
 using Sparc.Engine;
@@ -7,7 +8,7 @@ internal class SparcEngineContext(DbContextOptions<SparcEngineContext> options) 
 {
     protected override void OnModelCreating(ModelBuilder model)
     {
-        model.Entity<SparcUser>().ToContainer("Users")
+        model.Entity<BlossomUser>().ToContainer("Users")
             .HasPartitionKey(x => x.UserId);
         
         model.Entity<PouchDatum>().ToContainer("Data")

@@ -11,7 +11,7 @@ public interface ISparcAura
     [Get("/tools/friendlyid")]
     Task<string> FriendlyId();
 
-    [Get("/auth/login")]
+    [Post("/auth/login")]
     Task<BlossomUser> Login(string? emailOrToken = null);
 
     [Get("/auth/userinfo")]
