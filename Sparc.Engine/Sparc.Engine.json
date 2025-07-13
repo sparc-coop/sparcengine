@@ -43,8 +43,27 @@
         }
       }
     },
+    "/auth/register": {
+      "post": {
+        "tags": [
+          "SparcAuthenticator`1"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BlossomUser"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/auth/login": {
-      "get": {
+      "post": {
         "tags": [
           "SparcAuthenticator`1"
         ],
@@ -73,7 +92,7 @@
       }
     },
     "/auth/logout": {
-      "get": {
+      "post": {
         "tags": [
           "SparcAuthenticator`1"
         ],
@@ -120,7 +139,7 @@
         }
       }
     },
-    "/billing/create-order-payment": {
+    "/billing/payments": {
       "post": {
         "tags": [
           "Sparc.Engine"
@@ -533,6 +552,10 @@
             "type": "string",
             "nullable": true
           },
+          "token": {
+            "type": "string",
+            "nullable": true
+          },
           "avatar": {
             "$ref": "#/components/schemas/BlossomAvatar"
           },
@@ -565,40 +588,21 @@
       },
       "CreateOrderPaymentRequest": {
         "required": [
+          "email",
           "amount",
-          "currency",
-          "customerId",
-          "receiptEmail",
-          "metadata",
-          "setupFutureUsage"
+          "currency"
         ],
         "type": "object",
         "properties": {
+          "email": {
+            "type": "string"
+          },
           "amount": {
             "type": "integer",
             "format": "int64"
           },
           "currency": {
             "type": "string"
-          },
-          "customerId": {
-            "type": "string",
-            "nullable": true
-          },
-          "receiptEmail": {
-            "type": "string",
-            "nullable": true
-          },
-          "metadata": {
-            "type": "object",
-            "additionalProperties": {
-              "type": "string"
-            },
-            "nullable": true
-          },
-          "setupFutureUsage": {
-            "type": "string",
-            "nullable": true
           }
         }
       },

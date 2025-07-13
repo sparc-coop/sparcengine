@@ -22,7 +22,7 @@ internal class AzureTranslator(IConfiguration configuration) : ITranslator
         foreach (var batch in batches)
         {
             var options = new TextTranslationTranslateOptions(
-                targetLanguages: batch.Select(x => x.Id),
+                targetLanguages: batch.Select(x => x!.Id),
                 content: messages.Select(x => x.Text));
 
             var response = await Client!.TranslateAsync(options);

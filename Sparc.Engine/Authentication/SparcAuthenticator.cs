@@ -17,13 +17,14 @@ public class SparcAuthenticator<T>(
     where T : BlossomUser, new()
 {
     T? SparcUser;
+    readonly IRepository<T> Users = users;
 
     public override async Task<ClaimsPrincipal> LoginAsync(ClaimsPrincipal principal)
     {
         SparcUser = await GetUserAsync(principal);
         SparcUser.Login();
         UpdateFromHttpContext(principal);
-        await users.UpdateAsync(SparcUser!);
+        await Users.UpdateAsync(SparcUser!);
 
         var priorUser = BlossomUser.FromPrincipal(principal);
         var newPrincipal = SparcUser.ToPrincipal();
@@ -82,7 +83,7 @@ public class SparcAuthenticator<T>(
             throw new InvalidOperationException(Message);
         }
 
-        var user = await users.Query
+        var user = await Users.Query
             .Where(x => x.Identities.Any(y => y.Type == "Passwordless" && y.Id == verifiedUser.UserId))
             .FirstOrDefaultAsync();
 

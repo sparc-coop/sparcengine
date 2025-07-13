@@ -4,7 +4,7 @@ namespace Sparc.Engine.Billing;
 
 public interface ISparcBilling
 {
-    [Post("/billing/create-order-payment")]
+    [Post("/billing/payments")]
     Task<CreateOrderPaymentResponse> CreateOrderPaymentAsync([Body] CreateOrderPaymentRequest request);
 
     [Get("/billing/get-product/{productId}")]

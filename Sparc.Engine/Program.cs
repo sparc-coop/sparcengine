@@ -14,7 +14,7 @@ builder.Services.AddScoped<FriendlyId>();
 builder.Services.AddCosmos<SparcEngineContext>(builder.Configuration.GetConnectionString("Cosmos")!, "sparc", ServiceLifetime.Scoped);
 
 builder.AddSparcAuthentication<SparcUser>();
-builder.AddSparcEngineBilling();
+builder.AddSparcBilling();
 builder.AddTovikTranslator();
 
 builder.Services.AddMediatR(options =>
@@ -39,7 +39,7 @@ builder.Services.Configure<JsonOptions>(options =>
 var app = builder.Build();
 app.MapStaticAssets();
 app.UseSparcAuthentication<SparcUser>();
-app.UseSparcEngineBilling();
+app.UseSparcBilling();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

@@ -78,7 +78,7 @@ public class TovikTranslator(IEnumerable<ITranslator> translators, IRepository<T
             ?? throw new Exception($"No translator found for {fromLanguage.Id} to {toLanguage.Id}");
     }
 
-    internal static Language? GetLanguage(string languageClaim)
+    internal static Language? GetLanguage(string? languageClaim)
     {
         if (Languages == null || string.IsNullOrWhiteSpace(languageClaim))
             return null;
