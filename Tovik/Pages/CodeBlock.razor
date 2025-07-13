@@ -30,7 +30,7 @@
 
 @inject IJSRuntime Js
 @code {
-    [Parameter] public RenderFragment ChildContent { get; set; }
+    [Parameter] public required RenderFragment ChildContent { get; set; }
     [Parameter] public bool CanCopy { get; set; }
     bool isCopied = false;
 

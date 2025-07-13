@@ -27,12 +27,11 @@
 </tr>
 
 @code {
-    [Parameter] public SparcDomain Domain { get; set; }
+    [Parameter] public required SparcDomain Domain { get; set; }
     [Parameter] public string? PageType { get; set; }
     [Parameter] public EventCallback<SparcDomain> OnDelete { get; set; }
 
     bool showDomainActions = false;
-    int? num;
 
     private void ToggleDomainActions()
     {

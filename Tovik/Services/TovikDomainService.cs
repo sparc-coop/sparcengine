@@ -63,7 +63,7 @@ namespace Tovik.Services
             if (string.IsNullOrWhiteSpace(text))
                 return 0;
 
-            var words = text.Split((char[])null, StringSplitOptions.RemoveEmptyEntries);
+            var words = text.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries);
 
             return words.Length;
         }
