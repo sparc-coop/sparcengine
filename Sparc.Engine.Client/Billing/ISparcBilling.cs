@@ -8,5 +8,5 @@ public interface ISparcBilling
     Task<CreateOrderPaymentResponse> CreateOrderPaymentAsync([Body] CreateOrderPaymentRequest request);
 
     [Get("/billing/products/{productId}")]
-    Task<GetProductResponse> GetProductAsync(string productId);
+    Task<GetProductResponse> GetProductAsync(string productId, string? currency = null);
 }

@@ -18,10 +18,14 @@ public class SparcEngineBillingService(ExchangeRates rates, IConfiguration confi
             });
 
         billingGroup.MapGet("/products/{productId}",
-            async (SparcEngineBillingService svc, string productId) =>
+            async (SparcEngineBillingService svc, string productId, string? currency = null) =>
             {
                 var product = await svc.GetProductAsync(productId);
-                return Results.Ok(product);
+                var price = currency == null 
+                ? product.DefaultPrice.UnitAmountDecimal 
+                : await svc.GetPriceAsync(productId, currency ?? "USD");
+                
+                return Results.Ok(new GetProductResponse(productId, product.Name, price ?? 0, currency));
             });
     }
 }

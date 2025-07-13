@@ -9,7 +9,7 @@ public record CreateOrderPaymentRequest(
     string? SetupFutureUsage
 );
 
-public class CreateOrderRequest()
+public class SparcOrder()
 {
     public long Amount { get; set; }
     public string Currency { get; set; } = "";
