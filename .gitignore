@@ -404,3 +404,17 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+/Tovik/wwwroot/MD5.js
+/Tovik/wwwroot/SparcEngine.js
+/Tovik/wwwroot/tovik.js
+/Tovik/wwwroot/TovikDb.js
+/Tovik/wwwroot/TovikElement.js
+/Tovik/wwwroot/TovikLanguageElement.js
+/Tovik/wwwroot/TovikNode.js
+/Tovik/wwwroot/MD5.js.map
+/Tovik/wwwroot/SparcEngine.js.map
+/Tovik/wwwroot/tovik.js.map
+/Tovik/wwwroot/TovikDb.js.map
+/Tovik/wwwroot/TovikElement.js.map
+/Tovik/wwwroot/TovikLanguageElement.js.map
+/Tovik/wwwroot/TovikNode.js.map
