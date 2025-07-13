@@ -21,7 +21,7 @@ public static class ServiceCollectionExtensions
             options.UseSqlServer(builder.Configuration.GetConnectionString("Aura"));
         });
 
-        builder.Services.AddCosmos<SparcAuraContext>(builder.Configuration.GetConnectionString("Cosmos")!, "Users", ServiceLifetime.Scoped);
+        builder.Services.AddCosmos<SparcAuraContext>(builder.Configuration.GetConnectionString("Cosmos")!, "sparc", ServiceLifetime.Scoped);
 
         builder.Services.AddAuthorization()
             .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)

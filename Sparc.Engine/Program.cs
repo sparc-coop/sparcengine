@@ -1,8 +1,10 @@
+using MediatR.NotificationPublishers;
 using Microsoft.AspNetCore.Cors.Infrastructure;
 using Scalar.AspNetCore;
 using Sparc.Aura;
 using Sparc.Blossom.Authentication;
 using Sparc.Blossom.Realtime;
+using System.Reflection;
 using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,6 +14,14 @@ builder.AddSparcAura();
 
 builder.Services.AddTwilio(builder.Configuration);
 builder.Services.AddHybridCache();
+
+builder.Services.AddMediatR(options =>
+{
+    options.RegisterServicesFromAssembly(Assembly.GetEntryAssembly());
+    options.RegisterServicesFromAssemblyContaining<BlossomEvent>();
+    options.NotificationPublisher = new TaskWhenAllPublisher();
+    options.NotificationPublisherType = typeof(TaskWhenAllPublisher);
+});
 
 builder.Services.AddCors();
 builder.Services.AddScoped<ICorsPolicyProvider, SparcAuraDomainPolicyProvider>();
