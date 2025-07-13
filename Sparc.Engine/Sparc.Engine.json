@@ -5,7 +5,7 @@
     "version": "1.0.0"
   },
   "paths": {
-    "/tools/friendlyid": {
+    "/aura/friendlyid": {
       "get": {
         "tags": [
           "Sparc.Engine"
@@ -43,7 +43,7 @@
         }
       }
     },
-    "/auth/register": {
+    "/aura/register": {
       "post": {
         "tags": [
           "SparcAuthenticator`1"
@@ -62,36 +62,7 @@
         }
       }
     },
-    "/auth/login": {
-      "post": {
-        "tags": [
-          "SparcAuthenticator`1"
-        ],
-        "parameters": [
-          {
-            "name": "emailOrToken",
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "default": null
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/BlossomUser"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/auth/logout": {
+    "/aura/login": {
       "post": {
         "tags": [
           "SparcAuthenticator`1"
@@ -120,7 +91,36 @@
         }
       }
     },
-    "/auth/userinfo": {
+    "/aura/logout": {
+      "post": {
+        "tags": [
+          "SparcAuthenticator`1"
+        ],
+        "parameters": [
+          {
+            "name": "emailOrToken",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": null
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BlossomUser"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/aura/userinfo": {
       "get": {
         "tags": [
           "BlossomDefaultAuthenticator`1"

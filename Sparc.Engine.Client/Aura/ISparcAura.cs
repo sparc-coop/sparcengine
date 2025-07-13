@@ -8,15 +8,15 @@ public interface ISparcAura
     /// <returns>OK</returns>
     /// <exception cref="ApiException">Thrown when the request returns a non-success status code.</exception>
     [Headers("Accept: text/plain")]
-    [Get("/tools/friendlyid")]
+    [Get("/aura/friendlyid")]
     Task<string> FriendlyId();
 
-    [Post("/auth/login")]
+    [Post("/aura/login")]
     Task<BlossomUser> Login(string? emailOrToken = null);
 
-    [Get("/auth/userinfo")]
+    [Get("/aura/userinfo")]
     Task<BlossomUser> UserInfo();
 
-    [Post("/auth/userinfo")]
+    [Post("/aura/userinfo")]
     Task<BlossomUser> UpdateUserInfo([Body] BlossomAvatar avatar);
 }

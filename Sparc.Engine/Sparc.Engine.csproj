@@ -17,10 +17,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Content Include="Tools\FriendlyId\words_alpha.txt">
+		<Content Include="Aura\FriendlyId\words_alpha.txt">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
-		<Content Include="Tools\FriendlyId\words_officesafe.txt">
+		<Content Include="Aura\FriendlyId\words_officesafe.txt">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</Content>
 	</ItemGroup>
