@@ -1,4 +1,5 @@
 ﻿@page "/"
+@using Tovik.Domains
 @layout MainLayout
 
 <PageTitle>Tovik</PageTitle>
@@ -61,7 +62,7 @@
 </article>
 
 @inject IRepository<TovikDomain> SparcDomains
-@inject Tovik.Services.TovikDomainService TovikDomainService
+@inject TovikDomainService TovikDomainService
 @code {
     private List<TovikDomain> Domains = new();
     private TovikDomain NewDomain = new TovikDomain("");

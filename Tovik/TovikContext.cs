@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
 using Sparc.Engine;
+using Tovik;
 
 internal class TovikContext(DbContextOptions<TovikContext> options) : DbContext(options)
 {

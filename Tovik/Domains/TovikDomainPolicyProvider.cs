@@ -24,8 +24,8 @@ public class TovikDomainPolicyProvider(IRepository<TovikDomain> domains, HybridC
             return AllowAll;
 
         var currentDomain = context.Request.Headers.Origin.ToString();
-        var domain = await cache.GetOrCreateAsync(currentDomain, async _ => await GetOrAddDomainAsync(currentDomain), new HybridCacheEntryOptions { Expiration = TimeSpan.FromMinutes(5) });
-        if (!domain.HasProduct(policyName))
+        var domain = await cache.GetOrCreateAsync(currentDomain, async _ => await GetDomainAsync(currentDomain), new HybridCacheEntryOptions { Expiration = TimeSpan.FromMinutes(5) });
+        if (domain == null)
             return DenyAll;
 
         if (_policies.TryGetValue(domain.Domain, out var existingPolicy))
@@ -41,17 +41,11 @@ public class TovikDomainPolicyProvider(IRepository<TovikDomain> domains, HybridC
         return _policies[currentDomain];
     }
 
-    async Task<TovikDomain> GetOrAddDomainAsync(string domain)
+    async Task<TovikDomain?> GetDomainAsync(string domain)
     {
         var existing = await domains.Query
             .Where(d => d.Domain == domain)
             .FirstOrDefaultAsync();
-
-        if (existing == null)
-        {
-            existing = new(domain);
-            await domains.AddAsync(existing);
-        }
 
         return existing;
     }
