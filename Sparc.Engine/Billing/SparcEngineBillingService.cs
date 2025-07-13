@@ -17,7 +17,7 @@ public class SparcEngineBillingService(ExchangeRates rates, IConfiguration confi
                 return Results.Ok(new { intent.ClientSecret });
             });
 
-        billingGroup.MapGet("/get-product/{productId}",
+        billingGroup.MapGet("/products/{productId}",
             async (SparcEngineBillingService svc, string productId) =>
             {
                 var product = await svc.GetProductAsync(productId);

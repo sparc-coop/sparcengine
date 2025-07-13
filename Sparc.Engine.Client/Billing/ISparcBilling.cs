@@ -7,6 +7,6 @@ public interface ISparcBilling
     [Post("/billing/payments")]
     Task<CreateOrderPaymentResponse> CreateOrderPaymentAsync([Body] CreateOrderPaymentRequest request);
 
-    [Get("/billing/get-product/{productId}")]
+    [Get("/billing/products/{productId}")]
     Task<GetProductResponse> GetProductAsync(string productId);
 }
