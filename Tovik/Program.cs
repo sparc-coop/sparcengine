@@ -8,7 +8,7 @@ using Tovik.Languages;
 var builder = BlossomApplication.CreateBuilder<Html>(args);
 
 builder.Services.AddCosmos<TovikContext>(builder.Configuration.GetConnectionString("Cosmos")!, "sparc", ServiceLifetime.Scoped);
-builder.Services.AddSparcEngine();
+builder.Services.AddSparcAura();
 builder.Services.AddScoped<TovikDomainService>();
 
 builder.Services.AddScoped<IRepository<Language>, BlossomInMemoryRepository<Language>>();
