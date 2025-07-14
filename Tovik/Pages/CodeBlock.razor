@@ -1,14 +1,16 @@
 ﻿@using System.Net
 
 <div class="code-block @(CanCopy ? "can-copy" : "")">
-    <div class="code-text" @ref=HtmlRef style="display: none;">
-        @ChildContent
-    </div>
+    @if (IsMultiline)
+    {
+        <pre><code @ref=CodeRef class="language-html">
+@ChildContent</code></pre>
+    }
+    else
+    {
+        <code @ref=CodeRef class="language-html">@ChildContent</code>
+    }
 
-    <pre>
-        <code @ref=CodeRef class="language-html">
-        </code>
-    </pre>
 
     @if (CanCopy)
     {
@@ -32,14 +34,14 @@
 @code {
     [Parameter] public required RenderFragment ChildContent { get; set; }
     [Parameter] public bool CanCopy { get; set; }
+    [Parameter] public bool IsMultiline { get; set; }
     bool isCopied = false;
 
-    ElementReference HtmlRef;
     ElementReference CodeRef;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        await Js.InvokeVoidAsync("populatePreviewCode", HtmlRef, CodeRef);
+        await Js.InvokeVoidAsync("highlight", CodeRef);
     }
 
     async Task Copy()
@@ -47,7 +49,7 @@
         Console.WriteLine("Copy");
         if (ChildContent != null)
         {
-            await Js.InvokeAsync<string>("copyToClipboard", HtmlRef);
+            await Js.InvokeAsync<string>("copyToClipboard", CodeRef);
             isCopied = true;
             StateHasChanged();
             await Task.Delay(3000);
