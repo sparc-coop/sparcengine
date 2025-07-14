@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Cors.Infrastructure;
 using Sparc.Blossom.Data;
 using Sparc.Engine;
 using Tovik;
@@ -6,13 +7,11 @@ using Tovik.Services;
 var builder = BlossomApplication.CreateBuilder<Html>(args);
 
 builder.Services.AddCosmos<TovikContext>(builder.Configuration.GetConnectionString("Cosmos")!, "sparc", ServiceLifetime.Scoped);
-builder.Services.AddSparcEngine();
+builder.Services.AddSparcEngine(new Uri("https://localhost:7185"));
 builder.Services.AddScoped<TovikDomainService>();
+builder.Services.AddScoped<ICorsPolicyProvider, SparcEngineDomainPolicyProvider>();
+builder.Services.AddCors();
+builder.Services.AddHybridCache();
 
 var app = builder.Build();
-
-using var scope = app.Services.CreateScope();
-var domainRepository = scope.ServiceProvider.GetRequiredService<IRepository<SparcDomain>>();
-await domainRepository.AddAsync(SparcDomain.Generate(5));
-
 await app.RunAsync<Html>();

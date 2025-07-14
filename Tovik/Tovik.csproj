@@ -8,50 +8,15 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <Content Remove="wwwroot\dexie\dexie.js" />
-	  <Content Remove="wwwroot\dexie\dexie.js.map" />
-	  <Content Remove="wwwroot\dexie\dexie.min.js" />
-	  <Content Remove="wwwroot\dexie\dexie.min.js.map" />
-	  <Content Remove="wwwroot\dexie\dexie.mjs" />
-	  <Content Remove="wwwroot\dexie\dexie.mjs.map" />
-	  <Content Remove="wwwroot\dexie\modern\dexie.min.mjs" />
-	  <Content Remove="wwwroot\dexie\modern\dexie.min.mjs.map" />
-	  <Content Remove="wwwroot\dexie\modern\dexie.mjs" />
-	  <Content Remove="wwwroot\dexie\modern\dexie.mjs.map" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <None Include="wwwroot\dexie\dexie.js" />
-	  <None Include="wwwroot\dexie\dexie.js.map" />
-	  <None Include="wwwroot\dexie\dexie.min.js" />
-	  <None Include="wwwroot\dexie\dexie.min.js.map" />
-	  <None Include="wwwroot\dexie\dexie.mjs" />
-	  <None Include="wwwroot\dexie\dexie.mjs.map" />
-	  <None Include="wwwroot\dexie\modern\dexie.min.mjs" />
-	  <None Include="wwwroot\dexie\modern\dexie.min.mjs.map" />
-	  <None Include="wwwroot\dexie\modern\dexie.mjs" />
-	  <None Include="wwwroot\dexie\modern\dexie.mjs.map" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<ProjectReference Include="..\..\blossom\Sparc.Blossom.Data.Cosmos\Sparc.Blossom.Data.Cosmos.csproj" />
 		<ProjectReference Include="..\..\blossom\Sparc.Blossom\Sparc.Blossom.csproj" />
 		<ProjectReference Include="..\..\blossom\Sparc.Core\Sparc.Core.csproj" />
 		<ProjectReference Include="..\Sparc.Engine.Client\Sparc.Engine.Client.csproj" />
+		<PackageReference Include="Microsoft.Extensions.Caching.Hybrid" Version="9.6.0" />
 		<PackageReference Include="Microsoft.TypeScript.MSBuild" Version="5.8.3">
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
-	</ItemGroup>
-
-	<ItemGroup>
-		<TypeScriptCompile Include="Translation\dexie\dexie.d.ts" />
-		<TypeScriptCompile Include="Translation\MD5.ts" />
-		<TypeScriptCompile Include="Translation\tovik.ts" />
-		<TypeScriptCompile Include="Translation\TovikDb.ts" />
-		<TypeScriptCompile Include="Translation\TovikElement.ts" />
-		<TypeScriptCompile Include="Translation\TovikLanguageElement.ts" />
-		<TypeScriptCompile Include="Translation\TovikNode.ts" />
 	</ItemGroup>
 
 </Project>
