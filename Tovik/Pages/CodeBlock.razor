@@ -40,11 +40,6 @@
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         await Js.InvokeVoidAsync("populatePreviewCode", HtmlRef, CodeRef);
-
-        // if (HtmlRef != null)
-        //     await Js.InvokeVoidAsync("populatePreviewCode", HtmlRef, CodeRef);
-        // else if (firstRender)
-        //     await Js.InvokeVoidAsync("highlight", CodeRef);
     }
 
     async Task Copy()
@@ -52,7 +47,6 @@
         Console.WriteLine("Copy");
         if (ChildContent != null)
         {
-            // await Js.InvokeAsync<string>("copyToClipboard", ChildContent.ToString());
             await Js.InvokeAsync<string>("copyToClipboard", HtmlRef);
             isCopied = true;
             StateHasChanged();
