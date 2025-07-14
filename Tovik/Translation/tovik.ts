@@ -1,12 +1,14 @@
-import TovikNode from './TovikNode.js';
+﻿import TovikNode from './TovikNode.js';
 import TovikLanguageElement from './TovikLanguageElement.js';
 import TovikElement from './TovikElement.js';
-import SparcEngine from './SparcEngine.js';
+import TovikEngine from './TovikEngine.js';
+
 // do an initial ping to Sparc Engine to set the cookie
-SparcEngine.hi().then(() => {
+TovikEngine.hi().then(() => {
     customElements.define('tovik-t', TovikNode);
     customElements.define('tovik-language', TovikLanguageElement);
     customElements.define('tovik-translate', TovikElement);
+
     // If the document does not have a <tovik-translate> element, create one and point it to the body
     if (!document.querySelector('tovik-translate')) {
         var bodyElement = document.createElement('tovik-translate');
@@ -14,4 +16,3 @@ SparcEngine.hi().then(() => {
         document.body.appendChild(bodyElement);
     }
 });
-//# sourceMappingURL=tovik.js.map

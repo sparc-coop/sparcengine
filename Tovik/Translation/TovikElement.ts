@@ -1,5 +1,5 @@
 ﻿import db from './TovikDb.js';
-import SparcEngine from './SparcEngine.js';
+import TovikEngine from './TovikEngine.js';
 
 export default class TovikElement extends HTMLElement {
     observer;
@@ -100,7 +100,7 @@ export default class TovikElement extends HTMLElement {
             }
 
             console.log('mapping', textNode.originalText);
-            textNode.hash = SparcEngine.idHash(textNode.originalText);
+            textNode.hash = TovikEngine.idHash(textNode.originalText);
             const translation = await db.translations.get(textNode.hash);
             if (translation) {
                 textNode.textContent = translation.text;
@@ -128,7 +128,7 @@ export default class TovikElement extends HTMLElement {
             text: node.originalText
         }));
 
-        const newTranslations = await SparcEngine.bulkTranslate(textsToTranslate, this.#originalLang);
+        const newTranslations = await TovikEngine.bulkTranslate(textsToTranslate, this.#originalLang);
         for (const node of pendingTranslations) {
             const translation = newTranslations.find(t => t.id === node.hash);
             console.log('checking for', newTranslations, node.hash, translation);
