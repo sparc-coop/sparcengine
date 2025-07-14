@@ -22,7 +22,7 @@ public class TovikTranslator(IEnumerable<ITranslator> translators, IRepository<T
             }
         }
 
-        Languages = Languages.OrderBy(x => x.Id)
+        Languages = Languages.OrderBy(x => x.DisplayName)
             .ThenBy(x => x.DialectId == null ? 1 : 0)
             .ToList();
 
