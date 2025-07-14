@@ -9,19 +9,22 @@ public class StripePaymentService
     public StripePaymentService(ExchangeRates rates, IConfiguration config)
     {
         _rates = rates;
-        StripeConfiguration.ApiKey = config.GetConnectionString("Stripe") 
+        StripeConfiguration.ApiKey = config.GetConnectionString("Stripe")
             ?? throw new InvalidOperationException("Stripe connection string is missing in configuration.");
     }
-    public async Task<PaymentIntent> CreatePaymentIntentAsync(string email, decimal amount, string currencyId, string? paymentIntentId = null)
+    public async Task<PaymentIntent> CreatePaymentIntentAsync(string email, string productId, string currencyId, string? paymentIntentId = null)
     {
         var customerId = await GetOrCreateCustomerAsync(email);
         currencyId = currencyId.ToLower();
+
+        var basePrice = await GetPriceAsync(productId, currencyId, true)
+            ?? throw new InvalidOperationException($"Product {productId} does not have a price in currency {currencyId}.");
 
         if (string.IsNullOrWhiteSpace(paymentIntentId))
         {
             var createOptions = new PaymentIntentCreateOptions
             {
-                Amount = ToStripePrice(amount, currencyId),
+                Amount = (long)basePrice,
                 Currency = currencyId,
                 Customer = customerId,
                 SetupFutureUsage = "on_session",
@@ -39,7 +42,7 @@ public class StripePaymentService
             var service = new PaymentIntentService();
             var options = new PaymentIntentUpdateOptions
             {
-                Amount = ToStripePrice(amount, currencyId),
+                Amount = (long)basePrice,
                 Currency = currencyId
             };
             return await service.UpdateAsync(paymentIntentId, options);
@@ -68,7 +71,7 @@ public class StripePaymentService
         return product;
     }
 
-    public async Task<decimal?> GetPriceAsync(string productId, string currencyId)
+    public async Task<decimal?> GetPriceAsync(string productId, string currencyId, bool stripeFormat = false)
     {
         currencyId = currencyId.ToLower();
 
@@ -85,71 +88,25 @@ public class StripePaymentService
             return null;
 
         var hasPrice = basePrice.CurrencyOptions.TryGetValue(currencyId, out var currentPrice);
-        if (hasPrice && currentPrice!.UnitAmount != null && _rates.IsOutOfDate)
-            // If the price is already set and the rates are up to date, return the price
-            return FromStripePrice(currentPrice.UnitAmount.Value, currencyId);
+        var newPrice = ToStripePrice(await _rates.ConvertAsync(FromStripePrice(basePrice.UnitAmount.Value, "USD"), "USD", currencyId, true), currencyId);
+        var difference = currentPrice?.UnitAmount == null ? 1 : Math.Abs(newPrice - currentPrice.UnitAmount.Value) / (decimal)currentPrice.UnitAmount.Value;
 
-        var newPrice = await _rates.ConvertAsync(basePrice.UnitAmount.Value, "USD", currencyId, true);
-        // if the difference is less than 20%, keep the old price
-        if (currentPrice?.UnitAmount != null && Math.Abs(newPrice - currentPrice.UnitAmount.Value) / currentPrice.UnitAmount.Value < 0.2M)
-            return FromStripePrice(currentPrice.UnitAmount.Value, currencyId);
-
-        var priceUpdateOptions = new PriceUpdateOptions
+        if (difference > 0.2M)
         {
-            CurrencyOptions = new Dictionary<string, PriceCurrencyOptionsOptions>
-            {
-                { currencyId, new PriceCurrencyOptionsOptions { UnitAmount = newPrice } }
-            }
-        };
-        await priceService.UpdateAsync(basePrice.Id, priceUpdateOptions);
-
-        return FromStripePrice(newPrice, currencyId);
+            // Stripe doesn't let you update prices directly, so just return the newly calculated price
+            //var priceUpdateOptions = new PriceUpdateOptions
+            //{
+            //    CurrencyOptions = new Dictionary<string, PriceCurrencyOptionsOptions>
+            //    {
+            //        { currencyId, new PriceCurrencyOptionsOptions { UnitAmount = newPrice } }
+            //    }
+            //};
+            //await priceService.UpdateAsync(basePrice.Id, priceUpdateOptions);
+            return stripeFormat ? newPrice : FromStripePrice(newPrice, currencyId);
+        }
+        
+        return stripeFormat ? currentPrice.UnitAmount.Value : FromStripePrice(currentPrice.UnitAmount.Value, currencyId);
     }
-
-    //public async Task<Price> CreatePriceWithCurrencyOptionsAsync(string productId)
-    //{
-    //    var priceService = new PriceService();
-    //    var defaultCurrency = "usd";
-    //    var defaultUnitAmount = 1000;
-    //    var currencyOptions = new Dictionary<string, PriceCurrencyOptionsOptions>();
-
-    //    var lowercasedSupportedRates = _rates.Rates
-    //        .Where(kvp => SupportedCurrencies.Contains(kvp.Key))
-    //        .ToDictionary(
-    //            kvp => kvp.Key.ToLowerInvariant(),
-    //            kvp => kvp.Value // / eurToUsdRate
-    //        ).Where(x => x.Value <= 10_000M)
-    //        .ToDictionary(
-    //            x => x.Key,
-    //            x => x.Value
-    //        );
-
-    //    lowercasedSupportedRates.Remove("usd");
-
-
-    //    foreach (var rate in lowercasedSupportedRates)
-    //    {
-    //        var convertedValue = Math.Round(rate.Value, 2) * defaultUnitAmount;
-    //        int roundedValue = (int)Math.Round(convertedValue, 0);
-    //        var strVal = roundedValue.ToString();
-    //        var niceStrVal = strVal[0] + new string(strVal.Skip(1).Select(x => '0').ToArray());
-
-    //        currencyOptions[rate.Key] = new PriceCurrencyOptionsOptions
-    //        {
-    //            UnitAmountDecimal = decimal.Parse(niceStrVal)
-    //        };
-    //    }
-
-    //    var createOptions = new PriceCreateOptions
-    //    {
-    //        Product = productId,
-    //        Currency = defaultCurrency,
-    //        UnitAmountDecimal = defaultUnitAmount,
-    //        CurrencyOptions = currencyOptions,
-    //    };
-
-    //    return await priceService.CreateAsync(createOptions);
-    //}
 
     public async Task<string?> GetOrCreateCustomerAsync(string? email)
     {
@@ -176,7 +133,7 @@ public class StripePaymentService
         return newCustomer.Id;
     }
 
-    private long ToStripePrice(decimal amount, string currencyId)
+    public long ToStripePrice(decimal amount, string currencyId)
     {
         if (ZeroDecimalCurrencies.Contains(currencyId))
             return (long)amount;
@@ -184,7 +141,7 @@ public class StripePaymentService
         return (long)(amount * 100);
     }
 
-    private decimal FromStripePrice(long amount, string currencyId)
+    public decimal FromStripePrice(long amount, string currencyId)
     {
         if (ZeroDecimalCurrencies.Contains(currencyId))
             return amount;
@@ -198,7 +155,7 @@ public class StripePaymentService
         "ugx", "vnd", "vuv", "xaf", "xof", "xpf"
     };
 
-    static readonly HashSet<string> Currencies = new(StringComparer.OrdinalIgnoreCase)
+    protected static readonly HashSet<string> Currencies = new(StringComparer.OrdinalIgnoreCase)
     {
         "sll","aed","afn","all","amd","ang","aoa","ars","aud","awg","azn",
         "bam","bbd","bdt","bgn","bhd","bif","bmd","bnd","bob","brl","bsd",
@@ -211,7 +168,7 @@ public class StripePaymentService
         "nad","ngn","nio","nok","npr","nzd","omr","pab","pen","pgk","php",
         "pkr","pln","pyg","qar","ron","rsd","rub","rwf","sar","sbd","scr",
         "sek","sgd","shp","sle","sos","srd","std","szl","thb","tjs","tnd",
-        "top","try","ttd","twd","tzs","uah","ugx","uyu","uzs","vnd","vuv",
+        "top","try","ttd","twd","tzs","uah","ugx","uyu","usd","uzs","vnd","vuv",
         "wst","xaf","xcd","xcg","xof","xpf","yer","zar","zmw","btn",
         "ghs","eek","lvl","svc","vef","ltl"
     };

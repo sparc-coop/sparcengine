@@ -1,8 +1,9 @@
-﻿using Sparc.Engine.Billing.Stripe;
+﻿using Sparc.Core.Billing;
+using Sparc.Engine.Billing.Stripe;
 
 namespace Sparc.Engine.Billing;
 
-public record SparcOrder(string Email, long Amount, string Currency, string? PaymentIntentId = null);
+public record SparcOrder(string Email, string ProductId, string Currency, string? PaymentIntentId = null);
 
 public class SparcEngineBillingService(ExchangeRates rates, IConfiguration config) : StripePaymentService(rates, config), IBlossomEndpoints
 {
@@ -13,12 +14,15 @@ public class SparcEngineBillingService(ExchangeRates rates, IConfiguration confi
         billingGroup.MapPost("/payments", 
             async (SparcEngineBillingService svc, SparcOrder req) =>
             {
-                var intent = await svc.CreatePaymentIntentAsync(req.Email, req.Amount, req.Currency, req.PaymentIntentId);
-                return Results.Ok(new 
+                var intent = await svc.CreatePaymentIntentAsync(req.Email, req.ProductId, req.Currency, req.PaymentIntentId);
+                return Results.Ok(new SparcPaymentIntent
                 { 
-                    intent.ClientSecret, 
-                    PublishableKey = config["Stripe:PublishableKey"],
-                    PaymentIntentId = intent.Id
+                    ClientSecret = intent.ClientSecret, 
+                    PublishableKey = config["Stripe:PublishableKey"]!,
+                    PaymentIntentId = intent.Id,
+                    Amount = FromStripePrice(intent.Amount, req.Currency),
+                    Currency = req.Currency,
+                    FormattedAmount = SparcCurrency.From(req.Currency).ToString(FromStripePrice(intent.Amount, req.Currency))
                 });
             });
 
@@ -32,5 +36,13 @@ public class SparcEngineBillingService(ExchangeRates rates, IConfiguration confi
                 
                 return Results.Ok(new GetProductResponse(productId, product.Name, price ?? 0, currency ?? "USD"));
             });
+
+        billingGroup.MapGet("/currencies",
+            () =>
+            {
+                var currencies = SparcCurrency.All()
+                    .Where(x => Currencies.Contains(x.Id.ToLower()));
+                return Results.Ok(currencies);
+            }).CacheOutput();
     }
 }

@@ -13,7 +13,7 @@ public class ExchangeRates(IConfiguration config)
     public DateTime? AsOfDate { get; private set; }
     public bool IsOutOfDate => Rates.Count == 0 || LastUpdated == null || LastUpdated < DateTime.UtcNow.AddHours(-24);
 
-    public async Task<decimal> ConvertAsync(decimal amount, string from, string to)
+    public async Task<decimal> ConvertAsync(decimal amount, string from, string to, bool round = false)
     {
         from = from.ToUpper();
         to = to.ToUpper();
@@ -24,23 +24,21 @@ public class ExchangeRates(IConfiguration config)
         if (from == to)
             return amount;
 
-        if (from == "USD")
-            return amount * Rates[to];
+        var convertedAmount =
+            from == "USD" ? amount * Rates[to]
+            : to == "USD" ? amount / Rates[from]
+            : amount * Rates[to] / Rates[from];
 
-        if (to == "USD")
-            return amount / Rates[from];
-
-        return amount * Rates[to] / Rates[from];
-    }
-
-    public async Task<long> ConvertAsync(long amount, string from, string to, bool round = false)
-    {
-        var convertedAmount = await ConvertAsync((decimal)amount, from, to);
         if (round)
-            // round to the nearest 100
-            convertedAmount = Math.Round(convertedAmount / 100, 0) * 100;
+        {
+            // Find the largest power of 10 less than or equal to 10% of the convertedAmount
+            var tenPercent = convertedAmount * 0.1m;
+            var magnitude = (decimal)Math.Pow(10, Math.Floor(Math.Log10((double)tenPercent)));
+            // Round down to nearest 'magnitude'
+            convertedAmount = Math.Floor(convertedAmount / magnitude) * magnitude;
+        }
 
-        return (long)convertedAmount;
+        return convertedAmount;
     }
 
     public async Task<List<decimal>> ConvertToNiceAmountsAsync(string toCurrency, params decimal[] usdAmounts)

@@ -191,6 +191,18 @@
         }
       }
     },
+    "/billing/currencies": {
+      "get": {
+        "tags": [
+          "Sparc.Engine"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/translate": {
       "post": {
         "tags": [
@@ -668,7 +680,7 @@
       "SparcOrder": {
         "required": [
           "email",
-          "amount",
+          "productId",
           "currency"
         ],
         "type": "object",
@@ -676,9 +688,8 @@
           "email": {
             "type": "string"
           },
-          "amount": {
-            "type": "integer",
-            "format": "int64"
+          "productId": {
+            "type": "string"
           },
           "currency": {
             "type": "string"
