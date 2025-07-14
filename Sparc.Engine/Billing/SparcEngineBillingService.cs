@@ -14,7 +14,7 @@ public class SparcEngineBillingService(ExchangeRates rates, IConfiguration confi
             async (SparcEngineBillingService svc, CreateOrderPaymentRequest req) =>
             {
                 var intent = await svc.CreatePaymentIntentAsync(req.Email, req.Amount, req.Currency);
-                return Results.Ok(new { intent.ClientSecret });
+                return Results.Ok(new { intent.ClientSecret, PublishableKey = config["Stripe:PublishableKey"] });
             });
 
         billingGroup.MapGet("/products/{productId}",

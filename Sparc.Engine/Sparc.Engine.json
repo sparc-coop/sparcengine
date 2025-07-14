@@ -142,7 +142,7 @@
     "/billing/payments": {
       "post": {
         "tags": [
-          "Sparc.Engine"
+          "SparcEngineBillingService"
         ],
         "requestBody": {
           "content": {
@@ -805,6 +805,9 @@
     },
     {
       "name": "BlossomDefaultAuthenticator`1"
+    },
+    {
+      "name": "SparcEngineBillingService"
     },
     {
       "name": "Contents"

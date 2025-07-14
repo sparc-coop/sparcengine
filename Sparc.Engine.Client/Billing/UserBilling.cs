@@ -11,6 +11,7 @@ public class CreateOrderPaymentResponse
 {
     [Newtonsoft.Json.JsonProperty("clientSecret")]
     public string ClientSecret { get; set; } = default!;
+    public string PublishableKey { get; set; } = default!;
 }
 
 public record ConfirmOrderPaymentRequest(string PaymentIntentId, string PaymentMethodId);
