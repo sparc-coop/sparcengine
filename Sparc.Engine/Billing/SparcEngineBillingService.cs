@@ -2,7 +2,7 @@
 
 namespace Sparc.Engine.Billing;
 
-public record CreateOrderPaymentRequest(string Email, long Amount, string Currency);
+public record SparcOrder(string Email, long Amount, string Currency, string? PaymentIntentId = null);
 
 public class SparcEngineBillingService(ExchangeRates rates, IConfiguration config) : StripePaymentService(rates, config), IBlossomEndpoints
 {
@@ -11,10 +11,15 @@ public class SparcEngineBillingService(ExchangeRates rates, IConfiguration confi
         var billingGroup = endpoints.MapGroup("/billing");
 
         billingGroup.MapPost("/payments", 
-            async (SparcEngineBillingService svc, CreateOrderPaymentRequest req) =>
+            async (SparcEngineBillingService svc, SparcOrder req) =>
             {
-                var intent = await svc.CreatePaymentIntentAsync(req.Email, req.Amount, req.Currency);
-                return Results.Ok(new { intent.ClientSecret, PublishableKey = config["Stripe:PublishableKey"] });
+                var intent = await svc.CreatePaymentIntentAsync(req.Email, req.Amount, req.Currency, req.PaymentIntentId);
+                return Results.Ok(new 
+                { 
+                    intent.ClientSecret, 
+                    PublishableKey = config["Stripe:PublishableKey"],
+                    PaymentIntentId = intent.Id
+                });
             });
 
         billingGroup.MapGet("/products/{productId}",

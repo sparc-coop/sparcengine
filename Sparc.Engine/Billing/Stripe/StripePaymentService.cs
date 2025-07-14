@@ -12,25 +12,38 @@ public class StripePaymentService
         StripeConfiguration.ApiKey = config.GetConnectionString("Stripe") 
             ?? throw new InvalidOperationException("Stripe connection string is missing in configuration.");
     }
-    public async Task<PaymentIntent> CreatePaymentIntentAsync(string email, decimal amount, string currencyId, string? productId = null)
+    public async Task<PaymentIntent> CreatePaymentIntentAsync(string email, decimal amount, string currencyId, string? paymentIntentId = null)
     {
         var customerId = await GetOrCreateCustomerAsync(email);
         currencyId = currencyId.ToLower();
 
-        var createOptions = new PaymentIntentCreateOptions
+        if (string.IsNullOrWhiteSpace(paymentIntentId))
         {
-            Amount = ToStripePrice(amount, currencyId),
-            Currency = currencyId,
-            Customer = customerId,
-            SetupFutureUsage = "on_session",
-            StatementDescriptor = productId,
-            AutomaticPaymentMethods = new PaymentIntentAutomaticPaymentMethodsOptions
+            var createOptions = new PaymentIntentCreateOptions
             {
-                Enabled = true,
-            },
-        };
+                Amount = ToStripePrice(amount, currencyId),
+                Currency = currencyId,
+                Customer = customerId,
+                SetupFutureUsage = "on_session",
+                AutomaticPaymentMethods = new PaymentIntentAutomaticPaymentMethodsOptions
+                {
+                    Enabled = true,
+                },
+            };
 
-        return await new PaymentIntentService().CreateAsync(createOptions);
+            return await new PaymentIntentService().CreateAsync(createOptions);
+        }
+
+        else
+        {
+            var service = new PaymentIntentService();
+            var options = new PaymentIntentUpdateOptions
+            {
+                Amount = ToStripePrice(amount, currencyId),
+                Currency = currencyId
+            };
+            return await service.UpdateAsync(paymentIntentId, options);
+        }
     }
 
     public async Task<PaymentIntent> ConfirmPaymentIntentAsync(

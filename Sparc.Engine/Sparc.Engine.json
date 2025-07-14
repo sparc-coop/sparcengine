@@ -148,7 +148,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateOrderPaymentRequest"
+                "$ref": "#/components/schemas/SparcOrder"
               }
             }
           },
@@ -600,26 +600,6 @@
           }
         }
       },
-      "CreateOrderPaymentRequest": {
-        "required": [
-          "email",
-          "amount",
-          "currency"
-        ],
-        "type": "object",
-        "properties": {
-          "email": {
-            "type": "string"
-          },
-          "amount": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "currency": {
-            "type": "string"
-          }
-        }
-      },
       "Language": {
         "required": [
           "id"
@@ -681,6 +661,31 @@
           },
           "isRightToLeft": {
             "type": "boolean",
+            "nullable": true
+          }
+        }
+      },
+      "SparcOrder": {
+        "required": [
+          "email",
+          "amount",
+          "currency"
+        ],
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "paymentIntentId": {
+            "type": "string",
+            "default": null,
             "nullable": true
           }
         }
