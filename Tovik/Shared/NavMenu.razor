@@ -10,9 +10,9 @@
     <div class="nav-menu @(showMobileMenu ? "show" : "")">
         <SecondaryLogo />
         <ul>
-            <li class="@(Page.ToLower() == "/demo" ? "active" : "")"><a href="/demo" @onclick='() => PageChanged("demo")'><BubbleTail />Demo</a></li>
-            <li class="@(Page.ToLower() == "/" || Page == "/domain" ? "active" : "")"><a href="/" @onclick='() => PageChanged("/")'><BubbleTail />Domain</a></li>
-            <li class="@(Page.ToLower() == "/install" ? "active" : "")"><a href="/install" @onclick='() => PageChanged("install")'><BubbleTail />Installation</a></li>
+            <li><NavLink class="nav-link" href="/demo" ActiveClass="active" @onclick=ToggleMobileMenu><BubbleTail />Demo</NavLink></li>
+            <li><NavLink class="nav-link" href="/domains" ActiveClass="active" @onclick=ToggleMobileMenu><BubbleTail />Domains</NavLink></li>
+            <li><NavLink class="nav-link" href="/install" ActiveClass="active" @onclick=ToggleMobileMenu><BubbleTail />Installation</NavLink></li>
         </ul>
     </div>
     <div class="nav-mask">
@@ -22,9 +22,6 @@
 <div class="nav-overlay @(showOverlay ? "show" : "")" @onclick=ToggleMobileMenu></div>
 
 @code {
-    [Parameter] public string Page { get; set; } = "/";
-    [Parameter] public EventCallback<string> OnPageChanged { get; set; }
-
     bool showMobileMenu;
     bool showOverlay;
 
@@ -40,12 +37,5 @@
             await Task.Delay(1500);
             showOverlay = false;
         }
-    }
-
-    void PageChanged(string page)
-    {
-        Page = page;
-        OnPageChanged.InvokeAsync(page);
-        ToggleMobileMenu();
     }
 }

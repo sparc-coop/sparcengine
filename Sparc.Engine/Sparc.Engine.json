@@ -398,6 +398,9 @@
           "language": {
             "$ref": "#/components/schemas/Language"
           },
+          "currency": {
+            "$ref": "#/components/schemas/SparcCurrency"
+          },
           "languagesSpoken": {
             "type": "array",
             "items": {
@@ -465,6 +468,9 @@
           },
           "language": {
             "$ref": "#/components/schemas/Language"
+          },
+          "currency": {
+            "$ref": "#/components/schemas/SparcCurrency"
           },
           "languagesSpoken": {
             "type": "array",
@@ -541,9 +547,6 @@
             "type": "string"
           },
           "nativeName": {
-            "type": "string"
-          },
-          "currencyNativeName": {
             "type": "string"
           }
         },
@@ -676,6 +679,24 @@
             "nullable": true
           }
         }
+      },
+      "SparcCurrency": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "symbol": {
+            "type": "string"
+          },
+          "nativeName": {
+            "type": "string"
+          }
+        },
+        "nullable": true
       },
       "SparcOrder": {
         "required": [
