@@ -199,11 +199,10 @@ ul {
 
 .code-text {
     color: var(--blue-50, #EFF7F9);
-    leading-trim: both;
-    text-edge: cap;
     font-family: "Courier New";
     font-size: 16px;
     font-style: normal;
     font-weight: 400;
     line-height: normal;
+    opacity: 0.8;
 }
