@@ -135,7 +135,7 @@ main ::deep table tbody tr:last-child {
   }
   .layout-container ::deep .nav-sidebar {
     grid-column: 1/span 1;
-    margin-top: 100px;
+    margin-top: 44px;
     z-index: 10;
   }
   .layout-container ::deep .nav-overlay {
@@ -156,14 +156,15 @@ main ::deep table tbody tr:last-child {
     display: none;
   }
   .layout-container main .hero-background {
-    width: 100vw;
-    top: -300px;
-    left: -40%;
+    width: 110vw;
+    top: -38vh;
+    left: -38vw;
     transform: none;
     opacity: 0.6;
   }
   .layout-container main ::deep article {
     width: 100%;
+    margin-top: 144px;
   }
   .layout-container main ::deep article .page-container {
     max-width: none;
