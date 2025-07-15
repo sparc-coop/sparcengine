@@ -1,6 +1,6 @@
 ﻿@inherits LayoutComponentBase
 
-<NavMenu />
+<NavMenu Page=@slug OnPageChanged=PageChanged />
 
 <main>
     <div class="main-grid">
@@ -13,3 +13,17 @@
         @Body
     </div>
 </main>
+
+@code {
+    string slug = "/";
+
+    protected override void OnInitialized()
+    {
+        slug = Nav.Uri.Substring(Nav.BaseUri.Length - 1).ToLower();
+    }
+
+    void PageChanged (string page)
+    {
+        slug = page;
+    }
+}

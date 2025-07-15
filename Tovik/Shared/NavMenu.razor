@@ -10,9 +10,9 @@
     <div class="nav-menu @(showMobileMenu ? "show" : "")">
         <SecondaryLogo />
         <ul>
-            <li><a href="/demo">Demo</a></li>
-            <li><a href="/">Domain</a></li>
-            <li><a href="/install">Installation</a></li>
+            <li class="@(Page.ToLower() == "/demo" ? "active" : "")"><a href="/demo" @onclick='() => PageChanged("demo")'><BubbleTail />Demo</a></li>
+            <li class="@(Page.ToLower() == "/" || Page == "/domain" ? "active" : "")"><a href="/" @onclick='() => PageChanged("/")'><BubbleTail />Domain</a></li>
+            <li class="@(Page.ToLower() == "/install" ? "active" : "")"><a href="/install" @onclick='() => PageChanged("install")'><BubbleTail />Installation</a></li>
         </ul>
     </div>
     <div class="nav-mask">
@@ -22,6 +22,9 @@
 <div class="nav-overlay @(showOverlay ? "show" : "")" @onclick=ToggleMobileMenu></div>
 
 @code {
+    [Parameter] public string Page { get; set; } = "/";
+    [Parameter] public EventCallback<string> OnPageChanged { get; set; }
+
     bool showMobileMenu;
     bool showOverlay;
 
@@ -37,5 +40,12 @@
             await Task.Delay(1500);
             showOverlay = false;
         }
+    }
+
+    void PageChanged(string page)
+    {
+        Page = page;
+        OnPageChanged.InvokeAsync(page);
+        ToggleMobileMenu();
     }
 }
