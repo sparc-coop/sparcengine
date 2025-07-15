@@ -123,6 +123,13 @@ public class SparcAuthenticator<T>(
         User = SparcUser;
     }
 
+    public override async Task<BlossomUser> UpdateAsync(ClaimsPrincipal principal, BlossomAvatar avatar)
+    {
+        await base.UpdateAsync(principal, avatar);
+        await LoginAsync(principal);
+        return User!;
+    }
+
     public async Task SendVerificationCodeAsync(BlossomIdentity identity)
     {
         identity.Revoke();
