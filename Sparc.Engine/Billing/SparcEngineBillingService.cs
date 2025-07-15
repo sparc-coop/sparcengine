@@ -29,14 +29,18 @@ public class SparcEngineBillingService(ExchangeRates rates, IConfiguration confi
             });
 
         billingGroup.MapGet("/products/{productId}",
-            async (SparcEngineBillingService svc, string productId, string? currency = null) =>
+            async (ClaimsPrincipal principal, HttpRequest request, SparcEngineBillingService svc, string productId, string? currency = null) =>
             {
+                var sparcCurrency = SparcCurrency.From(principal.Get("currency") ?? request.Headers.AcceptLanguage);
+
                 var product = await svc.GetProductAsync(productId);
-                var price = string.IsNullOrWhiteSpace(currency) && product.DefaultPrice != null
-                ? product.DefaultPrice.UnitAmountDecimal 
-                : await svc.GetPriceAsync(productId, currency ?? "USD");
+                var price = await svc.GetPriceAsync(productId, sparcCurrency.Id);
                 
-                return Results.Ok(new GetProductResponse(productId, product.Name, price ?? 0, currency ?? "USD"));
+                return new GetProductResponse(productId, 
+                    product.Name, 
+                    price ?? 0, 
+                    sparcCurrency.Id,
+                    sparcCurrency.ToString(price ?? 0));
             });
 
         billingGroup.MapGet("/currency", (ClaimsPrincipal principal, HttpRequest request) => SparcCurrency.From(principal.Get("currency") ?? request.Headers.AcceptLanguage));

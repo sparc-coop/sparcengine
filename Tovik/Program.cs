@@ -7,7 +7,7 @@ using Tovik.Services;
 var builder = BlossomApplication.CreateBuilder<Html>(args);
 
 builder.Services.AddCosmos<TovikContext>(builder.Configuration.GetConnectionString("Cosmos")!, "sparc", ServiceLifetime.Scoped);
-builder.Services.AddSparcEngine(new Uri("https://localhost:7185"));
+builder.Services.AddSparcEngine();
 builder.Services.AddScoped<TovikDomainService>();
 builder.Services.AddScoped<ICorsPolicyProvider, SparcEngineDomainPolicyProvider>();
 builder.Services.AddCors();
