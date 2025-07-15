@@ -13,6 +13,7 @@
             </header>
             <div>
                 <h4>Remaining words</h4>
+                <UsageMeter Usage=Usage Limit=Limit />
             </div>
             <div class="btn-container">
                 <button class="purchase-btn primary-btn">Purchase a Word Pack</button>
@@ -66,11 +67,18 @@
     private List<SparcDomain> Domains = new();
     private SparcDomain NewDomain = new SparcDomain("");
 
+    int Usage;
+    int Limit;
 
     protected override async Task OnInitializedAsync()
     {
         await LoadDomains();
         //await TovikDomainService.UpdateWordCountForDomains();
+        if (Domains.Count > 0)
+        {
+            Usage = Domains.Sum(d => d.TotalUsage);
+            Limit = 100000;
+        }
     }
 
     private async Task LoadDomains()
