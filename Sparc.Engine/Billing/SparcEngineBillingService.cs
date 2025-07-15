@@ -1,5 +1,7 @@
-﻿using Sparc.Core.Billing;
+﻿using Sparc.Blossom.Authentication;
+using Sparc.Core.Billing;
 using Sparc.Engine.Billing.Stripe;
+using System.Security.Claims;
 
 namespace Sparc.Engine.Billing;
 
@@ -36,6 +38,15 @@ public class SparcEngineBillingService(ExchangeRates rates, IConfiguration confi
                 
                 return Results.Ok(new GetProductResponse(productId, product.Name, price ?? 0, currency ?? "USD"));
             });
+
+        billingGroup.MapGet("/currency", (ClaimsPrincipal principal, HttpRequest request) => SparcCurrency.From(principal.Get("currency") ?? request.Headers.AcceptLanguage));
+        billingGroup.MapPost("/currency", async (SparcAuthenticator<BlossomUser> auth, ClaimsPrincipal principal, SparcCurrency currency) =>
+        {
+            var user = await auth.GetAsync(principal);
+            user.Avatar.Currency = currency;
+            await auth.UpdateAsync(principal, user.Avatar);
+            return currency;
+        });
 
         billingGroup.MapGet("/currencies",
             () =>

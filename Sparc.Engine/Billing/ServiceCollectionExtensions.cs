@@ -8,8 +8,8 @@ public static class ServiceCollectionExtensions
         this WebApplicationBuilder builder
     )
     {
-        builder.Services.AddSingleton<StripePaymentService>();
-        builder.Services.AddSingleton<ExchangeRates>();
+        builder.Services.AddScoped<StripePaymentService>();
+        builder.Services.AddScoped<ExchangeRates>();
         builder.Services.AddTransient<SparcEngineBillingService>();
 
         return builder;
