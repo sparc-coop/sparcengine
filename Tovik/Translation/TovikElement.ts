@@ -3,6 +3,7 @@ import TovikEngine from './TovikEngine.js';
 
 export default class TovikElement extends HTMLElement {
     observer;
+    forceReload = false;
     #observedElement;
     #originalLang;
 
@@ -22,12 +23,17 @@ export default class TovikElement extends HTMLElement {
 
         await this.wrapTextNodes(this.#observedElement);
         document.addEventListener('tovik-language-changed', async (event: any) => {
+            await this.wrapTextNodes(this.#observedElement, true);
+        });
+
+        document.addEventListener('tovik-content-changed', async (event: any) => {
+            console.log('tovik-content-changed event received');
             await this.wrapTextNodes(this.#observedElement);
         });
 
 
         this.observer = new MutationObserver(this.#observer);
-        this.observer.observe(this.#observedElement, { childList: true, characterData: true, subtree: true });
+        this.observer.observe(this.#observedElement, { childList: true, characterData: false, subtree: true });
     }
 
     disconnectedCallback() {
@@ -35,12 +41,13 @@ export default class TovikElement extends HTMLElement {
             this.observer.disconnect();
     }
 
-    async wrapTextNodes(element) {
+    async wrapTextNodes(element, forceReload = false) {
         var nodes = [];
-        var treeWalker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, this.#tovikIgnoreFilter);
+        var treeWalker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, forceReload ? this.#tovikForceReloadIgnoreFilter : this.#tovikIgnoreFilter);
         while (treeWalker.nextNode()) {
             const node = treeWalker.currentNode;
             if (this.isValid(node)) {
+                node['translating'] = true;
                 nodes.push(node);
             }
         }
@@ -51,30 +58,28 @@ export default class TovikElement extends HTMLElement {
     isValid(node) {
         return node
             && node.textContent
-            && node.textContent.trim()
+            && /\p{Letter}/u.test(node.textContent) // Check if the text contains any letter
             && !(node.parentElement && node.parentElement.tagName === 'TOVIK-T');
     }
 
     #observer = mutations => {
-        for (let mutation of mutations) {
-            if (!mutation.target.translate === false
-                || mutation.target.parentElement?.translate === false)
-                return;
-
-            if (mutation.type == 'characterData') {
-                console.log('Character data mutation', mutation.target);
-            }
-            else if (mutation.type == 'childList') {
-                console.log('Mutation childList', mutation.target);
-                this.wrapTextNodes(mutation.target);
-            }
-            else {
-                this.queueForTranslation(mutation.addedNodes);
-            }
-        }
-    }
+        document.dispatchEvent(new CustomEvent('tovik-content-changed'));
+    };
 
     #tovikIgnoreFilter = function (node) {
+        var approvedNodes = ['#text'];
+
+        if (!approvedNodes.includes(node.nodeName) || node.translating || node.translated || node.parentNode.nodeName == 'SCRIPT')
+            return NodeFilter.FILTER_SKIP;
+
+        var closest = node.parentElement.closest('[translate="no"]');
+        if (closest)
+            return NodeFilter.FILTER_SKIP;
+
+        return NodeFilter.FILTER_ACCEPT;
+    }
+
+    #tovikForceReloadIgnoreFilter = function (node) {
         var approvedNodes = ['#text'];
 
         if (!approvedNodes.includes(node.nodeName) || node.parentNode.nodeName == 'SCRIPT')
@@ -134,6 +139,8 @@ export default class TovikElement extends HTMLElement {
             console.log('checking for', newTranslations, node.hash, translation);
             if (translation) {
                 node.textContent = translation.text;
+                node.translating = false;
+                node.translated = true;
                 db.translations.put(translation);
             }
         }
