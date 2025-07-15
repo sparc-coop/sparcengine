@@ -20,6 +20,16 @@
     </div>
 </nav>
 <div class="nav-overlay @(showOverlay ? "show" : "")" @onclick=ToggleMobileMenu></div>
+<div class="nav-sidebar">
+    <div class="nav-menu @(showMobileMenu ? "show" : "")">
+        <PrimaryLogo FontColor="#FF945E" />
+        <ul>
+            <li><NavLink class="nav-link" href="/demo" ActiveClass="active" @onclick=ToggleMobileMenu><BubbleTail />Demo</NavLink></li>
+            <li><NavLink class="nav-link" href="/domains" ActiveClass="active" @onclick=ToggleMobileMenu><BubbleTail />Domains</NavLink></li>
+            <li><NavLink class="nav-link" href="/install" ActiveClass="active" @onclick=ToggleMobileMenu><BubbleTail />Installation</NavLink></li>
+        </ul>
+    </div>
+</div>
 
 @code {
     bool showMobileMenu;

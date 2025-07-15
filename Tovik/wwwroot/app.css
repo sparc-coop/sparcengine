@@ -21,6 +21,7 @@
   --orange-100: #FFD4BF;
   --app-width: calc(100vw - 32px);
   --container-width: calc(100% - 32px);
+  --desktop-width: calc(100vw - 128px);
   --brother-printed: "brother-1816-printed", sans-serif;
   --articulat: "articulat-cf", sans-serif;
 }
