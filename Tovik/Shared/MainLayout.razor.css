@@ -1,5 +1,6 @@
 ﻿main {
   width: var(--app-width);
+  margin-top: 100px;
   padding: 0 16px;
   padding-bottom: 24px;
   color: var(--blue-50);
@@ -38,6 +39,7 @@ main .hero-background {
   left: 50%;
   transform: translateX(-50%);
   z-index: 0;
+  opacity: 0.6;
 }
 main .hero-background ::deep svg {
   width: 100%;
@@ -115,4 +117,58 @@ main ::deep table tbody tr {
 }
 main ::deep table tbody tr:last-child {
   padding-bottom: 0;
+}
+
+@media only screen and (min-width: 1024px) {
+  .layout-container {
+    width: var(--desktop-width);
+    padding: 0 64px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    column-gap: 16px;
+  }
+  .layout-container ::deep nav {
+    width: var(--app-width);
+  }
+  .layout-container ::deep nav .nav-menu {
+    display: none;
+  }
+  .layout-container ::deep .nav-sidebar {
+    grid-column: 1/span 1;
+    margin-top: 44px;
+    z-index: 10;
+  }
+  .layout-container ::deep .nav-overlay {
+    display: none !important;
+  }
+  .layout-container main {
+    width: 100%;
+    grid-column: 2/span 3;
+    margin: 0;
+    padding: 0;
+    padding-bottom: 32px;
+  }
+  .layout-container main .main-grid {
+    width: 100%;
+    display: block;
+  }
+  .layout-container main .hero-img {
+    display: none;
+  }
+  .layout-container main .hero-background {
+    width: 110vw;
+    top: -38vh;
+    left: -38vw;
+    transform: none;
+    opacity: 0.6;
+  }
+  .layout-container main ::deep article {
+    width: 100%;
+    margin-top: 144px;
+  }
+  .layout-container main ::deep article .page-container {
+    max-width: none;
+    width: 100%;
+    margin: 0;
+  }
 }

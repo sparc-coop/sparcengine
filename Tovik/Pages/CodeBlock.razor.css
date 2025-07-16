@@ -19,6 +19,7 @@
   font-weight: 400;
   line-height: normal;
   text-align: start;
+  opacity: 0.6;
 }
 .code-block.can-copy {
   display: flex;
