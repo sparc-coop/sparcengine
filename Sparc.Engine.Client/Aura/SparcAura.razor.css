@@ -18,7 +18,7 @@
   border: none;
   top: 50%;
   left: 50%;
-  transform: translateX(-50%) translateY(-50%);
+  transform: translate(-50%, -50%);
   z-index: 10000;
   max-height: 100%;
 }
@@ -115,6 +115,9 @@ dialog[open] section .column > section > div {
   flex-direction: column;
   gap: 8px;
   width: 100%;
+}
+dialog[open] section .column > section > div input, dialog[open] section .column > section > div select, dialog[open] section .column > section > div textarea {
+  color: var(--purple-800);
 }
 dialog[open] section .column > section > div input,
 dialog[open] section .column > section > div textarea {

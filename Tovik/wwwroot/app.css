@@ -44,6 +44,10 @@ html.modal-open, body.modal-open {
   overflow: hidden;
 }
 
+nav dialog[open] {
+  transform: translate(-50%, -25%) !important;
+}
+
 h1, h2, h3, h4, h5, h6, h7 {
   margin: 0;
   padding: 0;
