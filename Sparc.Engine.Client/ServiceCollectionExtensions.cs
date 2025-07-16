@@ -32,5 +32,7 @@ public static class ServiceCollectionExtensions
             .AddStandardResilienceHandler();
 
         services.AddSparcAura();
+
+        services.AddScoped<SparcEvents>();
     }
 }
