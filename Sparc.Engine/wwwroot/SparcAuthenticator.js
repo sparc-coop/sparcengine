@@ -49,6 +49,14 @@ async function signUpWithPasskey(registerToken) {
     }
 }
 
+function disableBodyScrolling(bool) {
+    if (bool == true) {
+        document.body.classList.add("modal-open");
+    } else {
+        document.body.classList.remove("modal-open");
+    }
+}
+
 //export { init, signInWithPasskey, signUpWithPasskey };
 
 window.initSparcAuthenticator = initSparcAuthenticator;
