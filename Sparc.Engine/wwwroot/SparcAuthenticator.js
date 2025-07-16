@@ -49,11 +49,11 @@ async function signUpWithPasskey(registerToken) {
     }
 }
 
-function disableBodyScrolling(bool) {
+function toggleDialog(dialog, bool) {
     if (bool == true) {
-        document.body.classList.add("modal-open");
+        dialog.showModal();
     } else {
-        document.body.classList.remove("modal-open");
+        dialog.close();
     }
 }
 

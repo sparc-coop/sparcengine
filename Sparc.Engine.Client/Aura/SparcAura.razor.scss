@@ -1,4 +1,4 @@
-﻿article {
+﻿dialog[open] {
     --yellow-50: #FFFCF6;
     --purple-50: #F7F2FC;
     --purple-100: #DABEFA;
@@ -12,15 +12,16 @@
     background: var(--yellow-50);
     width: 100%;
     max-width: 996px;
-    height: auto;
     border-radius: 20px;
     color: var(--purple-800);
     box-sizing: border-box;
     position: fixed;
+    border: none;
     top: 50%;
     left: 50%;
     transform: translateX(-50%) translateY(-50%);
     z-index: 10000;
+    max-height: 100%;
 
     header {
         display: flex;
