@@ -103,7 +103,7 @@ public class Contents(BlossomAggregateOptions<TextContent> options, TovikTransla
         group.MapPost("language", async (ClaimsPrincipal principal, Language language) =>
         {
             var user = await auth.GetAsync(principal);
-            user.Avatar.Language = language;
+            user.Avatar.Language = TovikTranslator.GetLanguage(language.Id);
             await auth.UpdateAsync(principal, user.Avatar);
             return language;
         });

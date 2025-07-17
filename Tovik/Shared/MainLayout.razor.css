@@ -99,7 +99,9 @@ main ::deep article .page-container section h4 {
 @media only screen and (min-width: 1024px) {
   .layout-container {
     width: var(--desktop-width);
+    max-width: 1400px;
     padding: 0 64px;
+    margin: 0 auto;
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     column-gap: 16px;

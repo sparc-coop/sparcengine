@@ -1,4 +1,7 @@
-﻿.code-block pre {
+﻿.code-block {
+  width: 100%;
+}
+.code-block pre {
   width: 100%;
   margin: 0;
   padding: 0;
@@ -6,6 +9,7 @@
 }
 .code-block pre code {
   display: flex;
+  width: 100%;
   flex-direction: column;
   justify-content: start;
   color: var(--blue-50);

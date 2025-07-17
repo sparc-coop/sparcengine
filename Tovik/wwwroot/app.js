@@ -1,5 +1,4 @@
 ﻿function copyToClipboard(html) {
-    console.log("copying to clipboard");
     var text = html.innerHTML.toString().replace(/<!--!-->/g, '') // get rid of blazor debug comments
 
     navigator.clipboard.writeText(text);

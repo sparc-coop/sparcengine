@@ -49,6 +49,14 @@ async function signUpWithPasskey(registerToken) {
     }
 }
 
+function toggleDialog(dialog, bool) {
+    if (bool == true) {
+        dialog.showModal();
+    } else {
+        dialog.close();
+    }
+}
+
 //export { init, signInWithPasskey, signUpWithPasskey };
 
 window.initSparcAuthenticator = initSparcAuthenticator;

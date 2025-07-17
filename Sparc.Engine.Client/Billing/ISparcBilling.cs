@@ -13,4 +13,10 @@ public interface ISparcBilling
 
     [Get("/billing/currencies")]
     Task<List<SparcCurrency>> GetCurrenciesAsync();
+
+    [Get("/billing/currency")]
+    Task<SparcCurrency?> GetUserCurrencyAsync();
+
+    [Post("/billing/currency")]
+    Task<SparcCurrency> SetUserCurrencyAsync([Body] SparcCurrency currency);
 }

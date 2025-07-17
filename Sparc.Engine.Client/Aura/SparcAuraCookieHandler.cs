@@ -25,7 +25,7 @@ public class SparcAuraCookieHandler(IHttpContextAccessor httpContextAccessor) : 
         var response = await base.SendAsync(request, cancellationToken);
 
         // Capture Set-Cookie from Login response and set it in the browser
-        if (response.Headers.TryGetValues("Set-Cookie", out var setCookies))
+        if (response.Headers.TryGetValues("Set-Cookie", out var setCookies) && context?.Response.HasStarted != true)
         {
             foreach (var setCookie in setCookies.Where(x => x.StartsWith(CookieName)))
             {
@@ -35,7 +35,8 @@ public class SparcAuraCookieHandler(IHttpContextAccessor httpContextAccessor) : 
                 {
                     HttpOnly = true,
                     Secure = true,
-                    SameSite = SameSiteMode.Lax
+                    SameSite = SameSiteMode.Lax,
+                    Expires = DateTimeOffset.UtcNow.AddDays(30)
                 });
             }
         }

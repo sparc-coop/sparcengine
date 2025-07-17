@@ -1,6 +1,10 @@
 ﻿@page "/install"
 @layout MainLayout
 
+<HeadContent>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/atom-one-dark.min.css">
+</HeadContent>
+
 <article class="install-page">
     <div class="page-container">
 
@@ -21,11 +25,11 @@
                 </p>
                 <div class="code-container">
                     <CodeBlock CanCopy=true>
-                        <script type="module" src="https://tovik.app/tovik.js"></script>
+                        @("<script type=\"module\" src=\"https://tovik.app/tovik.js\"></script>")
                     </CodeBlock>
                 </div>
                 <p>
-                    That’s it. Tovik will now detect your visitors’ browser language and display your site accordingly.                    
+                    That’s it. Tovik will now detect your visitors’ browser language and display your site accordingly.
                 </p>
                 <ul>
                     <li>One line of code</li>
@@ -49,23 +53,23 @@
                 <p>To add a dropdown language picker to your page, insert this wherever you want it to appear:</p>
                 <div class="code-container">
                     <CodeBlock CanCopy=true>
-                        <tovik-langselect></tovik-langselect>
+                        @("<tovik-langselect></tovik-langselect>")
                     </CodeBlock>
                 </div>
                 <p>
                     It comes pre-loaded with supported languages and behaves like a regular HTML element, so you can customize the look to match your brand. Here’s some starter CSS:
                 </p>
                 <div class="code-container">
-                    <CodeBlock CanCopy=true>
-                        Tovik-langselect {
-                            appearance: none; /* Removes default styling */
-                            background-color: #f9f9f9;
-                            color: #333;
-                            padding: 10px 14px;
-                            border: 1px solid #ccc;
-                            border-radius: 6px;
-                            font-size: 16px;
-                            font-family: sans-serif;
+                    <CodeBlock CanCopy=true IsMultiline=true>
+                        tovik-langselect select {
+                        appearance: none; /* Removes default styling */
+                        background-color: #f9f9f9;
+                        color: #333;
+                        padding: 10px 14px;
+                        border: 1px solid #ccc;
+                        border-radius: 6px;
+                        font-size: 16px;
+                        font-family: sans-serif;
                         }
                     </CodeBlock>
                 </div>
@@ -79,53 +83,32 @@
             </header>
             <div>
                 <p>
-                    By default, Toviks the whole page. But if you want more control, you can specify exactly which sections should (or shouldn’t) be translated.
+                    By default, Tovik translates your whole site. But if you want more control, you can specify exactly which sections should (or shouldn’t) be translated.
                 </p>
                 <p>To target a specific section, use:</p>
                 <div class="code-container">
                     <CodeBlock CanCopy=true>
-                        <tovik-translate for="{selector}"></tovik-translate>
+                        @("<tovik-translate for=\"{selector}\"></tovik-translate>")
                     </CodeBlock>
                 </div>
-                <p>Where <span class="code-text">&lcub;selector&rcub;</span>  is the CSS selector of the HTML section you wish to translate.</p>
-                <p>You can include multiple <span class="code-text">&lt;Tovik-translate&gt;</span> tags as well, if you have multiple separate sections you wish to translate.</p>
+                <p>Where <code>&lcub;selector&rcub;</code> is the CSS selector you'd like Tovik to translate.</p>
+                <p>You can include multiple <code>&lt;tovik-translate&gt;</code> tags as well, if you have multiple separate sections you wish to translate.</p>
                 <h4>Examples:</h4>
                 <p>To translate an element with an ID of translate-this:</p>
-                <CodeBlock>
-                    <tovik-translate for="#translate-this"></tovik-translate>
+                <CodeBlock CanCopy="true">
+                    @("<tovik-translate for=\"#translate-this\"></tovik-translate>")
                 </CodeBlock>
                 <p>To translate all elements with the CSS class .translate</p>
-                <CodeBlock>
-                    <tovik-translate for=".translate"></tovik-translate>
+                <CodeBlock CanCopy="true">
+                    @("<tovik-translate for=\".translate\"></tovik-translate>")
                 </CodeBlock>
             </div>
-        </section>
 
-        <section class="step-4">
-            <header>
-                <aside>Step 4 (Advanced)</aside>
-                <h3>Keep Translations Live</h3>
-            </header>
-            <div>
-                <p>
-                    If your site updates dynamically—like a chat, dashboard, or app—Tovik can keep translations up to date in real time.
-                    <br/>
-                    Just add the <span class="code-text">live</span> attribute like this:
-                </p>
-                <div class="code-container">
-                    <CodeBlock CanCopy=true>
-                        <tovik-translate for="#app" live></tovik-translate>
-                    </CodeBlock>
-                </div>
-                <p>This keeps translations fresh as new content appears.</p>
-                <p>Most static websites won't need this.</p>
-                <h4>That's It</h4>
-                <p>
-                    Whether you want plug-and-play simplicity or more control, Tovik is built to meet you where you are—no developer required.
-                </p>
-            </div>
+            <h4>That's It</h4>
+            <p>
+                Whether you want plug-and-play simplicity or more control, Tovik is built to meet you where you are—no developer required.
+            </p>
         </section>
-
     </div>
 </article>
 

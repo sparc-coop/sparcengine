@@ -19,10 +19,6 @@
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="9.0.6" />
-		<PackageReference Include="Microsoft.Extensions.ApiDescription.Server" Version="9.0.6">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
 		<PackageReference Include="Microsoft.Extensions.Caching.Hybrid" Version="9.6.0" />
 		<PackageReference Include="Passwordless" Version="2.0.0" />
 		<PackageReference Include="Scalar.AspNetCore" Version="2.5.0" />
@@ -50,6 +46,7 @@
 		<ProjectReference Include="../../blossom/Sparc.Core/Sparc.Core.csproj" />
 		<ProjectReference Include="../../blossom/Sparc.Blossom/Sparc.Blossom.csproj" />
 		<ProjectReference Include="../../blossom/Sparc.Blossom.Data.Cosmos/Sparc.Blossom.Data.Cosmos.csproj" />
+		<ProjectReference Include="..\..\blossom\Sparc.Blossom.Data.AzureStorage\Sparc.Blossom.Data.AzureStorage.csproj" />
 		<ProjectReference Include="..\..\blossom\Sparc.Blossom.Realtime.Twilio\Sparc.Blossom.Realtime.Twilio.csproj" />
 	</ItemGroup>
 </Project>
