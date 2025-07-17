@@ -1,4 +1,5 @@
 ﻿@page "/domains/{Id}"
+@using Tovik.Domains
 @layout MainLayout
 
 <PageTitle>Tovik | @(Domain != null ? Domain.Domain : "Your Domain")</PageTitle>
@@ -72,38 +73,26 @@
     </div>
 </article>
 
-@inject IRepository<SparcDomain> SparcDomains
+@inject TovikDomains TovikDomains
 
 @code {
-    [Parameter] public string? Id { get; set; }
+    [Parameter] public required string Id { get; set; }
 
-    private List<SparcDomain> Domains = new();
     SparcDomain? Domain;
 
     private List<string> Glossaries = new();
 
     protected override async Task OnInitializedAsync()
     {
-        await LoadDomains();
-        Domain = await SparcDomains.Query
-            .Where(d => d.Id == Id)
-            .FirstOrDefaultAsync();
-
+        Domain = await TovikDomains.Get(Id);
         Glossaries.AddRange(new[] { "Lorem Ipsum", "Dolor Sit Amet", "Consectetur Adipiscing Elit" });
-    }
-
-    private async Task LoadDomains()
-    {
-        Domains = await SparcDomains.Query.ToListAsync();
-        StateHasChanged();
     }
 
     private async Task DeleteDomain()
     {
         if (Domain != null)
         {
-            await SparcDomains.DeleteAsync(Domain);
-            //await LoadDomains();
+            await TovikDomains.Delete(Id);
         }
     }
 

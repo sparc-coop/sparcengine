@@ -2,10 +2,11 @@
 using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Net.Http.Headers;
 using Sparc.Blossom.Data;
+using Sparc.Engine;
 
-namespace Sparc.Engine;
+namespace Tovik.Domains;
 
-public class SparcEngineDomainPolicyProvider(IRepository<SparcDomain> domains, HybridCache cache) : ICorsPolicyProvider
+public class TovikDomainPolicyProvider(IRepository<SparcDomain> domains, HybridCache cache) : ICorsPolicyProvider
 {
     static CorsPolicy AllowAll = new CorsPolicyBuilder()
         .AllowAnyOrigin()
