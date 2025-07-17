@@ -27,7 +27,6 @@ export default class TovikElement extends HTMLElement {
         });
 
         document.addEventListener('tovik-content-changed', async (event: any) => {
-            console.log('tovik-content-changed event received');
             await this.wrapTextNodes(this.#observedElement);
         });
 
@@ -94,7 +93,6 @@ export default class TovikElement extends HTMLElement {
 
     async queueForTranslation(textNodes) {
         let pendingTranslations = [];
-        console.log('oh lawd', textNodes);
 
         await Promise.all(textNodes.map(async textNode => {
             if (!textNode.textContent)
@@ -104,7 +102,6 @@ export default class TovikElement extends HTMLElement {
                 textNode.originalText = textNode.textContent.trim();
             }
 
-            console.log('mapping', textNode.originalText);
             textNode.hash = TovikEngine.idHash(textNode.originalText);
             const translation = await db.translations.get(textNode.hash);
             if (translation) {
@@ -117,7 +114,6 @@ export default class TovikElement extends HTMLElement {
             }
         }));
 
-        console.log('oh lawd!', pendingTranslations);
         if (pendingTranslations.length > 0) {
             await this.processBulkTranslations(pendingTranslations);
         }
@@ -125,8 +121,6 @@ export default class TovikElement extends HTMLElement {
 
     async processBulkTranslations(pendingTranslations) {
         if (pendingTranslations.length === 0) return;
-
-        console.log(`Processing bulk translation for ${pendingTranslations.length} nodes`);
 
         const textsToTranslate = pendingTranslations.map(node => ({
             hash: node.hash,
@@ -136,7 +130,6 @@ export default class TovikElement extends HTMLElement {
         const newTranslations = await TovikEngine.bulkTranslate(textsToTranslate, this.#originalLang);
         for (const node of pendingTranslations) {
             const translation = newTranslations.find(t => t.id === node.hash);
-            console.log('checking for', newTranslations, node.hash, translation);
             if (translation) {
                 node.textContent = translation.text;
                 node.translating = false;
