@@ -28,14 +28,12 @@ public class SparcEngineDomainPolicyProvider(IRepository<SparcDomain> domains, H
             return DenyAll;
 
         var domain = await cache.GetOrCreateAsync(currentDomain, async _ => await GetOrAddDomainAsync(currentDomain), new HybridCacheEntryOptions { Expiration = TimeSpan.FromMinutes(5) });
-        if (!domain.HasProduct(policyName))
-            return DenyAll;
 
         if (_policies.TryGetValue(domain.Domain, out var existingPolicy))
             return existingPolicy;
 
         var newPolicy = new CorsPolicyBuilder()
-            .WithOrigins(domain.Domain)
+            .WithOrigins(context.Request.Headers.Origin)
             .WithMethods("GET", "POST")
             .WithHeaders(HeaderNames.ContentType, HeaderNames.AcceptLanguage)
             .AllowCredentials();

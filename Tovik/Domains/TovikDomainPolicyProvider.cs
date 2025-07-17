@@ -6,7 +6,9 @@ using Sparc.Engine;
 
 namespace Tovik.Domains;
 
-public class TovikDomainPolicyProvider(IRepository<SparcDomain> domains, HybridCache cache) : ICorsPolicyProvider
+public class TovikDomainPolicyProvider(
+    IRepository<SparcDomain> domains, 
+    HybridCache cache) : ICorsPolicyProvider
 {
     static CorsPolicy AllowAll = new CorsPolicyBuilder()
         .AllowAnyOrigin()
@@ -26,7 +28,9 @@ public class TovikDomainPolicyProvider(IRepository<SparcDomain> domains, HybridC
 
         var currentDomain = context.Request.Headers.Origin.ToString();
         var domain = await cache.GetOrCreateAsync(currentDomain, async _ => await GetOrAddDomainAsync(currentDomain), new HybridCacheEntryOptions { Expiration = TimeSpan.FromMinutes(5) });
-        if (!domain.HasProduct(policyName))
+
+        // Check usage
+        if (domain.TovikUserId == null && !domain.Domain.Contains("localhost") && domain.TovikUsage > 500)
             return DenyAll;
 
         if (_policies.TryGetValue(domain.Domain, out var existingPolicy))

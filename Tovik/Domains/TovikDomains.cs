@@ -4,12 +4,12 @@ using Sparc.Engine;
 
 namespace Tovik.Domains;
 
-public class TovikDomains(BlossomAggregateOptions<SparcDomain> options, IRepository<TextContent> content) 
+public class TovikDomains(BlossomAggregateOptions<SparcDomain> options) 
     : BlossomAggregate<SparcDomain>(options)
 {
    public async Task<List<SparcDomain>> All()
         => await Repository.Query
-            .Where(x => x.Products.Any(p => p.ProductId == "Tovik" && p.UserId == User.Id()))
+            .Where(x => x.TovikUserId == User.Id())
             .ToListAsync();
 
 
@@ -28,58 +28,10 @@ public class TovikDomains(BlossomAggregateOptions<SparcDomain> options, IReposit
             await Repository.AddAsync(existing);
         }
 
-        var product = existing.Products.FirstOrDefault(p => p.ProductId == "Tovik");
-        if (product?.UserId != null)
+        if (existing.TovikUserId != null)
             throw new Exception("This domain is already registered with Tovik.");
         
-        if (product == null)
-            existing.Products.Add(new("Tovik") { UserId = User.Id() });
-        else
-            product.UserId = User.Id();
-
+        existing.TovikUserId = User.Id();
         await Repository.UpdateAsync(existing);
     }
-    
-    // repositories
-    public async Task<string> UpdateWordCountForDomains()
-    {
-        var domains = await Repository.Query.Where(d => d.Domain != null)
-            .ToListAsync();
-
-        foreach (var domain in domains)
-        {
-            var domainTexts = await content.Query
-                .Where(t => t.Domain == domain.Domain && t.Id != null)
-                .ToListAsync();
-
-            if (domainTexts.Count > 0)
-            {
-                foreach (var text in domainTexts)
-                {
-                    if (text.OriginalText != null)
-                    {
-                        int wordCount = CountWords(text.OriginalText);
-                        domain.TovikUsage += wordCount;
-                    }
-                }
-            }
-
-            await Repository.UpdateAsync(domain);
-        }
-
-        return "";
-    }
-
-    
-
-    public int CountWords(string text)
-    {
-        if (string.IsNullOrWhiteSpace(text))
-            return 0;
-
-        var words = text.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries);
-
-        return words.Length;
-    }
-
 }

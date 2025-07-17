@@ -12,7 +12,7 @@ public class StripePaymentService
         StripeConfiguration.ApiKey = config.GetConnectionString("Stripe")
             ?? throw new InvalidOperationException("Stripe connection string is missing in configuration.");
     }
-    public async Task<PaymentIntent> CreatePaymentIntentAsync(string email, string productId, string currencyId, string? paymentIntentId = null)
+    public async Task<PaymentIntent> CreatePaymentIntentAsync(string? email, string productId, string currencyId, string? paymentIntentId = null)
     {
         var customerId = await GetOrCreateCustomerAsync(email);
         currencyId = currencyId.ToLower();
@@ -105,7 +105,7 @@ public class StripePaymentService
             return stripeFormat ? newPrice : FromStripePrice(newPrice, currencyId);
         }
         
-        return stripeFormat ? currentPrice.UnitAmount.Value : FromStripePrice(currentPrice.UnitAmount.Value, currencyId);
+        return stripeFormat ? currentPrice!.UnitAmount!.Value : FromStripePrice(currentPrice!.UnitAmount!.Value, currencyId);
     }
 
     public async Task<string?> GetOrCreateCustomerAsync(string? email)

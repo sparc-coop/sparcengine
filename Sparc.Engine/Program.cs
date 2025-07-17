@@ -57,7 +57,7 @@ app.MapGet("/aura/friendlyid", (FriendlyId friendlyId) => friendlyId.Create());
 app.MapGet("/hi", () => "Hi from Sparc!");
 
 using var scope = app.Services.CreateScope();
-scope.ServiceProvider.GetRequiredService<Contents>().Map(app);
+scope.ServiceProvider.GetRequiredService<TovikTranslator>().Map(app);
 
 if (!string.IsNullOrWhiteSpace(app.Configuration.GetConnectionString("Cognitive")))
 {

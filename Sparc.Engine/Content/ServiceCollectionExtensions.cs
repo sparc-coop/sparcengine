@@ -14,12 +14,4 @@ public static class ContentServiceCollectionExtensions
 
         return builder;
     }
-
-    public static WebApplication UseTovikTranslator(this WebApplication app)
-    {
-        var translator = app.MapGroup("/tovik");
-        translator.MapGet("languages", async (TovikTranslator translator) => await translator.GetLanguagesAsync());
-        
-        return app;
-    }
 }

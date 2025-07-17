@@ -8,6 +8,8 @@ namespace Sparc.Engine.Billing;
 public class SparcEngineBillingService(ExchangeRates rates, ClaimsPrincipal principal, SparcAuthenticator<BlossomUser> auth, IConfiguration config) 
     : StripePaymentService(rates, config), IBlossomEndpoints
 {
+    readonly IConfiguration Config = config;
+
     public async Task<SparcPaymentIntent> StartCheckoutAsync(SparcOrder req)
     {
         var currency = req.Currency ?? principal.Get("currency") ?? "USD";
@@ -16,7 +18,7 @@ public class SparcEngineBillingService(ExchangeRates rates, ClaimsPrincipal prin
         return new SparcPaymentIntent
         {
             ClientSecret = intent.ClientSecret,
-            PublishableKey = config["Stripe:PublishableKey"]!,
+            PublishableKey = Config["Stripe:PublishableKey"]!,
             PaymentIntentId = intent.Id,
             Amount = FromStripePrice(intent.Amount, currency),
             Currency = currency,

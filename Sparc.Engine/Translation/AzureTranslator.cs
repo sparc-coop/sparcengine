@@ -10,6 +10,8 @@ internal class AzureTranslator(IConfiguration configuration) : ITranslator
     internal static List<Language>? Languages;
 
     public int Priority => 2;
+    decimal CostPerWord => 10.00m / 1_000_000 * 5; // $25 per million characters, assuming average 5 characters per word
+
 
     public async Task<List<TextContent>> TranslateAsync(IEnumerable<TextContent> messages, IEnumerable<Language> toLanguages, string? additionalContext = null)
     {
@@ -32,7 +34,9 @@ internal class AzureTranslator(IConfiguration configuration) : ITranslator
             {
                 var newContent = result.Translations.Select(translation =>
                     new TextContent(sourceContent, toLanguages.First(x => x.Matches(translation.TargetLanguage)), translation.Text));
+
                 translatedMessages.AddRange(newContent);
+                translatedMessages.ForEach(x => x.AddCharge(CostPerWord, $"Azure translation of {x.OriginalText} to {x.LanguageId}"));
             }
         }
 
