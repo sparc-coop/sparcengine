@@ -24,7 +24,7 @@ public class BillToTovik(
 
         // Every 100th or so call, recalculate usage and bill Tovik user
         var random = new Random().Next(100);
-        if (random != 8)
+        if (false && random != 8)
             return;
 
         var user = await users.Query
@@ -37,5 +37,9 @@ public class BillToTovik(
 
         product.TotalUsage = charges.Query.Sum(x => x.Amount);
         await users.UpdateAsync(user);
+
+        domain.TovikUsage = (int)charges.Query.Where(x => x.Domain == item.Content.Domain)
+            .Sum(x => x.Amount);
+        await domains.UpdateAsync(domain);
     }
 }
