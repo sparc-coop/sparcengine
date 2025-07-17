@@ -15,6 +15,13 @@
             </header>
             <div>
                 <table>
+                    <thead>
+                        <tr>
+                            <th>Domain Name</th>
+                            <th>Word Usage</th>
+                            <th></th>
+                        </tr>
+                    </thead>
                     <tbody>
                         @if (Domain != null)
                         {
@@ -23,48 +30,68 @@
                     </tbody>
                 </table>
             </div>
-            <div class="btn-container">
-                <button class="connection-btn primary-btn">Check Connection</button>
+            <hr />
+            <div class="domain-connection">
+                <aside class="connection-status">
+                    @if (Domain != null)
+                    {
+                         @if (Domain.DateConnected != null)
+                        {
+                            <VerifiedIcon /> <span>This domain is connected</span>
+                        } else
+                        {
+                            <span>This domain's connection has not yet been verified. Check connection below.</span>
+                        }
+                    }
+                </aside>
+                <div class="connection-loading" style="display: none;">
+                </div>
+                <div class="btn-container">
+                    <button class="connection-btn primary-btn">Check Connection</button>
+                </div>
             </div>
         </section>
-        <section class="add-glossary">
+        <section class="add-exemption">
             <header>
-                <h3>Add a Glossary</h3>
-                <p class="subheader">There’s no limit to the number of domains you can add.</p>
+                <h3>Add Exempt Words or Phrases</h3>
+                <p class="subheader">Words or phrases on your website that will not be translated by Tovik.</p>
             </header>
             <form>
                 <label>
-                    <input type="text" placeholder="Enter a glossary name" />
+                    <input type="text" placeholder="Enter a word or phrase..." />
                 </label>
                 <div class="btn-container">
-                    <button class="add-btn primary-btn">Add Glossary</button>
+                    <button class="add-btn primary-btn">Add</button>
                 </div>
             </form>
         </section>
-        <section class="glossary-list">
+        <section class="exemptions">
             <header>
-                <h3>Glossary List</h3>
-                <p class="subheader">You can add or remove glossaries at anytime.</p>
+                <h3>Exemptions</h3>
+                <p class="subheader">Edit or Delete exempt words and phrases</p>
             </header>
-            <table class="glossary-table">
+            <table class="exempt-table">
                 <thead>
                     <tr>
-                        <td>Glossary</td>
+                        <td>Word or Phrase</td>
                         <td></td>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var glossary in Glossaries)
+                    @if (Domain != null)
                     {
-                        <tr>
-                            <td>@glossary</td>
-                            <td>
-                                <div class="glossary-actions">
-                                    <button class="edit-glossary-btn secondary-btn"><EditIcon /></button>
-                                    <button class="delete-glossary-btn secondary-btn"><TrashIcon /></button>
-                                </div>
-                            </td>
-                        </tr>
+                        @foreach (var word in Domain.Exemptions)
+                        {
+                            <tr>
+                                <td>@word</td>
+                                <td>
+                                    <div class="exempt-actions">
+                                        <button class="edit-exempt-btn secondary-btn"><EditIcon /></button>
+                                        <button class="delete-exempt-btn secondary-btn"><TrashIcon /></button>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
                     }
                 </tbody>
             </table>
@@ -77,10 +104,8 @@
 @code {
     [Parameter] public string? Id { get; set; }
 
-    private List<SparcDomain> Domains = new();
     SparcDomain? Domain;
-
-    private List<string> Glossaries = new();
+    private List<SparcDomain> Domains = new();
 
     protected override async Task OnInitializedAsync()
     {
@@ -89,7 +114,10 @@
             .Where(d => d.Id == Id)
             .FirstOrDefaultAsync();
 
-        Glossaries.AddRange(new[] { "Lorem Ipsum", "Dolor Sit Amet", "Consectetur Adipiscing Elit" });
+        if (Domain != null)
+        {
+            Domain.Exemptions.AddRange(new[] { "Lorem Ipsum", "Dolor Sit Amet", "Consectetur Adipiscing Elit" });
+        }
     }
 
     private async Task LoadDomains()

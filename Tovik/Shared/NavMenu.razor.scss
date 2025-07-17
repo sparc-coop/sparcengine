@@ -18,7 +18,7 @@ nav {
         align-items: center;
         gap: 4px;
         position: absolute;
-        bottom: -30px;
+        bottom: -20px;
         right: 16px;
         background: var(--orange-100);
         border-bottom-left-radius: 32px;
@@ -47,11 +47,11 @@ nav {
         padding-top: 120px;
         background: var(--blue-700);
         transform: translateX(70vw);
-        transition: transform 1.5s ease-in;
+        transition: transform 0.8s ease-in;
 
         &.show {
             transform: translateX(0);
-            transition: transform 1.5s ease-in-out;
+            transition: transform 0.8s ease-in-out;
         }
     }
 
@@ -135,9 +135,16 @@ nav {
     left: 0;
     background: rgba(0, 0, 0, 0.50);
     z-index: 100;
+    animation: fadeOut .8s;
 
     &.show {
         display: block;
+        animation: fadeIn .8s;
+    }
+
+    &.hiding {
+        animation: fadeOut .8s;
+        pointer-events: none;
     }
 }
 
@@ -157,5 +164,23 @@ nav {
     .nav-sidebar {
         display: block;
         z-index: 10;
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
     }
 }

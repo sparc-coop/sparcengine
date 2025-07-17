@@ -1,17 +1,12 @@
 ﻿.domain-card td {
-  font-size: 1.6rem;
-  line-height: 150%;
   padding: 16px 0;
 }
 .domain-card td:first-child, .domain-card td:nth-child(2) {
   padding-right: 32px;
 }
-.domain-card td.domain-name {
-  cursor: pointer;
-}
 .domain-card td.domain-name ::deep svg {
   margin-left: 8px;
-  margin-top: -4px;
+  margin-top: -2px;
   vertical-align: middle;
 }
 .domain-card td.domain-actions {
@@ -53,6 +48,7 @@
 .domain-card__domain .domain-actions {
   display: flex;
   flex-direction: row;
+  justify-content: end;
   gap: 8px;
 }
 .domain-card__domain .domain-actions button {

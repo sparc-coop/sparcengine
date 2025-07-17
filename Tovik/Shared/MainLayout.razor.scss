@@ -110,34 +110,6 @@ main {
             }
         }
     }
-
-    ::deep table {
-        font-family: var(--articulat);
-        color: var(--blue-50);
-
-        thead {
-            color: var(--white, #fff);
-            leading-trim: both;
-            text-edge: cap;
-            font-size: 1.4rem;
-            font-style: normal;
-            font-weight: 700;
-            line-height: normal;
-        }
-
-        tbody {
-            font-size: 1.6rem;
-            font-weight: 500;
-
-            tr {
-                padding-bottom: 16px;
-
-                &:last-child {
-                    padding-bottom: 0;
-                }
-            }
-        }
-    }
 }
 
 @media only screen and (min-width: 1024px) {
