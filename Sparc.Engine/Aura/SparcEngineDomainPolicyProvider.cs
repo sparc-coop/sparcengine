@@ -23,7 +23,10 @@ public class SparcEngineDomainPolicyProvider(IRepository<SparcDomain> domains, H
         if (policyName == null)
             return AllowAll;
 
-        var currentDomain = new Uri(context.Request.Headers.Origin.ToString()).Host;
+        var currentDomain = SparcDomain.Normalize(context.Request.Headers.Origin.ToString());
+        if (currentDomain == null)
+            return DenyAll;
+
         var domain = await cache.GetOrCreateAsync(currentDomain, async _ => await GetOrAddDomainAsync(currentDomain), new HybridCacheEntryOptions { Expiration = TimeSpan.FromMinutes(5) });
         if (!domain.HasProduct(policyName))
             return DenyAll;
