@@ -120,22 +120,31 @@ nav .nav-mask {
   font-style: normal;
   font-weight: 700;
   line-height: normal;
-}
-.nav-menu ul li ::deep .nav-link svg {
-  display: none;
-}
-.nav-menu ul li ::deep .nav-link.active {
-  background: var(--blue-50);
-  color: var(--blue-700);
   position: relative;
 }
-.nav-menu ul li ::deep .nav-link.active svg {
-  display: block;
+.nav-menu ul li ::deep .nav-link svg {
   width: 26px;
   height: auto;
   position: absolute;
   left: -2px;
   bottom: -2px;
+}
+.nav-menu ul li ::deep .nav-link svg path {
+  fill: var(--blue-700);
+}
+.nav-menu ul li ::deep .nav-link.active {
+  background: var(--blue-50);
+  color: var(--blue-700);
+}
+.nav-menu ul li ::deep .nav-link.active svg path {
+  fill: var(--blue-50);
+}
+.nav-menu ul li ::deep .nav-link:hover {
+  background: #365d71;
+  color: var(--blue-50);
+}
+.nav-menu ul li ::deep .nav-link:hover svg path {
+  fill: #365d71;
 }
 
 .nav-overlay {

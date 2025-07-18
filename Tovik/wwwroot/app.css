@@ -153,6 +153,22 @@ input {
   line-height: normal;
 }
 
+select {
+  display: flex;
+  padding: 8px 16px;
+  align-items: center;
+  gap: 8px;
+  border-radius: 16px;
+  border: 1px solid var(--blue-500, #376880);
+  background: var(--blue-600, #1F5068);
+  color: var(--white, #FFF);
+  font-family: var(--articulat);
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+
 ul {
   margin: 0;
   padding: 0;

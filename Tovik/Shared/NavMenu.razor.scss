@@ -134,23 +134,35 @@ nav {
                 font-style: normal;
                 font-weight: 700;
                 line-height: normal;
+                position: relative;
 
                 svg {
-                    display: none;
+                    width: 26px;
+                    height: auto;
+                    position: absolute;
+                    left: -2px;
+                    bottom: -2px;
+
+                    path {
+                        fill: var(--blue-700);
+                    }
                 }
 
                 &.active {
                     background: var(--blue-50);
                     color: var(--blue-700);
-                    position: relative;
 
-                    svg {
-                        display: block;
-                        width: 26px;
-                        height: auto;
-                        position: absolute;
-                        left: -2px;
-                        bottom: -2px;
+                    svg path {
+                        fill: var(--blue-50);
+                    }
+                }
+
+                &:hover {
+                    background: #365d71; //blue-50 with 20% opacity
+                    color: var(--blue-50);
+
+                    svg path {
+                        fill: #365d71; //blue-50 with 20% opacity
                     }
                 }
             }

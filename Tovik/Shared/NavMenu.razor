@@ -11,7 +11,7 @@
         <SecondaryLogo />
         <ul>
             <li><NavLink class="nav-link" href="/demo" ActiveClass="active" @onclick=ToggleMobileMenu><BubbleTail />Demo</NavLink></li>
-            <li><NavLink class="nav-link" href="/" ActiveClass="active" @onclick=ToggleMobileMenu><BubbleTail />Domains</NavLink></li>
+            <li><NavLink class="nav-link" href="/" Match=NavLinkMatch.All ActiveClass="active" @onclick=ToggleMobileMenu><BubbleTail />Domains</NavLink></li>
             <li><NavLink class="nav-link" href="/install" ActiveClass="active" @onclick=ToggleMobileMenu><BubbleTail />Installation</NavLink></li>
         </ul>
     </div>
@@ -25,7 +25,7 @@
         <PrimaryLogo FontColor="#FF945E" />
         <ul>
             <li><NavLink class="nav-link" href="/demo" ActiveClass="active" @onclick=ToggleMobileMenu><BubbleTail />Demo</NavLink></li>
-            <li><NavLink class="nav-link" href="/" ActiveClass="active" @onclick=ToggleMobileMenu><BubbleTail />Domains</NavLink></li>
+            <li><NavLink class="nav-link" href="/" Match=NavLinkMatch.All ActiveClass ="active" @onclick =ToggleMobileMenu><BubbleTail />Domains</NavLink></li>
             <li><NavLink class="nav-link" href="/install" ActiveClass="active" @onclick=ToggleMobileMenu><BubbleTail />Installation</NavLink></li>
         </ul>
     </div>
