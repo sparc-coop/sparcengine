@@ -331,17 +331,13 @@
         // }
     }
 
-    private bool showUserProfile = false;
-
     private async Task OpenUserProfile()
     {
-        showUserProfile = true;
         await Js.InvokeVoidAsync("toggleDialog", Dialog, true);
     }
 
     private async Task CloseUserProfile()
     {
-        showUserProfile = false;
         await Js.InvokeVoidAsync("toggleDialog", Dialog, false);
     }
 }

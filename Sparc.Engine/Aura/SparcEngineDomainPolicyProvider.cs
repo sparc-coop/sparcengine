@@ -23,7 +23,9 @@ public class SparcEngineDomainPolicyProvider(IRepository<SparcDomain> domains, H
         if (policyName == null)
             return AllowAll;
 
-        var currentDomain = SparcDomain.Normalize(context.Request.Headers.Origin.ToString());
+        var origin = context.Request.Headers.Origin.ToString();
+
+        var currentDomain = SparcDomain.Normalize(origin);
         if (currentDomain == null)
             return DenyAll;
 
@@ -33,7 +35,7 @@ public class SparcEngineDomainPolicyProvider(IRepository<SparcDomain> domains, H
             return existingPolicy;
 
         var newPolicy = new CorsPolicyBuilder()
-            .WithOrigins(context.Request.Headers.Origin)
+            .WithOrigins(origin)
             .WithMethods("GET", "POST")
             .WithHeaders(HeaderNames.ContentType, HeaderNames.AcceptLanguage)
             .AllowCredentials();
