@@ -79,15 +79,11 @@ public class SparcAuthenticator<T>(
         return matchingUser;
     }
 
-    public async Task<BlossomUser> Register(ClaimsPrincipal principal)
+    public async Task<SparcCode> Register(ClaimsPrincipal principal)
     {
         SparcUser = await GetUserAsync(principal);
-        if (SparcUser.HasIdentity("Passwordless"))
-            return SparcUser;
-
-        var passwordlessToken = await SignUpWithPasswordlessAsync(SparcUser);
-        SparcUser.GetOrCreateIdentity("Passwordless", passwordlessToken);
-        return SparcUser;
+        var passwordlessToken = await StartPasskeyRegistrationAsync(SparcUser);
+        return new SparcCode(passwordlessToken);
     }
 
     private async Task<BlossomUser> VerifyTokenAsync(string token)
@@ -121,10 +117,13 @@ public class SparcAuthenticator<T>(
         user.Logout();
         await SaveAsync();
 
+        if (http.HttpContext != null)
+            await http.HttpContext.SignOutAsync();
+
         return user;
     }
 
-    private async Task<string> SignUpWithPasswordlessAsync(BlossomUser user)
+    private async Task<string> StartPasskeyRegistrationAsync(BlossomUser user)
     {
         var options = new RegisterOptions(user.Id, user.Avatar.Username)
         {
