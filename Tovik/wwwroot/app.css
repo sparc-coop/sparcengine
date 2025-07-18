@@ -45,10 +45,6 @@ html.modal-open, body.modal-open {
   overflow: hidden;
 }
 
-nav dialog[open] {
-  transform: translate(-50%, -25%) !important;
-}
-
 h1, h2, h3, h4, h5, h6, h7 {
   margin: 0;
   padding: 0;
@@ -202,6 +198,12 @@ table tbody tr {
 }
 table tbody tr:last-child {
   padding-bottom: 0;
+}
+
+.error-message {
+  color: var(--orange-300);
+  font-weight: 600;
+  font-size: 16px;
 }
 
 .code-container {

@@ -3,8 +3,8 @@
     {
         @if (PageType == "home")
         {
-            <td class="domain-name">@Domain.Domain <VerifiedIcon /></td>
-            <td class="domain-usage">@Domain.TotalUsage.ToString("N").Replace(".00", "")</td>
+            <td class="domain-name" @onclick='() => Nav.NavigateTo($"/domains/{Domain.Id}")'>@Domain.Domain <VerifiedIcon /></td>
+            <td class="domain-usage">@Domain.TovikUsage.ToString("N").Replace(".00", "")</td>
             <td class="domain-actions">
                 <button class="actions-btn icon-btn" data-id="@Domain.Id" @onclick='() => Nav.NavigateTo($"/domains/{Domain.Id}")'><ChevronRightIcon /></button>                
                 @* <div id="@Domain.Id-actions" class="actions-menu @(showDomainActions ? "show" : "")">
@@ -17,7 +17,7 @@
         @if (PageType == "domain")
         {
             <td class="domain-name">@Domain.Domain</td>
-            <td class="domain-usage">@Domain.TotalUsage.ToString("N").Replace(".00", "")</td>
+            <td class="domain-usage">@Domain.TovikUsage.ToString("N").Replace(".00", "")</td>
             <td class="domain-actions">
                 <button class="edit-btn secondary-btn"><EditIcon /></button>
                 <button @onclick="ToggleDeleteModal" class="delete-btn secondary-btn"><TrashIcon /></button>

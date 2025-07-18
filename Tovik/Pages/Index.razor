@@ -1,4 +1,5 @@
 ﻿@page "/"
+@using Sparc.Engine.Aura
 @layout MainLayout
 
 <PageTitle>Tovik</PageTitle>
@@ -16,7 +17,7 @@
                 <UsageMeter Usage=Usage Limit=Limit />
             </div>
             <div class="btn-container">
-                <button class="purchase-btn primary-btn">Purchase a Word Pack</button>
+                <button class="purchase-btn primary-btn">Need more words?</button>
             </div>
         </section>
 
@@ -26,14 +27,17 @@
                 <p class="subheader">There’s no limit to the number of domains you can add. You can add or remove domains at anytime.</p>
             </header>
 
-            <form @onsubmit="AddDomain">
-                <label>
-                    <input type="text" placeholder="Enter a domain name" @bind="NewDomain.Domain" />
-                </label>
-                <div class="btn-container">
-                    <button class="add-btn primary-btn">Add Domain</button>
-                </div>
-            </form>
+            @if (Error != null)
+            {
+                <div class="error-message">@Error</div>
+            }
+
+            <label>
+                <input type="text" placeholder="Enter a domain name" @bind="NewDomain" @bind:event="oninput" />
+            </label>
+            <div class="btn-container">
+                <button class="add-btn primary-btn" disabled="@(string.IsNullOrWhiteSpace(NewDomain))" @onclick=AddDomain>Add Domain</button>
+            </div>
         </section>
 
         <section class="manage-domains">
@@ -61,46 +65,52 @@
     </div>
 </article>
 
-@inject IRepository<SparcDomain> SparcDomains
-@inject Tovik.Services.TovikDomainService TovikDomainService
+@inject Tovik.Domains.TovikDomains TovikDomains
+@inject ISparcAura Aura
 @code {
-    private List<SparcDomain> Domains = new();
-    private SparcDomain NewDomain = new SparcDomain("");
+    List<SparcDomain> Domains = new();
+    string NewDomain = "";
+    string? Error;
 
     int Usage;
     int Limit;
 
     protected override async Task OnInitializedAsync()
     {
+        var user = await Aura.UserInfo();
+        var product = user.Product("Tovik");
         await LoadDomains();
-        //await TovikDomainService.UpdateWordCountForDomains();
-        if (Domains.Count > 0)
-        {
-            Usage = Domains.Sum(d => d.TotalUsage);
-            Limit = 100000;
-        }
+        Limit = product?.MaxUsage ?? 500;
+        Usage = Domains.Sum(d => d.TovikUsage);
     }
 
     private async Task LoadDomains()
     {
-        Domains = await SparcDomains.Query.ToListAsync();
-        StateHasChanged();
+        Domains = await TovikDomains.All();
     }
 
     private async Task AddDomain()
     {
-        if (string.IsNullOrWhiteSpace(NewDomain.Domain))
-        {
+        if (string.IsNullOrWhiteSpace(NewDomain))
             return;
+
+        Error = null;
+        try
+        {
+            await TovikDomains.RegisterAsync(NewDomain);
+            NewDomain = "";
+            await LoadDomains();
         }
-        await SparcDomains.AddAsync(NewDomain);
-        NewDomain = new SparcDomain("");
-        await LoadDomains();
+        catch (Exception ex)
+        {
+            Error = ex.Message;
+            NewDomain = "";
+        }
     }
 
     private async Task DeleteDomain(SparcDomain domain)
     {
-        await SparcDomains.DeleteAsync(domain);
+        await TovikDomains.Delete(domain);
         await LoadDomains();
     }
 }

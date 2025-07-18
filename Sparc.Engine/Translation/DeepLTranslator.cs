@@ -10,6 +10,7 @@ internal class DeepLTranslator(IConfiguration configuration) : ITranslator
     internal static List<Language> TargetLanguages = [];
 
     public int Priority => 1;
+    decimal CostPerWord => 25.00m / 1_000_000 * 5; // $25 per million characters, assuming average 5 characters per word
 
     public async Task<List<TextContent>> TranslateAsync(IEnumerable<TextContent> messages, IEnumerable<Language> toLanguages, string? additionalContext = null)
     {
@@ -37,6 +38,7 @@ internal class DeepLTranslator(IConfiguration configuration) : ITranslator
                     var result = await Client.TranslateTextAsync(texts!, sourceLanguage.Key.ToString(), targetLanguage.ToString(), options);
                     var newContent = batch.Zip(result, (message, translation) => new TextContent(message, targetLanguage, translation.Text));
                     translatedMessages.AddRange(newContent);
+                    translatedMessages.ForEach(x => x.AddCharge(CostPerWord, $"DeepL translation of {x.OriginalText} to {x.LanguageId}"));
                 }
             }
         }
