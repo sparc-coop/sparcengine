@@ -1,9 +1,10 @@
 .demo {
     &-component {
     }
+
     // BROWSER BACKGROUND / FRAME
     &-browser {
-        width: 100%;
+        width: 150%;
         position: relative;
 
         ::deep svg {
@@ -11,14 +12,15 @@
             height: auto;
         }
     }
+
     // TOVIK CHARACTER
     &-tovik {
-        width: 30%;
-        min-width: 200px;
+        width: 20%;
+        min-width: 280px;
         height: auto;
         position: absolute;
-        top: 24%;
-        left: 5%;
+        top: 26%;
+        left: 3%;
     }
 
     &-bubble {
@@ -44,7 +46,7 @@
                 width: 100%;
                 color: var(--blue-600, #1F5068);
                 font-family: var(--articulat);
-                font-size: 1rem;
+                font-size: 1.4rem;
                 font-style: normal;
                 font-weight: 700;
                 line-height: normal;
@@ -60,24 +62,27 @@
         left: 50%;
         transform: translateX(-50%);
     }
+
     // LANGUAGE SELECTOR
     &-selector {
-        width: 50%;
+        width: 30%;
         position: absolute;
-        top: 29%;
-        right: 8%;
+        top: 32%;
+        left: 45%;
+        transform: translateX(-40%);
 
         select {
             width: 100%;
         }
     }
+
     // PREVIEW
     &-preview {
-        width: 65%;
+        width: 50%;
         position: absolute;
-        bottom: 0;
-        left: 50%;
-        transform: translatex(-50%);
+        top: 50%;
+        left: 10%;
+        transform: translatex(-10%);
         padding: 64px;
         color: var(--white, #FFF);
         font-family: var(--articulat);
