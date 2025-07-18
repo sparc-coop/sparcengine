@@ -1,6 +1,8 @@
 ﻿<nav>
     <div class="right">
-        <Sparc.Engine.Client.Aura.SparcAura />
+        <div class="profile-container">
+            <Sparc.Engine.Client.Aura.SparcAura />
+        </div>
         <button class="menu-btn" @onclick=ToggleMobileMenu>
             <MenuIcon />
         </button>
@@ -8,8 +10,8 @@
     <div class="nav-menu @(showMobileMenu ? "show" : "")">
         <SecondaryLogo />
         <ul>
-            @* <li><NavLink class="nav-link" href="/demo" ActiveClass="active" @onclick=ToggleMobileMenu><BubbleTail />Demo</NavLink></li> *@
-            <li><NavLink class="nav-link" href="/domains" ActiveClass="active" @onclick=ToggleMobileMenu><BubbleTail />Domains</NavLink></li>
+            <li><NavLink class="nav-link" href="/demo" ActiveClass="active" @onclick=ToggleMobileMenu><BubbleTail />Demo</NavLink></li>
+            <li><NavLink class="nav-link" href="/" ActiveClass="active" @onclick=ToggleMobileMenu><BubbleTail />Domains</NavLink></li>
             <li><NavLink class="nav-link" href="/install" ActiveClass="active" @onclick=ToggleMobileMenu><BubbleTail />Installation</NavLink></li>
         </ul>
     </div>
@@ -22,8 +24,8 @@
     <div class="nav-menu @(showMobileMenu ? "show" : "")">
         <PrimaryLogo FontColor="#FF945E" />
         <ul>
-            @* <li><NavLink class="nav-link" href="/demo" ActiveClass="active" @onclick=ToggleMobileMenu><BubbleTail />Demo</NavLink></li> *@
-            <li><NavLink class="nav-link" href="/domains" ActiveClass="active" @onclick=ToggleMobileMenu><BubbleTail />Domains</NavLink></li>
+            <li><NavLink class="nav-link" href="/demo" ActiveClass="active" @onclick=ToggleMobileMenu><BubbleTail />Demo</NavLink></li>
+            <li><NavLink class="nav-link" href="/" ActiveClass="active" @onclick=ToggleMobileMenu><BubbleTail />Domains</NavLink></li>
             <li><NavLink class="nav-link" href="/install" ActiveClass="active" @onclick=ToggleMobileMenu><BubbleTail />Installation</NavLink></li>
         </ul>
     </div>

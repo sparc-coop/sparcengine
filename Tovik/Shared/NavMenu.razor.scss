@@ -16,7 +16,7 @@ nav {
         flex-direction: row;
         justify-content: space-between;
         align-items: center;
-        gap: 4px;
+        gap: 0;
         position: absolute;
         bottom: -20px;
         right: 16px;
@@ -25,10 +25,42 @@ nav {
         border-bottom-right-radius: 32px;
 
         button {
-            height: 65px;
-            width: 65px;
-            padding: 8px;
+            aspect-ratio: 1/1;
+            height: 53px;
+            width: auto;
+            padding: 12px;
             border-radius: 30px;
+        }
+
+        .profile-container {
+            aspect-ratio: 1/1;
+            padding: 12px;
+            border-radius: 30px;
+
+            ::deep .account-btn {
+                aspect-ratio: 1/1;
+                padding: 0px;
+                background: var(--white);
+                border-radius: 20px;
+                position: relative;
+
+                svg circle {
+                    fill: var(--purple);
+                    position: absolute;
+                    top: 16px;
+                }
+            }
+        }
+
+        .menu-btn {
+            ::deep svg {
+                width: 22px;
+                height: auto;
+
+                path {
+                    stroke: var(--blue-900);
+                }
+            }
         }
     }
 
