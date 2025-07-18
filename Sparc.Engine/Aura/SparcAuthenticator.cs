@@ -4,6 +4,7 @@ using Passwordless;
 using Sparc.Blossom.Authentication;
 using Sparc.Blossom.Data;
 using Sparc.Blossom.Realtime;
+using Sparc.Engine.Aura;
 using System.Security.Claims;
 
 namespace Sparc.Engine;
@@ -53,12 +54,29 @@ public class SparcAuthenticator<T>(
         if (emailOrToken.StartsWith("verify"))
             return await VerifyTokenAsync(emailOrToken);
 
+        if (emailOrToken.StartsWith("totp"))
+            return await VerifyTotpAsync(emailOrToken);
+
         var authenticationType = TwilioService.IsValidEmail(emailOrToken) ? "Email" : "Phone";
         var identity = SparcUser.GetOrCreateIdentity(authenticationType, emailOrToken);
         if (!identity.IsVerified)
             await SendVerificationCodeAsync(identity);
 
         return SparcUser;
+    }
+
+    private async Task<BlossomUser> VerifyTotpAsync(string emailOrToken)
+    {
+        var matchingUserId = SparcCodes.Verify(emailOrToken)
+                        ?? throw new InvalidOperationException("Invalid TOTP code.");
+
+        var matchingUser = await Users.Query
+            .Where(x => x.Id == matchingUserId)
+            .FirstOrDefaultAsync()
+            ?? throw new InvalidOperationException("User not found for the provided TOTP code.");
+
+        await LoginAsync(matchingUser.ToPrincipal());
+        return matchingUser;
     }
 
     public async Task<BlossomUser> Register(ClaimsPrincipal principal)
@@ -142,6 +160,12 @@ public class SparcAuthenticator<T>(
         await SaveAsync();
     }
 
+    internal async Task<SparcCode?> GetSparcCode(ClaimsPrincipal principal)
+    {
+        var user = await GetAsync(principal);
+        return SparcCodes.Generate(user);
+    }
+
     private void UpdateFromHttpContext(ClaimsPrincipal principal)
     {
         if (http?.HttpContext != null && User != null)
@@ -176,5 +200,6 @@ public class SparcAuthenticator<T>(
         auth.MapPost("login", DoLogin);
         auth.MapPost("logout", DoLogout);
         auth.MapGet("userinfo", GetAsync);
+        auth.MapGet("code", GetSparcCode);
     }
 }
