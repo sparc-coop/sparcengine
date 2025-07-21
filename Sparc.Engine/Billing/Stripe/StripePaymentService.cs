@@ -1,4 +1,5 @@
-﻿using Stripe;
+﻿using Sparc.Core.Billing;
+using Stripe;
 
 namespace Sparc.Engine.Billing.Stripe;
 
@@ -12,15 +13,16 @@ public class StripePaymentService
         StripeConfiguration.ApiKey = config.GetConnectionString("Stripe")
             ?? throw new InvalidOperationException("Stripe connection string is missing in configuration.");
     }
-    public async Task<PaymentIntent> CreatePaymentIntentAsync(string? email, string productId, string currencyId, string? paymentIntentId = null)
+
+    public async Task<PaymentIntent> CreateOrUpdatePaymentIntentAsync(SparcOrder order)
     {
-        var customerId = await GetOrCreateCustomerAsync(email);
-        currencyId = currencyId.ToLower();
+        var customerId = await GetOrCreateCustomerAsync(order.Email);
+        var currencyId = order.Currency!.ToLower();
 
-        var basePrice = await GetPriceAsync(productId, currencyId, true)
-            ?? throw new InvalidOperationException($"Product {productId} does not have a price in currency {currencyId}.");
+        var basePrice = await GetPriceAsync(order.ProductId, currencyId, true)
+            ?? throw new InvalidOperationException($"Product {order.ProductId} does not have a price in currency {currencyId}.");
 
-        if (string.IsNullOrWhiteSpace(paymentIntentId))
+        if (string.IsNullOrWhiteSpace(order.PaymentIntentId))
         {
             var createOptions = new PaymentIntentCreateOptions
             {
@@ -32,9 +34,17 @@ public class StripePaymentService
                 {
                     Enabled = true,
                 },
+                Metadata = new Dictionary<string, string>
+                {
+                    { "OrderId", order.Id },
+                    { "ProductId", order.ProductId },
+                    { "UserId", order.UserId }
+                }
             };
 
-            return await new PaymentIntentService().CreateAsync(createOptions);
+            var intent = await new PaymentIntentService().CreateAsync(createOptions);
+            order.PaymentIntentId = intent.Id;
+            return intent;
         }
 
         else
@@ -45,20 +55,8 @@ public class StripePaymentService
                 Amount = (long)basePrice,
                 Currency = currencyId
             };
-            return await service.UpdateAsync(paymentIntentId, options);
+            return await service.UpdateAsync(order.PaymentIntentId, options);
         }
-    }
-
-    public async Task<PaymentIntent> ConfirmPaymentIntentAsync(
-        string paymentIntentId,
-        string paymentMethodId)
-    {
-        var service = new PaymentIntentService();
-        var confirmOptions = new PaymentIntentConfirmOptions
-        {
-            PaymentMethod = paymentMethodId
-        };
-        return await service.ConfirmAsync(paymentIntentId, confirmOptions);
     }
 
     public async Task<Product> GetProductAsync(string productId)
@@ -149,13 +147,34 @@ public class StripePaymentService
         return amount / 100M;
     }
 
+    internal PaymentIntent? GetPaymentIntentFromJson(string json, string signature, string webhookSecret)
+    {
+        try
+        {
+            var stripeEvent = EventUtility.ConstructEvent(json, signature, webhookSecret);
+            switch (stripeEvent.Type)
+            {
+                case "payment_intent.succeeded":
+                case "payment_intent.payment_failed":
+                    var paymentIntent = stripeEvent.Data.Object as PaymentIntent;
+                    return paymentIntent;
+                default:
+                    return null;
+            }
+        }
+        catch (StripeException)
+        {
+            return null;
+        }
+    }
+
     static readonly HashSet<string> ZeroDecimalCurrencies = new(StringComparer.OrdinalIgnoreCase)
     {
         "bif", "clp", "djf", "gnf", "jpy", "kmf", "krw", "mga", "pyg", "rwf",
         "ugx", "vnd", "vuv", "xaf", "xof", "xpf"
     };
 
-    protected static readonly HashSet<string> Currencies = new(StringComparer.OrdinalIgnoreCase)
+    public static readonly HashSet<string> Currencies = new(StringComparer.OrdinalIgnoreCase)
     {
         "sll","aed","afn","all","amd","ang","aoa","ars","aud","awg","azn",
         "bam","bbd","bdt","bgn","bhd","bif","bmd","bnd","bob","brl","bsd",
