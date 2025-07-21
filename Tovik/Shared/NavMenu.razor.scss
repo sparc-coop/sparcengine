@@ -16,19 +16,51 @@ nav {
         flex-direction: row;
         justify-content: space-between;
         align-items: center;
-        gap: 4px;
+        gap: 0;
         position: absolute;
-        bottom: -30px;
+        bottom: -20px;
         right: 16px;
         background: var(--orange-100);
         border-bottom-left-radius: 32px;
         border-bottom-right-radius: 32px;
 
         button {
-            height: 65px;
-            width: 65px;
-            padding: 8px;
+            aspect-ratio: 1/1;
+            height: 53px;
+            width: auto;
+            padding: 12px;
             border-radius: 30px;
+        }
+
+        .profile-container {
+            aspect-ratio: 1/1;
+            padding: 12px;
+            border-radius: 30px;
+
+            ::deep .account-btn {
+                aspect-ratio: 1/1;
+                padding: 0px;
+                background: var(--white);
+                border-radius: 20px;
+                position: relative;
+
+                svg circle {
+                    fill: var(--purple);
+                    position: absolute;
+                    top: 16px;
+                }
+            }
+        }
+
+        .menu-btn {
+            ::deep svg {
+                width: 22px;
+                height: auto;
+
+                path {
+                    stroke: var(--blue-900);
+                }
+            }
         }
     }
 
@@ -47,11 +79,11 @@ nav {
         padding-top: 120px;
         background: var(--blue-700);
         transform: translateX(70vw);
-        transition: transform 1.5s ease-in;
+        transition: transform 0.8s ease-in;
 
         &.show {
             transform: translateX(0);
-            transition: transform 1.5s ease-in-out;
+            transition: transform 0.8s ease-in-out;
         }
     }
 
@@ -102,23 +134,35 @@ nav {
                 font-style: normal;
                 font-weight: 700;
                 line-height: normal;
+                position: relative;
 
                 svg {
-                    display: none;
+                    width: 26px;
+                    height: auto;
+                    position: absolute;
+                    left: -2px;
+                    bottom: -2px;
+
+                    path {
+                        fill: var(--blue-700);
+                    }
                 }
 
                 &.active {
                     background: var(--blue-50);
                     color: var(--blue-700);
-                    position: relative;
 
-                    svg {
-                        display: block;
-                        width: 26px;
-                        height: auto;
-                        position: absolute;
-                        left: -2px;
-                        bottom: -2px;
+                    svg path {
+                        fill: var(--blue-50);
+                    }
+                }
+
+                &:hover {
+                    background: #365d71; //blue-50 with 20% opacity
+                    color: var(--blue-50);
+
+                    svg path {
+                        fill: #365d71; //blue-50 with 20% opacity
                     }
                 }
             }
@@ -135,9 +179,16 @@ nav {
     left: 0;
     background: rgba(0, 0, 0, 0.50);
     z-index: 100;
+    animation: fadeOut .8s;
 
     &.show {
         display: block;
+        animation: fadeIn .8s;
+    }
+
+    &.hiding {
+        animation: fadeOut .8s;
+        pointer-events: none;
     }
 }
 
@@ -157,5 +208,23 @@ nav {
     .nav-sidebar {
         display: block;
         z-index: 10;
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
     }
 }

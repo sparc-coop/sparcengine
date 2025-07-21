@@ -34,5 +34,17 @@
   {
     "outputFile": "Pages/UsageMeter.razor.css",
     "inputFile": "Pages/UsageMeter.razor.scss"
+  },
+  {
+    "outputFile": "Pages/DeleteModal.razor.css",
+    "inputFile": "Pages/DeleteModal.razor.scss"
+  },
+  {
+    "outputFile": "Pages/Demo.razor.css",
+    "inputFile": "Pages/Demo.razor.scss"
+  },
+  {
+    "outputFile": "Pages/DemoComponent.razor.css",
+    "inputFile": "Pages/DemoComponent.razor.scss"
   }
 ]

@@ -1,34 +1,49 @@
 .domain-page {
     .page-container {
-        table {
-            font-family: var(--articulat);
-            color: var(--blue-50);
-
-            tbody {
-                font-weight: 500;
-            }
-        }
-
         form {
             display: flex;
             flex-direction: column;
             gap: 8px;
         }
 
-        .glossary-list {
+        .domain-summary {
+            table {
+                width: 100%;
+            }
+        }
+
+        .domain-connection {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+
+            aside {
+                font-size: 1.4rem;
+            }
+        }
+
+        .exemptions {
             table {
                 tbody {
+                    width: 100%;
+
                     tr {
+                        width: 100%;
                         display: flex;
                         justify-content: space-between;
                         align-items: center;
                     }
                 }
+
+                td {
+                    padding: 0;
+                }
             }
 
-            .glossary-actions {
+            .exempt-actions {
                 display: flex;
                 flex-direction: row;
+                justify-content: end;
                 gap: 8px;
 
                 button {

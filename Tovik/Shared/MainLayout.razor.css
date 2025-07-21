@@ -95,29 +95,6 @@ main ::deep article .page-container section h4 {
   font-weight: 700;
   line-height: normal;
 }
-main ::deep table {
-  font-family: var(--articulat);
-  color: var(--blue-50);
-}
-main ::deep table thead {
-  color: var(--white, #fff);
-  leading-trim: both;
-  text-edge: cap;
-  font-size: 1.4rem;
-  font-style: normal;
-  font-weight: 700;
-  line-height: normal;
-}
-main ::deep table tbody {
-  font-size: 1.6rem;
-  font-weight: 500;
-}
-main ::deep table tbody tr {
-  padding-bottom: 16px;
-}
-main ::deep table tbody tr:last-child {
-  padding-bottom: 0;
-}
 
 @media only screen and (min-width: 1024px) {
   .layout-container {

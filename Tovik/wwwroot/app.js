@@ -36,3 +36,11 @@ function hideAllDomainActions() {
 function goBack() {
     window.history.back();
 }
+
+function disableBodyScrolling(bool) {
+    if (bool == true) {
+        document.body.classList.add("modal-open");
+    } else {
+        document.body.classList.remove("modal-open");
+    }
+}
