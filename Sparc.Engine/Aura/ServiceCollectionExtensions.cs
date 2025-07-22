@@ -47,7 +47,7 @@ public static class ServiceCollectionExtensions
         where TUser : BlossomUser, new()
     { 
         app.UseCookiePolicy(new() { 
-            MinimumSameSitePolicy = SameSiteMode.None,
+            MinimumSameSitePolicy = SameSiteMode.Lax,
             HttpOnly = Microsoft.AspNetCore.CookiePolicy.HttpOnlyPolicy.Always,
             Secure = CookieSecurePolicy.Always
         });
