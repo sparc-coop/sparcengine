@@ -29,7 +29,7 @@ public class SparcAuthenticator<T>(
 
         var priorUser = BlossomUser.FromPrincipal(principal);
         var newPrincipal = SparcUser.ToPrincipal();
-        if (priorUser != User && http.HttpContext != null)
+        if (!priorUser.Equals(SparcUser) && http.HttpContext != null)
         {
             http.HttpContext.User = newPrincipal;
             await http.HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, newPrincipal, new() { IsPersistent = true });
