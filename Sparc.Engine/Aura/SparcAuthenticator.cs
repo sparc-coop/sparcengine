@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.IdentityModel.Tokens;
 using Passwordless;
 using Sparc.Blossom.Authentication;
 using Sparc.Blossom.Data;
@@ -46,25 +47,26 @@ public class SparcAuthenticator<T>(
         // 1. Convert the ClaimsPrincipal from the cookie into a BlossomUser
         SparcUser = await GetUserAsync(principal);
 
-        if (emailOrToken == null)
-            return SparcUser.ToLogin();
+        if (emailOrToken != null)
+        {
+            // Verify Authentication Token or Register
+            if (emailOrToken.StartsWith("verify"))
+                await VerifyTokenAsync(emailOrToken);
+            else if (emailOrToken.StartsWith("totp"))
+                await VerifyTotpAsync(emailOrToken);
+            else
+            {
+                var authenticationType = TwilioService.IsValidEmail(emailOrToken) ? "Email" : "Phone";
+                var identity = SparcUser.GetOrCreateIdentity(authenticationType, emailOrToken);
+                if (!identity.IsVerified)
+                    await SendVerificationCodeAsync(identity);
+            }
+        }
 
-        // Verify Authentication Token or Register
-        if (emailOrToken.StartsWith("verify"))
-            return await VerifyTokenAsync(emailOrToken);
-
-        if (emailOrToken.StartsWith("totp"))
-            return await VerifyTotpAsync(emailOrToken);
-
-        var authenticationType = TwilioService.IsValidEmail(emailOrToken) ? "Email" : "Phone";
-        var identity = SparcUser.GetOrCreateIdentity(authenticationType, emailOrToken);
-        if (!identity.IsVerified)
-            await SendVerificationCodeAsync(identity);
-
-        return SparcUser.ToLogin();
+        return tokens.Create(SparcUser);
     }
 
-    private async Task<BlossomLogin> VerifyTotpAsync(string emailOrToken)
+    private async Task<BlossomUser> VerifyTotpAsync(string emailOrToken)
     {
         var matchingUserId = SparcCodes.Verify(emailOrToken)
                         ?? throw new InvalidOperationException("Invalid TOTP code.");
@@ -75,7 +77,7 @@ public class SparcAuthenticator<T>(
             ?? throw new InvalidOperationException("User not found for the provided TOTP code.");
 
         await LoginAsync(matchingUser.ToPrincipal());
-        return matchingUser.ToLogin();
+        return matchingUser;
     }
 
     public async Task<SparcCode> Register(ClaimsPrincipal principal)
@@ -85,7 +87,7 @@ public class SparcAuthenticator<T>(
         return new SparcCode(passwordlessToken);
     }
 
-    private async Task<BlossomLogin> VerifyTokenAsync(string token)
+    private async Task<BlossomUser> VerifyTokenAsync(string token)
     {
         var verifiedUser = await _passwordlessClient.VerifyAuthenticationTokenAsync(token);
 
@@ -108,7 +110,7 @@ public class SparcAuthenticator<T>(
         SparcUser.GetOrCreateIdentity("Passwordless", verifiedUser.UserId);
 
         await SaveAsync();
-        return SparcUser.ToLogin();
+        return SparcUser;
     }
     
     public async Task<BlossomUser> DoLogout(ClaimsPrincipal principal, string? emailOrToken = null)
@@ -117,9 +119,6 @@ public class SparcAuthenticator<T>(
 
         user.Logout();
         await SaveAsync();
-
-        if (http.HttpContext != null)
-            await http.HttpContext.SignOutAsync();
 
         return user;
     }
@@ -164,13 +163,6 @@ public class SparcAuthenticator<T>(
     {
         var user = await GetAsync(principal);
         return SparcCodes.Generate(user);
-    }
-
-    protected override async Task<T> GetUserAsync(ClaimsPrincipal principal)
-    {
-        var user = await base.GetUserAsync(principal);
-        tokens.Create(user);
-        return user;
     }
 
     private void UpdateFromHttpContext(ClaimsPrincipal principal)

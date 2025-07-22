@@ -21,7 +21,7 @@ public class SparcTokens(IConfiguration config)
         };
     }
     
-    internal void Create(BlossomUser user)
+    internal BlossomLogin Create(BlossomUser user)
     {
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Key"]!));
         var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
@@ -38,7 +38,7 @@ public class SparcTokens(IConfiguration config)
 
         var token = handler.CreateToken(descriptor);
         var tokenStr = handler.WriteToken(token);
-        user.AddClaim("sparcaura-access", tokenStr);
+        return new(user, tokenStr);
     }
 
     internal BlossomUser FromToken(string token)
