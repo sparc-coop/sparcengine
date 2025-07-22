@@ -16,11 +16,11 @@ public class StripePaymentService
 
     public async Task<PaymentIntent> CreateOrUpdatePaymentIntentAsync(SparcOrder order)
     {
-        var customerId = await GetOrCreateCustomerAsync(order.Email);
+        var customerId = await GetOrCreateCustomerAsync(order);
         var currencyId = order.Currency!.ToLower();
 
-        var basePrice = await GetPriceAsync(order.ProductId, currencyId, true)
-            ?? throw new InvalidOperationException($"Product {order.ProductId} does not have a price in currency {currencyId}.");
+        var basePrice = await GetPriceAsync(order.StripeProductId, currencyId, true)
+            ?? throw new InvalidOperationException($"Product {order.StripeProductId} does not have a price in currency {currencyId}.");
 
         if (string.IsNullOrWhiteSpace(order.PaymentIntentId))
         {
@@ -106,15 +106,27 @@ public class StripePaymentService
         return stripeFormat ? currentPrice!.UnitAmount!.Value : FromStripePrice(currentPrice!.UnitAmount!.Value, currencyId);
     }
 
-    public async Task<string?> GetOrCreateCustomerAsync(string? email)
+    public async Task<string?> GetOrCreateCustomerAsync(SparcOrder order)
     {
         var customerService = new CustomerService();
 
-        if (email != null)
+        if (order.UserId != null)
         {
             var searchOptions = new CustomerSearchOptions
             {
-                Query = $"email:'{email}'"
+                Query = $"name:'{order.UserId}'"
+            };
+
+            var stripeCustomerList = await customerService.SearchAsync(searchOptions);
+            if (stripeCustomerList.Data.Count > 0)
+                return stripeCustomerList.Data.First().Id;
+        }
+
+        if (order.Email != null)
+        {
+            var searchOptions = new CustomerSearchOptions
+            {
+                Query = $"email:'{order.Email}'"
             };
 
             var stripeCustomerList = await customerService.SearchAsync(searchOptions);
@@ -124,7 +136,8 @@ public class StripePaymentService
 
         var customerOptions = new CustomerCreateOptions
         {
-            Email = email
+            Email = order.Email,
+            Name = order.UserId
         };
 
         var newCustomer = await customerService.CreateAsync(customerOptions);
