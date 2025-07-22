@@ -28,6 +28,11 @@ public class TovikDomainPolicyProvider(
 
         var currentDomain = context.Request.Headers.Origin.ToString();
         var domain = await cache.GetOrCreateAsync(currentDomain, async _ => await GetOrAddDomainAsync(currentDomain), new HybridCacheEntryOptions { Expiration = TimeSpan.FromMinutes(5) });
+        if (domain.TovikUserId == null)
+        {
+            domain = await GetOrAddDomainAsync(currentDomain);
+            await cache.SetAsync(currentDomain, domain, new HybridCacheEntryOptions { Expiration = TimeSpan.FromMinutes(5) });
+        }
 
         // Check usage
         if (domain.TovikUserId == null && !domain.Domain.Contains("localhost") && domain.TovikUsage > 500)

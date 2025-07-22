@@ -34,14 +34,15 @@ public class SparcCodes
     public static string? Verify(string code)
     {
         CleanUpExpiredEntries();
-        
-        var hash = Hash(code.Replace("totp:", "").Replace("-", ""));
+
+        var cleanCode = code.Replace("totp:", "").Replace("-", "");
+        var hash = Hash(cleanCode);
         if (!TotpIndex.TryGetValue(hash, out var index))
             return null;
 
         // Validate against the user secret
         var totp = new Totp(index.UserSecret, totpSize: TotpSize);
-        if (!totp.VerifyTotp(code, out long timeStepMatched, Window))
+        if (!totp.VerifyTotp(cleanCode, out long timeStepMatched, Window))
             return null;
 
         // TODO: Validate against timeStepMatched
@@ -67,10 +68,8 @@ public class SparcCodes
 
     private static byte[]? UserSecret(BlossomUser user)
     {
-        var passkey = user.Identity("Passkey");
-        return passkey == null
-            ? null
-            : SHA1.HashData(Encoding.UTF8.GetBytes(passkey));
+        // TODO: Implement a way to retrieve or generate a user-specific secret key.
+        return GenerateRandomKey();
     }
 
     private static void CleanUpExpiredEntries()
@@ -84,5 +83,12 @@ public class SparcCodes
     }
 
     private static string Hash(string code) => Convert.ToHexString(SHA1.HashData(Encoding.UTF8.GetBytes(code)));
-
+    public static byte[] GenerateRandomKey(int length = 32)
+    {
+        var key = new byte[length];
+        using var rng = RandomNumberGenerator.Create();
+        rng.GetBytes(key);
+        
+        return key;
+    }
 }
