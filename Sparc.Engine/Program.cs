@@ -7,6 +7,7 @@ using Sparc.Blossom.Data;
 using Sparc.Blossom.Realtime;
 using Sparc.Engine;
 using Sparc.Engine.Billing;
+using Sparc.Engine.Chat;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddOpenApi();
@@ -17,6 +18,7 @@ builder.Services.AddAzureStorage(builder.Configuration.GetConnectionString("Stor
 
 builder.AddSparcAuthentication<BlossomUser>();
 builder.AddSparcBilling();
+builder.AddSparcChat();
 builder.AddTovikTranslator();
 
 builder.Services.AddMediatR(options =>
@@ -42,6 +44,7 @@ var app = builder.Build();
 app.MapStaticAssets();
 app.UseSparcAuthentication<BlossomUser>();
 app.UseSparcBilling();
+app.UseSparcChat();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

@@ -6,8 +6,11 @@ using System.Security.Claims;
 
 namespace Sparc.Engine.Chat;
 
-public class SparcEngineChatService() : IBlossomEndpoints
+public class SparcEngineChatService(IRepository<Room> rooms) : IBlossomEndpoints
 {
+
+    IRepository<Room> Rooms = rooms;
+
     private async Task LeaveRoomAsync(HttpContext context)
     {
         throw new NotImplementedException();
@@ -18,9 +21,13 @@ public class SparcEngineChatService() : IBlossomEndpoints
         throw new NotImplementedException();
     }
 
-    private async Task CreateRoomAsync()
+    private async Task CreateRoomAsync(Room room)
     {
-        throw new NotImplementedException();
+        //var newRoom = new Room(newRoomName); 
+        
+        await Rooms.AddAsync(room);
+
+        return;
     }
 
     public void Map(IEndpointRouteBuilder endpoints)
@@ -28,6 +35,12 @@ public class SparcEngineChatService() : IBlossomEndpoints
         var chatGroup = endpoints.MapGroup("/chat");
 
         chatGroup.MapPost("/createroom", CreateRoomAsync);
+
+        //chatGroup.MapPost("/createroom", async (Room room) =>
+        //{
+        //    var roomResult = await CreateRoomAsync(room);
+        //    return roomResult;
+        //});
         chatGroup.MapPost("/rooms/{roomId}/join", JoinRoomAsync);
         chatGroup.MapPost("/rooms/{roomId}/leave", LeaveRoomAsync);
     }

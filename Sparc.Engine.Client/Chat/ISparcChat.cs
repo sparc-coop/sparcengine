@@ -7,7 +7,7 @@ namespace Sparc.Engine.Chat;
 public interface ISparcChat
 {
     [Post("/chat/createroom")]
-    Task<Room> CreateRoomAsync([Body] Room room);
+    Task<Room> CreateRoomAsync(Room room);
     [Post("/chat/rooms/{roomId}/join")]
     Task<Room> JoinRoomAsync(string roomId);
     [Post("/chat/rooms/{roomId}/leave")]
