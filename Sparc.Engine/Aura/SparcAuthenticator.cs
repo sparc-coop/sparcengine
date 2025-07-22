@@ -97,14 +97,16 @@ public class SparcAuthenticator<T>(
             throw new InvalidOperationException(Message);
         }
 
-        var user = await Users.Query
-            .Where(x => x.Identities.Any(y => y.Type == "Passwordless" && y.Id == verifiedUser.UserId))
-            .FirstOrDefaultAsync();
+        SparcUser = await Users.FindAsync(verifiedUser.UserId);
 
-        if (user == null)
-            SparcUser!.AddIdentity("Passwordless", verifiedUser.UserId);
-        else
-            SparcUser = user;
+        if (SparcUser == null)
+        {
+            Message = "User not found for the provided token.";
+            LoginState = LoginStates.Error;
+            throw new InvalidOperationException(Message);
+        }
+
+        SparcUser.GetOrCreateIdentity("Passwordless", verifiedUser.UserId);
 
         await SaveAsync();
         return SparcUser;
@@ -195,10 +197,10 @@ public class SparcAuthenticator<T>(
         var auth = endpoints.MapGroup("/aura").RequireCors("Auth");
         //auth.MapGet("login", DoLogin);
         //auth.MapGet("logout", DoLogout);
-        auth.MapPost("register", Register);
-        auth.MapPost("login", DoLogin);
-        auth.MapPost("logout", DoLogout);
-        auth.MapGet("userinfo", GetAsync);
-        auth.MapGet("code", GetSparcCode);
+        auth.MapPost("register", async (SparcAuthenticator<T> auth, ClaimsPrincipal principal) => await auth.Register(principal));
+        auth.MapPost("login", async (SparcAuthenticator<T> auth, ClaimsPrincipal principal, string? emailOrToken = null) => await auth.DoLogin(principal, emailOrToken));
+        auth.MapPost("logout", async (SparcAuthenticator<T> auth, ClaimsPrincipal principal, string? emailOrToken = null) => await auth.DoLogout(principal, emailOrToken));
+        auth.MapGet("userinfo", async (SparcAuthenticator<T> auth, ClaimsPrincipal principal) => await GetAsync(principal));
+        auth.MapGet("code", async (SparcAuthenticator<T> auth, ClaimsPrincipal principal) => await GetSparcCode(principal));
     }
 }
