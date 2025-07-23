@@ -17,6 +17,9 @@ export default class TovikEngine {
         }
 
         this.setLanguage(profile.language);
+        document.addEventListener('tovik-user-language-changed', async (event: CustomEvent) => {
+            await this.setLanguage(event.detail);
+        });
     }
 
     static async getLanguages() {

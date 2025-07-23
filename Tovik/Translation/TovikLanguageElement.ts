@@ -39,7 +39,7 @@ export default class TovikLanguageElement extends HTMLElement {
         });
 
         select.addEventListener('change', () => {
-            TovikEngine.setLanguage(select.value);
+            document.dispatchEvent(new CustomEvent('tovik-user-language-changed', { detail: select.value }));
         });
 
         this.appendChild(select);
