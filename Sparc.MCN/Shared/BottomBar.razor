@@ -1,19 +1,49 @@
 ﻿<div class="bottom-bar">
-    <div class="bottom-toggle" @onclick=ToggleContent>
-        <ChevronDownIcon />
+    <div class="bottom-toggle @(showContent ? "up" : "")" @onclick=ToggleContent>
+        @if (showContent)
+        {
+            <ChevronUpIcon />
+        } else
+        {
+            <ChevronDownIcon />
+        }
     </div>
-    <section id="bottom-content" class="bottom-content @(showContent ? "show" : "")" @ref=ContentRef>
+    <section id="bottom-content" class="bottom-content @(showContent ? "show" : "")">
         <header>
             <h3>Please help us confirm your contact details</h3>
             <p class="subheader">Would you like to confirm below contact information for <strong>Adam</strong>?</p>
         </header>
         <ContactCard User=NewContact />
+        <div class="contact-actions">
+            <button class="confirm-btn secondary-btn">
+                <CheckCircledIcon />
+                <div>
+                    <p>Yes, it's me</p>
+                    <aside>My information is up-to-date</aside>
+                </div>
+            </button>
+            <button class="edit-btn secondary-btn">
+                <EditIcon />
+                <div>
+                    <p>I'd like to update</p>
+                    <aside>Some information is changed</aside>
+                </div>
+
+            </button>
+            <button class="reject-btn secondary-btn">
+                <CloseIcon />
+                <div>
+                    <p>No, it's not me</p>
+                    <aside>I am not this person</aside>
+                </div>
+            </button>
+            <button class="text-btn">Do you need help?</button>
+        </div>
     </section>
 </div>
 
 @code {
     bool showContent;
-    ElementReference ContentRef;
     User? NewContact;
 
     protected override void OnInitialized()

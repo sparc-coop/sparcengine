@@ -1,12 +1,14 @@
 ﻿<div class="contact-card">
     <header>
         <UserCard FirstName=@User.FirstName LastName=@User.LastName />
-        <SettingsIcon />
+        <button class="settings-btn icon-btn">
+            <SettingsIcon />
+        </button>
     </header>
     <hr/>
     <div class="contact-info">
         <div class="name">
-            <div class="prefix">
+            <div class="prefix contact-group">
                 <aside>Prefix</aside>
                 <p>
                     @if (!String.IsNullOrEmpty(User.Prefix))
@@ -15,7 +17,7 @@
                     }
                 </p>
             </div>
-            <div class="firstName">
+            <div class="firstName contact-group">
                 <aside>First Name</aside>
                 <p>
                     @if (!String.IsNullOrEmpty(User.Prefix))
@@ -24,7 +26,7 @@
                     }
                 </p>
             </div>
-            <div class="lastName">
+            <div class="lastName contact-group">
                 <aside>Last Name</aside>
                 <p>
                     @if (!String.IsNullOrEmpty(User.Prefix))
@@ -33,7 +35,7 @@
                     }
                 </p>
             </div>
-            <div class="suffix">
+            <div class="suffix contact-group">
                 <aside>Suffix</aside>
                 <p>
                     @if (!String.IsNullOrEmpty(User.Suffix))
@@ -43,7 +45,7 @@
                 </p>
             </div>
         </div>
-        <div class="address">
+        <div class="address contact-group">
             <aside>Address</aside>
             <div class="address-details">
                 @if (!String.IsNullOrEmpty(User.Contact.Address1))
@@ -74,43 +76,44 @@
                 </p>
             </div>
         </div>
-        <div class="contact-methods">
+        <div class="contact-methods contact-group">
             <aside>Contact Info</aside>
-            <div class="contact-item">
-                @if (!String.IsNullOrEmpty(User.Contact.HomePhone))
-                {
+
+            @if (!String.IsNullOrEmpty(User.Contact.HomePhone))
+            {
+                <div class="contact-item">
                     <PhoneIcon />
                     <p>@User.Contact.HomePhone</p>
                     <aside>Home Phone</aside>
-                }
-            </div>
+                </div>
+            }
 
-            <div class="contact-item">
-                @if (!String.IsNullOrEmpty(User.Contact.MobilePhone))
-                {
+            @if (!String.IsNullOrEmpty(User.Contact.MobilePhone))
+            {            
+                <div class="contact-item">
                     <PhoneIcon />
                     <p>@User.Contact.MobilePhone</p>
                     <aside>Mobile Phone</aside>
-                }
-            </div>
+                </div>
+            }
 
-            <div class="contact-item">
-                @if (!String.IsNullOrEmpty(User.Contact.WorkPhone))
-                {
+            @if (!String.IsNullOrEmpty(User.Contact.WorkPhone))
+            {
+                <div class="contact-item">
                     <PhoneIcon />
                     <p>@User.Contact.WorkPhone</p>
                     <aside>Work Phone</aside>
-                }
-            </div>
+                </div>
+            }
 
-            <div class="contact-item">
-                @if (!String.IsNullOrEmpty(User.Contact.Email))
-                {
-                    <PhoneIcon />
+            @if (!String.IsNullOrEmpty(User.Contact.Email))
+            {
+                <div class="contact-item">
+                    <EmailIcon />
                     <p>@User.Contact.Email</p>
                     <aside>Email</aside>
-                }
-            </div>
+                </div>
+            }
         </div>
     </div>
 </div>

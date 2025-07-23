@@ -106,20 +106,59 @@ button {
         }
     }
 
+    &.secondary-btn {
+        display: flex;
+        padding: 16px;
+        align-items: center;
+        gap: 24px;
+        align-self: stretch;
+        border-radius: 8px;
+        border: 1px solid var(--grey-200, #C9C9C9);
+        background: var(--grey-100, #F8F8FA);
+    }
+
     &.icon-btn {
         aspect-ratio: 1/1;
+        padding: 4px;
         display: flex;
-        width: 44px;
-        height: 44px;
         justify-content: center;
         align-items: center;
-        border-radius: 20px;
-        border: 1px solid var(--blue-600, #1F5068);
-        background: var(--blue-700, #07374F);
+        border-radius: 4px;
+        border: 1px solid transparent;
+        background: none;
+        transition: .2s ease-in-out;
 
         ::deep svg {
             height: 100%;
             width: auto;
+        }
+
+        &:hover {
+            box-shadow: 0px 10px 20px 0px rgba(0, 18, 65, 0.04), 0px 2px 6px 0px rgba(0, 18, 65, 0.04), 0px 0px 1px 0px rgba(0, 18, 65, 0.04);
+
+            ::deep svg {
+                path {
+                    stroke: var(--secondary);
+                }
+            }
+        }
+    }
+
+    &.text-btn {
+        padding: 0;
+        background: none;
+        border: none;
+        color: var(--grey-600, #474747);
+        text-align: center;
+        font-family: Poppins;
+        font-size: 1.4rem;
+        font-style: normal;
+        font-weight: 400;
+        line-height: 20px; /* 142.857% */
+        transition: .2s ease-in-out;
+
+        &:hover {
+            color: var(--secondary-600);
         }
     }
 }

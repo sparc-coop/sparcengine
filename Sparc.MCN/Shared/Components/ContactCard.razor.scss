@@ -29,6 +29,12 @@
         flex-direction: column;
         gap: 18px;
 
+        .contact-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
         aside {
             color: var(--grey-300, #999);
             font-family: Poppins;
