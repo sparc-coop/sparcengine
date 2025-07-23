@@ -78,11 +78,11 @@ internal class DeepLTranslator(IConfiguration configuration) : ITranslator
         var targets = await Client.GetTargetLanguagesAsync();
 
         SourceLanguages = sources
-            .Select(x => new Language(x.Code, x.Name, x.Name, x.CultureInfo.TextInfo.IsRightToLeft))
+            .Select(x => Language.FromCulture(x.Code))
             .ToList();
 
         TargetLanguages = targets
-            .Select(x => new Language(x.Code, x.Name, x.Name, x.CultureInfo.TextInfo.IsRightToLeft))
+            .Select(x => Language.FromCulture(x.Code))
             .ToList();
 
         return SourceLanguages.Union(TargetLanguages).ToList();
