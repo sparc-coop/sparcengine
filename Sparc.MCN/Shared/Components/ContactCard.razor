@@ -1,0 +1,120 @@
+﻿<div class="contact-card">
+    <header>
+        <UserCard FirstName=@User.FirstName LastName=@User.LastName />
+        <SettingsIcon />
+    </header>
+    <hr/>
+    <div class="contact-info">
+        <div class="name">
+            <div class="prefix">
+                <aside>Prefix</aside>
+                <p>
+                    @if (!String.IsNullOrEmpty(User.Prefix))
+                    {
+                        @User.Prefix
+                    }
+                </p>
+            </div>
+            <div class="firstName">
+                <aside>First Name</aside>
+                <p>
+                    @if (!String.IsNullOrEmpty(User.Prefix))
+                    {
+                        @User.FirstName
+                    }
+                </p>
+            </div>
+            <div class="lastName">
+                <aside>Last Name</aside>
+                <p>
+                    @if (!String.IsNullOrEmpty(User.Prefix))
+                    {
+                        @User.LastName
+                    }
+                </p>
+            </div>
+            <div class="suffix">
+                <aside>Suffix</aside>
+                <p>
+                    @if (!String.IsNullOrEmpty(User.Suffix))
+                    {
+                        @User.Suffix
+                    }
+                </p>
+            </div>
+        </div>
+        <div class="address">
+            <aside>Address</aside>
+            <div class="address-details">
+                @if (!String.IsNullOrEmpty(User.Contact.Address1))
+                {
+                    <p class="address1">@User.Contact.Address1</p>
+                }
+                @if (!String.IsNullOrEmpty(User.Contact.Address2))
+                {
+                    <p class="address2">@User.Contact.Address2</p>
+                }
+                <p>
+                    @if (!String.IsNullOrEmpty(User.Contact.City)) 
+                    {
+                        @User.Contact.City
+                    }, 
+                    @if (!String.IsNullOrEmpty(User.Contact.State))
+                    {
+                        @User.Contact.State
+                    }
+                    @if (!String.IsNullOrEmpty(User.Contact.PostalCode))
+                    {
+                        @User.Contact.PostalCode
+                    }
+                    @if (!String.IsNullOrEmpty(User.Contact.Country))
+                    {
+                        @User.Contact.Country
+                    }
+                </p>
+            </div>
+        </div>
+        <div class="contact-methods">
+            <aside>Contact Info</aside>
+            <div class="contact-item">
+                @if (!String.IsNullOrEmpty(User.Contact.HomePhone))
+                {
+                    <PhoneIcon />
+                    <p>@User.Contact.HomePhone</p>
+                    <aside>Home Phone</aside>
+                }
+            </div>
+
+            <div class="contact-item">
+                @if (!String.IsNullOrEmpty(User.Contact.MobilePhone))
+                {
+                    <PhoneIcon />
+                    <p>@User.Contact.MobilePhone</p>
+                    <aside>Mobile Phone</aside>
+                }
+            </div>
+
+            <div class="contact-item">
+                @if (!String.IsNullOrEmpty(User.Contact.WorkPhone))
+                {
+                    <PhoneIcon />
+                    <p>@User.Contact.WorkPhone</p>
+                    <aside>Work Phone</aside>
+                }
+            </div>
+
+            <div class="contact-item">
+                @if (!String.IsNullOrEmpty(User.Contact.Email))
+                {
+                    <PhoneIcon />
+                    <p>@User.Contact.Email</p>
+                    <aside>Email</aside>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public User User { get; set; }
+}

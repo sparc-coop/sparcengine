@@ -1,0 +1,48 @@
+﻿<div class="bottom-bar">
+    <div class="bottom-toggle" @onclick=ToggleContent>
+        <ChevronDownIcon />
+    </div>
+    <section id="bottom-content" class="bottom-content @(showContent ? "show" : "")" @ref=ContentRef>
+        <header>
+            <h3>Please help us confirm your contact details</h3>
+            <p class="subheader">Would you like to confirm below contact information for <strong>Adam</strong>?</p>
+        </header>
+        <ContactCard User=NewContact />
+    </section>
+</div>
+
+@code {
+    bool showContent;
+    ElementReference ContentRef;
+    User? NewContact;
+
+    protected override void OnInitialized()
+    {
+        Contact contact = new Contact(
+            address1: "4228 Homestead Rd",
+            address2: null,
+            city: "Cedar Hill",
+            state: "California",
+            postalCode: "38597",
+            country: "United States",
+            email: "beth@mcn.com",
+            homePhone: "(239) 555-00108",
+            mobilePhone: "(239) 555-00108",
+            workPhone: null
+        );
+
+        NewContact = new User(
+            firstName: "Beth",
+            lastName: "Jones",
+            contact: contact,
+            prefix: "Miss",
+            suffix: null
+        );
+    }
+
+    void ToggleContent()
+    {
+        showContent = !showContent;
+        Js.InvokeVoidAsync("scrollToElement", "bottom-content");
+    }
+}

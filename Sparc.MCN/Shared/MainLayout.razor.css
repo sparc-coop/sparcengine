@@ -1,8 +1,16 @@
-﻿main {
+﻿.layout-container {
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: start;
+  gap: 20px;
+  background: var(--primary);
+  color: var(--blue-50, #EFF7F9);
+}
+
+main {
   width: var(--app-width);
-  padding: 0 16px;
-  padding-bottom: 24px;
-  color: var(--blue-50);
 }
 main .main-grid {
   width: 100%;
@@ -12,7 +20,6 @@ main .main-grid {
 }
 main .main-grid ::deep article {
   grid-column: 1/span 4;
-  margin-top: 200px;
 }
 main .hero {
   width: var(--app-width);
@@ -72,14 +79,14 @@ main ::deep article .page-container section header h3 {
   line-height: normal;
 }
 main ::deep article .page-container section header .subheader {
-  font-family: 'Inter';
+  font-family: "Inter";
   font-size: 1.6rem;
   font-weight: 400;
   line-height: normal;
 }
 main ::deep article .page-container section header aside {
   color: var(--orange-300, #FF945E);
-  font-family: 'Inter';
+  font-family: "Inter";
   font-size: 16px;
   font-style: normal;
   font-weight: 700;
@@ -87,14 +94,14 @@ main ::deep article .page-container section header aside {
 }
 main ::deep article .page-container section h4 {
   color: #FFF;
-  font-family: 'Inter';
+  font-family: "Inter";
   font-size: 16px;
   font-style: normal;
   font-weight: 700;
   line-height: normal;
 }
 main ::deep table {
-  font-family: 'Inter';
+  font-family: "Inter";
   color: var(--blue-50);
 }
 main ::deep table thead {

@@ -1,8 +1,16 @@
+.layout-container {
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: start;
+    gap: 20px;
+    background: var(--primary);
+    color: var(--blue-50, #EFF7F9);
+}
+
 main {
     width: var(--app-width);
-    padding: 0 16px;
-    padding-bottom: 24px;
-    color: var(--blue-50);
 
     .main-grid {
         width: 100%;
@@ -12,7 +20,6 @@ main {
 
         ::deep article {
             grid-column: 1 / span 4;
-            margin-top: 200px;
         }
     }
 
