@@ -115,8 +115,8 @@ public class Orders(
         billingGroup.MapPost("/fulfill", async (Orders svc, HttpRequest request) => await svc.Fulfill(request));
         billingGroup.MapGet("/fulfill/{key}", async (Orders svc, string key) => await svc.Fulfill(key));
 
-        billingGroup.MapGet("/products/{productId}", async (Orders svc, HttpRequest req, string productId) 
-            => await svc.GetProduct(req, productId));
+        billingGroup.MapGet("/products/{productId}", async (Orders svc, HttpRequest req, string productId, string? currency = null) 
+            => await svc.GetProduct(req, productId, currency));
 
         billingGroup.MapGet("/currency", (Orders svc, HttpRequest req) => svc.GetCurrency(req));
         billingGroup.MapPost("/currency", async (Orders svc, SparcCurrency currency)
