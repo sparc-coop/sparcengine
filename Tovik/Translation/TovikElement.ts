@@ -105,7 +105,7 @@ export default class TovikElement extends HTMLElement {
             textNode.hash = TovikEngine.idHash(textNode.originalText);
             const translation = await db.translations.get(textNode.hash);
             if (translation) {
-                textNode.textContent = translation.text;
+                textNode.textContent = ' ' + translation.text + ' ';
             } else {
                 // Queue for bulk translation if not in cache
                 if (!pendingTranslations.some(node => node.hash === textNode.hash)) {
@@ -131,7 +131,7 @@ export default class TovikElement extends HTMLElement {
         for (const node of pendingTranslations) {
             const translation = newTranslations.find(t => t.id === node.hash);
             if (translation) {
-                node.textContent = translation.text;
+                node.textContent = ' ' + translation.text + ' ';
                 node.translating = false;
                 node.translated = true;
                 db.translations.put(translation);
