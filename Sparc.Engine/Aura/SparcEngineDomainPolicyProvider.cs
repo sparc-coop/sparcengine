@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Net.Http.Headers;
 using Sparc.Blossom.Data;
+using System.Collections.Concurrent;
 
 namespace Sparc.Engine;
 
@@ -16,7 +17,7 @@ public class SparcEngineDomainPolicyProvider(IRepository<SparcDomain> domains, H
     static CorsPolicy DenyAll = new CorsPolicyBuilder()
         .Build();
 
-    static Dictionary<string, CorsPolicy> _policies = [];
+    static ConcurrentDictionary<string, CorsPolicy> _policies = [];
 
     public async Task<CorsPolicy?> GetPolicyAsync(HttpContext context, string? policyName)
     {
