@@ -16,8 +16,8 @@
     "inputFile": "Shared/TopBar.razor.scss"
   },
   {
-    "outputFile": "Shared/BottomBar.razor.css",
-    "inputFile": "Shared/BottomBar.razor.scss"
+    "outputFile": "Shared/MainPage.razor.css",
+    "inputFile": "Shared/MainPage.razor.scss"
   },
   {
     "outputFile": "Shared/Components/UserCard.razor.css",
@@ -26,6 +26,10 @@
   {
     "outputFile": "Shared/Components/ContactCard.razor.css",
     "inputFile": "Shared/Components/ContactCard.razor.scss"
+  },
+  {
+    "outputFile": "Pages/Index.razor.css",
+    "inputFile": "Pages/Index.razor.scss"
   },
   {
     "outputFile": "Pages/Index.razor.css",

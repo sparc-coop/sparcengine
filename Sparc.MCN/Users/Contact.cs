@@ -8,11 +8,9 @@ public class Contact
     public string? State { get; set; }
     public string? PostalCode { get; set; }
     public string? Country { get; set; }
-    public string? Email { get; set; }
-    public string? HomePhone { get; set; }
-    public string? MobilePhone { get; set; }
-    public string? WorkPhone { get; set; }
-    public Contact(string? address1, string? address2, string? city, string? state, string? postalCode, string? country, string? email, string? homePhone, string? mobilePhone, string? workPhone)
+    public List<Email>? EmailAddresses { get; set; } = new List<Email>();
+    public List<Phone>? PhoneNumbers { get; set; } = new List<Phone>();
+    public Contact(string? address1, string? address2, string? city, string? state, string? postalCode, string? country, List<Email>? emails, List<Phone>? phoneNumbers)
     {
         Address1 = address1;
         Address2 = address2;
@@ -20,9 +18,29 @@ public class Contact
         State = state;
         PostalCode = postalCode;
         Country = country;
-        Email = email;
-        HomePhone = homePhone;
-        MobilePhone = mobilePhone;
-        WorkPhone = workPhone;
+        EmailAddresses = emails;
+        PhoneNumbers = phoneNumbers;
+    }
+}
+
+public class Email
+{
+    public string? Type { get; set; }
+    public string? Address { get; set; }
+    public Email(string? type, string? address)
+    {
+        Type = type;
+        Address = address;
+    }
+}
+
+public class Phone
+{
+    public string? Type { get; set; }
+    public string? Number { get; set; }
+    public Phone(string? type, string? number)
+    {
+        Type = type;
+        Number = number;
     }
 }

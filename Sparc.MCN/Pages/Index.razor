@@ -3,7 +3,7 @@
 
 <PageTitle>MyContactNetwork</PageTitle>
 
-<article class="home">
+<div class="home">
     <div class="page-container">
         <div class="hero">
             <div class="hero-img">
@@ -28,8 +28,78 @@
             </div>
         </section>
     </div>
-</article>
+</div>
+
+<MainPage ShowContent=showContent OnToggleContent=ToggleContent>        
+    <header>
+        <h3>Please help us confirm your contact details</h3>
+        <p class="subheader">Would you like to confirm below contact information for <strong>Adam</strong>?</p>
+    </header>
+    <ContactCard User=NewContact />
+    <div class="contact-actions">
+        <button class="confirm-btn secondary-btn">
+            <CheckCircledIcon />
+            <div>
+                <p>Yes, it's me</p>
+                <aside>My information is up-to-date</aside>
+            </div>
+        </button>
+        <button class="edit-btn secondary-btn">
+            <EditIcon />
+            <div>
+                <p>I'd like to update</p>
+                <aside>Some information is changed</aside>
+            </div>
+
+        </button>
+        <button class="reject-btn secondary-btn">
+            <CloseIcon />
+            <div>
+                <p>No, it's not me</p>
+                <aside>I am not this person</aside>
+            </div>
+        </button>
+        <button class="text-btn">Do you need help?</button>
+    </div>
+</MainPage>
 
 @code {
     [CascadingParameter] public User User { get; set; }
+
+    bool showContent;
+    User? NewContact;
+
+    protected override void OnInitialized()
+    {
+        Contact contact = new Contact(
+            address1: "4228 Homestead Rd",
+            address2: null,
+            city: "Cedar Hill",
+            state: "California",
+            postalCode: "38597",
+            country: "United States",
+            emails: new List<Email>(),
+            phoneNumbers: new List<Phone>()
+        );
+
+        contact.EmailAddresses = new List<Email>() { new  Email(type : "Work", address: "beth@mcn.com") };
+        contact.PhoneNumbers = new List<Phone>() {
+            new Phone(type: "Home", number: "(239) 555-0108)"),
+            new Phone(type: "Mobile", number: "(239) 555-0108"),
+        };
+
+        NewContact = new User(
+            firstName: "Beth",
+            lastName: "Jones",
+            contact: contact,
+            prefix: "Miss",
+            suffix: null
+        );
+    }
+
+    void ToggleContent()
+    {
+        showContent = !showContent;
+        Js.InvokeVoidAsync("scrollToElement", "main-content");
+    }
 }

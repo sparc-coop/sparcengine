@@ -79,7 +79,31 @@
         <div class="contact-methods contact-group">
             <aside>Contact Info</aside>
 
-            @if (!String.IsNullOrEmpty(User.Contact.HomePhone))
+            @foreach (var num in User.Contact.PhoneNumbers)
+            {
+                if (!String.IsNullOrEmpty(num.Number))
+                {
+                    <div class="contact-item">
+                        <PhoneIcon />
+                        <p>@num.Number</p>
+                        <aside>@num.Type Phone</aside>
+                    </div>
+                }
+            }
+
+            @foreach (var email in User.Contact.EmailAddresses)
+            {
+                if (!String.IsNullOrEmpty(email.Address))
+                {
+                    <div class="contact-item">
+                        <EmailIcon />
+                        <p>@email.Address</p>
+                        <aside>@email.Type Email</aside>
+                    </div>
+                }
+            }
+
+            @* @if (!String.IsNullOrEmpty(User.Contact.PhoneNumbers.FirstOrDefault(x => x.Type == "Home"));
             {
                 <div class="contact-item">
                     <PhoneIcon />
@@ -113,7 +137,7 @@
                     <p>@User.Contact.Email</p>
                     <aside>Email</aside>
                 </div>
-            }
+            } *@
         </div>
     </div>
 </div>

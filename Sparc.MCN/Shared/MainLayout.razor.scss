@@ -143,4 +143,22 @@ main {
             }
         }
     }
+
+    @media only screen and (min-width: 1080px) {
+        .layout-container {
+            width: 100vw;
+        }
+
+        .main-grid {
+            grid-template-columns: repeat(12, 1fr);
+
+            ::deep .home {
+                grid-column: 1 / span 3;
+            }
+
+            ::deep .main-page {
+                grid-column: 4 / span 8;
+            }
+        }
+    }
 }

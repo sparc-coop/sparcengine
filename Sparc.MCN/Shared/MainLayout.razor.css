@@ -123,3 +123,17 @@ main ::deep table tbody tr {
 main ::deep table tbody tr:last-child {
   padding-bottom: 0;
 }
+@media only screen and (min-width: 1080px) {
+  main .layout-container {
+    width: 100vw;
+  }
+  main .main-grid {
+    grid-template-columns: repeat(12, 1fr);
+  }
+  main .main-grid ::deep .home {
+    grid-column: 1/span 3;
+  }
+  main .main-grid ::deep .main-page {
+    grid-column: 4/span 8;
+  }
+}

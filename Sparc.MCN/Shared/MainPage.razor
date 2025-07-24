@@ -1,0 +1,26 @@
+﻿<article class="main-page">
+    <div class="content-toggle @(ShowContent ? "up" : "")" @onclick=ToggleContent>
+        @if (ShowContent)
+        {
+            <ChevronUpIcon />
+        } else
+        {
+            <ChevronDownIcon />
+        }
+    </div>
+    <section id="main-content" class="main-content @(ShowContent ? "show" : "")">
+        @ChildContent
+    </section>
+</article>
+
+@code {
+    [Parameter] public RenderFragment ChildContent { get; set; }
+    [Parameter] public bool ShowContent { get; set; }
+    [Parameter] public EventCallback OnToggleContent { get; set; }
+
+
+    void ToggleContent()
+    {
+        OnToggleContent.InvokeAsync();
+    }
+}

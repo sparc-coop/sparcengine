@@ -1,0 +1,84 @@
+﻿@page "/edit-contact"
+
+<div class="edit-contact">
+    <header>
+        <h2>Contact Detail</h2>
+        <p class="subheader">Please take a moment to check your details and make any necessary updates. Keeping your contact info accurate ensure your friends, family, and coworkers can reach you easily. </p>
+    </header>
+    <form>
+        <div class="name">
+            <div class="contact-group">
+                <aside>First Name</aside>
+                <p>@User.FirstName</p>
+            </div>
+            <div class="contact-group">
+                <aside>Last Name</aside>
+                <p>@User.LastName</p>
+            </div>
+        </div>
+        <div class="email contact-group">
+            <aside>Email</aside>
+            <div class="contact-item">
+                @foreach (var email in User.Contact.EmailAddresses)
+                {
+                    <select class="email-type">
+                        <option>Work</option>
+                        <option>Personal</option>
+                        <option>Other</option>
+                    </select>
+                    <input type="email" value="@email" />
+                }
+            </div>
+            <button><PlusCircled /> Add another email</button>
+        </div>
+        <div class="phone contact-group">
+            <aside>Phone Number</aside>
+            @foreach (var num in User.Contact.PhoneNumbers)
+            {
+                <div class="contact-item">
+                    <select>
+                        <option>Mobile</option>
+                        <option>Home</option>
+                        <option>Work</option>
+                        <option>Other</option>
+                    </select>
+                    <input type="tel" @bind="num.Number" />
+                </div>
+            }
+        </div>
+        <div>
+        </div>
+    </form>
+</div>
+
+@code {
+    [Parameter] public User User { get; set; }
+
+    protected override void OnInitialized()
+    {
+        Contact contact = new Contact(
+            address1: "4228 Homestead Rd",
+            address2: null,
+            city: "Cedar Hill",
+            state: "California",
+            postalCode: "38597",
+            country: "United States",
+            emails: new List<Email>(),
+            phoneNumbers: new List<Phone>()
+        );
+
+        contact.EmailAddresses = new List<Email>() { new Email(type: "Work", address: "beth@mcn.com") };
+        contact.PhoneNumbers = new List<Phone>() {
+            new Phone(type: "Home", number: "(239) 555-0108)"),
+            new Phone(type: "Mobile", number: "(239) 555-0108"),
+        };
+
+        User = new User(
+            firstName: "Beth",
+            lastName: "Jones",
+            contact: contact,
+            prefix: "Miss",
+            suffix: null
+        );
+    }
+}
