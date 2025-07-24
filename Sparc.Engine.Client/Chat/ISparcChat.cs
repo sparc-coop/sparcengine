@@ -6,12 +6,24 @@ namespace Sparc.Engine.Chat;
 
 public interface ISparcChat
 {
-    [Post("/chat/createroom")]
+    [Get("/chat/getrooms")]
+    Task<List<Room>> GetRoomsAsync(string userId);
+
+    [Post("/chat/rooms/create")]
     Task<Room> CreateRoomAsync(Room room);
-    [Post("/chat/rooms/{roomId}/join")]
+
+    [Post("/chat/rooms/join")]
     Task<Room> JoinRoomAsync(string roomId);
-    [Post("/chat/rooms/{roomId}/leave")]
+
+    [Post("/chat/rooms/{roomId}/join")]
     Task<Room> LeaveRoomAsync(string roomId);
-    [Post("/chat/rooms/{roomId}/invite")]
+
+    [Post("/chat/rooms/{roomId}/leave")]
     Task<Room> InviteRoomAsync(string roomId, string userId);
+
+    [Get("/chat/rooms/{roomId}/messages")]
+    Task<List<MessageEvent>> GetMessagesAsync(string roomId);
+
+    [Post("/chat/rooms/sendmessage")]
+    Task<Event> SendMessageAsync(MessageEvent message);
 }

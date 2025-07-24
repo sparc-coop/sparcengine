@@ -7,10 +7,11 @@ using Sparc.Engine;
 
 internal class SparcEngineContext(DbContextOptions<SparcEngineContext> options) : DbContext(options)
 {
+
+    public DbSet<RoomMembership> Memberships { get; set; }
     protected override void OnModelCreating(ModelBuilder model)
     {
-        model.Entity<BlossomUser>().ToContainer("Users")
-            .HasPartitionKey(x => x.UserId);
+
         
         model.Entity<PouchDatum>().ToContainer("Data")
             .HasPartitionKey(x => new { x.Db, x.PouchId })
@@ -28,8 +29,26 @@ internal class SparcEngineContext(DbContextOptions<SparcEngineContext> options) 
             .HasPartitionKey(x => x.Domain)
             .HasKey(x => x.Id);
 
+        model.Entity<BlossomUser>().ToContainer("Users")
+            .HasPartitionKey(x => x.UserId);
+
         model.Entity<Room>().ToContainer("Rooms")
             .HasPartitionKey(x => x.RoomId)
             .HasKey(x => x.Id);
+
+        model.Entity<RoomMembership>()
+          .ToContainer("Memberships")
+          .HasPartitionKey(rm => rm.RoomId)
+          .HasKey(x => x.Id);
+
+        model.Entity<RoomMembership>()
+          .HasOne(rm => rm.Room)
+          .WithMany(r => r.Memberships)
+          .HasForeignKey(rm => rm.RoomId);
+
+        model.Entity<MessageEvent>()
+          .ToContainer("Events")
+          .HasPartitionKey(e => e.RoomId)
+          .HasKey(x => x.Id);
     }
 }
