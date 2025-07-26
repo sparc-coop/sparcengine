@@ -100,6 +100,8 @@ export default class TovikElement extends HTMLElement {
 
             if (!textNode.originalText) {
                 textNode.originalText = textNode.textContent.trim();
+                textNode.preWhiteSpace = /^\s/.test(textNode.textContent);
+                textNode.postWhiteSpace = /\s$/.test(textNode.textContent);
             }
 
             textNode.hash = TovikEngine.idHash(textNode.originalText);
@@ -131,7 +133,10 @@ export default class TovikElement extends HTMLElement {
         for (const node of pendingTranslations) {
             const translation = newTranslations.find(t => t.id === node.hash);
             if (translation) {
-                node.textContent = ' ' + translation.text + ' ';
+                node.textContent =
+                    (node.preWhiteSpace ? ' ' : '')
+                    + translation.text
+                    + (node.postWhiteSpace ? ' ' : '');
                 node.translating = false;
                 node.translated = true;
                 db.translations.put(translation);
