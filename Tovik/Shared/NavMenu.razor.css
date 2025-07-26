@@ -5,7 +5,10 @@
   justify-content: end;
   height: 28px;
   padding: 16px;
-  background: var(--orange-100);
+  background-image: url("/images/navbar.svg");
+  background-position: bottom left;
+  background-repeat: no-repeat;
+  background-size: cover;
   position: fixed;
   top: 0;
   left: 0;
@@ -18,11 +21,13 @@ nav .right {
   align-items: center;
   gap: 0;
   position: absolute;
-  bottom: -20px;
-  right: 16px;
-  background: var(--orange-100);
-  border-bottom-left-radius: 32px;
-  border-bottom-right-radius: 32px;
+  bottom: -28px;
+  right: 32px;
+  background-image: url("/images/aura-background.svg");
+  padding: 10px;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: bottom center;
 }
 nav .right button {
   aspect-ratio: 1/1;
@@ -172,6 +177,10 @@ nav .nav-mask {
 }
 
 @media only screen and (min-width: 1024px) {
+  nav .right {
+    background-position: center center;
+    padding: 10px;
+  }
   nav .right .menu-btn {
     display: none;
   }
