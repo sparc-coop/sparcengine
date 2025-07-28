@@ -23,9 +23,9 @@ nav {
         position: absolute;
         bottom: -28px;
         right: 32px;
-        background-image: url('/images/aura-background.svg');
-        padding: 10px;
-        background-size: cover;
+        background-image: url('/images/top-nav-mobile.svg');
+        padding: 4px 8px;
+        background-size: contain;
         background-repeat: no-repeat;
         background-position: bottom center;
 
@@ -204,6 +204,7 @@ nav {
 @media only screen and (min-width: 1024px) {
     nav {
         .right {
+            background-image: url('/images/aura-background.svg');
             background-position: center center;
             padding: 10px;
 
