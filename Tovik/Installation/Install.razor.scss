@@ -1,4 +1,14 @@
 .install-page {
+    p, ul {
+        font-size: 1.8rem;
+        letter-spacing: 1.1px;
+        line-height: 150%;
+    }
+
+    ul {
+        padding-left: 32px;
+    }
+    
     .page-header {
         display: flex;
         flex-direction: column;
@@ -17,7 +27,7 @@
 
         .subheader {
             font-family: var(--articulat);
-            font-size: 1.6rem;
+            font-size: 1.8rem;
             font-weight: 400;
             line-height: normal;
         }
@@ -27,6 +37,11 @@
         display: flex;
         flex-direction: column;
         gap: 24px;
+        align-items: flex-start;
+
+        > img {
+            height: 30px;
+        }
 
         header {
             display: flex;

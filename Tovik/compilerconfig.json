@@ -50,5 +50,9 @@
   {
     "outputFile": "Index.razor.css",
     "inputFile": "Index.razor.scss"
+  },
+  {
+    "outputFile": "Shared/HomeLayout.razor.css",
+    "inputFile": "Shared/HomeLayout.razor.scss"
   }
 ]

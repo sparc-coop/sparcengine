@@ -1,4 +1,4 @@
-﻿@page "/Domains"
+﻿@page "/sites"
 @using Sparc.Engine.Aura
 @layout MainLayout
 
@@ -13,7 +13,7 @@
                 <p class="subheader">Tovik includes 100,000 words by default. If you need additional words, you can purchase a word pack anytime.</p>
             </header>
             <div>
-                <h4>Remaining words</h4>
+                <h4>Words Translated</h4>
                 <UsageMeter Usage=Usage Limit=Limit />
             </div>
             <div class="btn-container">
@@ -23,8 +23,8 @@
 
         <section class="add-domain">
             <header>
-                <h3>Add a Domain</h3>
-                <p class="subheader">There’s no limit to the number of domains you can add. You can add or remove domains at anytime.</p>
+                <h3>Add a Website</h3>
+                <p class="subheader">Add as many websites as you want -- there's no limit. And whenever you need to, you can add new ones or remove old ones instantly.</p>
             </header>
 
             @if (Error != null)
@@ -42,8 +42,8 @@
 
         <section class="manage-domains">
             <header>
-                <h3>Manage Domains</h3>
-                <p class="subheader">Change the display name, delete a domain, or add exempt words/phrases to your domain glossary.</p>
+                <h3>My Websites</h3>
+                <p class="subheader">Change the display name, delete a website, or add exempt words/phrases to your website glossary.</p>
             </header>
             <table class="domains-table">
                 <thead>
@@ -59,6 +59,18 @@
                         <DomainCard Domain=domain PageType="home" OnDelete=DeleteDomain />
                     }
                 </tbody>
+                @if (!Domains.Any())
+                {
+                    <tfoot>
+                        <tr>
+                            <td colspan="3">
+                                <aside>
+                                    Looks like you haven't added any sites yet. Go ahead and add your first website in the box above!
+                                </aside>
+                            </td>
+                        </tr>
+                    </tfoot>
+                }
             </table>
         </section>
 
@@ -79,8 +91,12 @@
     {
         var user = await Aura.UserInfo();
         var product = user.Product("Tovik");
+
+        if (product == null) // Start free trial
+            product = await Aura.Activate("Tovik");
+
         await LoadDomains();
-        Limit = product?.MaxUsage ?? 500;
+        Limit = product.MaxUsage;
         Usage = Domains.Sum(d => d.TovikUsage);
     }
 

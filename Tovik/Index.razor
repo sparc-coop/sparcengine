@@ -1,16 +1,73 @@
 ﻿@page "/"
+@using Sparc.Blossom.Authentication
 @using Sparc.Engine.Aura
-@layout MainLayout
+@layout HomeLayout
 
 <PageTitle>Tovik</PageTitle>
 
-<article class="home">
-    <div class="page-container">
-        <img src="/images/site-frame.svg" />
-    </div>
-</article>
+@if (Avatar != null)
+{
+    <article class="home">
+        <div class="page-container">
+            <section class="demo">
+                <header>
+                    <img src="/images/site-frame.svg" alt="Web browser facade" />
+                </header>
+                <div>
+                    <h1>Your Website, Multilingual in Minutes</h1>
+                    <p>
+                        Meet Tovik: A simple tool that turns your website multilingual without the need for coding or developers.
+                    </p>
+                    <p>
+                        Whether you're a small business owner, startup founder, or part of a growing team, Tovik helps you speak your customers’ language with ease. Tovik detects your users’ language preferences and seamlessly translates your content, helping you connect with more people around the world.
+
+                    </p>
+                    <p>
+                        Try it out! This site’s already running Tovik behind the scenes.
+                    </p>
+                    <Sparc.Blossom.SparcEngine.Tovik.LanguageSelector Avatar="Avatar" />
+                </div>
+            </section>
+
+            <section class="trial">
+                <img src="/images/Star.svg" alt="Star" />
+                <div>
+                    <h2>
+                        Try It On Your Site
+                        <span>Free</span>
+                    </h2>
+                    <p>
+                        Try our complimentary 1,000 word trial, no strings attached, and no login required. Once you need additional words, you can purchase a word pack anytime.
+                    </p>
+                    <div>
+                        <h4>Words Translated</h4>
+                        <UsageMeter Usage=0 Limit=1000 />
+                    </div>
+                    <div class="btn-container">
+                        <button class="purchase-btn primary-btn" @onclick=Start>Start Free Trial</button>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </article>
+}
 
 @inject Tovik.Domains.TovikDomains TovikDomains
 @inject ISparcAura Aura
 @code {
+    BlossomAvatar? Avatar;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var user = await Aura.UserInfo();
+        if (user.HasProduct("Tovik"))
+            Start();
+
+        Avatar = user.Avatar;
+    }
+
+    void Start()
+    {
+        Nav.NavigateTo("/sites");
+    }
 }

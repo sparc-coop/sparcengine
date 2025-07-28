@@ -1,11 +1,20 @@
 ﻿function copyToClipboard(html) {
-    var text = html.innerHTML.toString().replace(/<!--!-->/g, '') // get rid of blazor debug comments
+    var code = html.originalCode ?? html.innerHTML;
+    console.log('copying', code);
+    
+    var text = code.toString().replace(/<!--!-->/g, '') // get rid of blazor debug comments
 
     navigator.clipboard.writeText(text);
 }
 
 function highlight(codeBlock) {
+    // decode HTML entities
+    var txt = document.createElement('textarea');
+    txt.innerHTML = codeBlock.innerHTML;
+    codeBlock.originalCode = txt.value;
+
     hljs.highlightElement(codeBlock);
+    console.log('highlighted', codeBlock.originalCode);
 }
 
 function populatePreviewCode(previewBlock, codeBlock) {

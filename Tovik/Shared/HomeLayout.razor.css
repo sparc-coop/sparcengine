@@ -32,7 +32,7 @@ main .hero-img ::deep svg {
   height: auto;
 }
 main .hero-background {
-  width: 827px;
+  width: 100%;
   height: auto;
   position: absolute;
   top: 0;
@@ -68,9 +68,6 @@ main ::deep article .page-container section {
   border-radius: 24px;
   backdrop-filter: blur(4px);
 }
-main ::deep article .page-container section a {
-  text-decoration: underline;
-}
 main ::deep article .page-container section header h3 {
   font-size: 2.5rem;
   font-weight: 700;
@@ -81,7 +78,6 @@ main ::deep article .page-container section header .subheader {
   font-size: 1.6rem;
   font-weight: 400;
   line-height: normal;
-  margin-bottom: 16px;
 }
 main ::deep article .page-container section header aside {
   color: var(--orange-300, #FF945E);
@@ -100,58 +96,27 @@ main ::deep article .page-container section h4 {
   line-height: normal;
 }
 
+::deep nav {
+  width: var(--app-width);
+}
+::deep nav .right {
+  background-position: center center;
+  padding: 10px;
+}
+::deep nav .right .menu-btn {
+  display: none;
+}
+::deep nav .nav-menu {
+  display: none;
+}
+
+::deep .nav-sidebar {
+  display: none !important;
+}
+
 @media only screen and (min-width: 1024px) {
-  .layout-container {
-    width: var(--desktop-width);
-    max-width: 1400px;
-    padding: 0 64px;
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    column-gap: 16px;
-  }
-  .layout-container ::deep nav {
-    width: var(--app-width);
-  }
-  .layout-container ::deep nav .nav-menu {
-    display: none;
-  }
-  .layout-container ::deep .nav-sidebar {
-    grid-column: 1/span 1;
-    margin-top: 44px;
-    z-index: 10;
-  }
-  .layout-container ::deep .nav-overlay {
-    display: none !important;
-  }
-  .layout-container main {
-    width: 100%;
-    grid-column: 2/span 3;
-    margin: 0;
-    padding: 0;
-    padding-bottom: 32px;
-  }
-  .layout-container main .main-grid {
-    width: 100%;
+  .nav-sidebar {
     display: block;
-  }
-  .layout-container main .hero-img {
-    display: none;
-  }
-  .layout-container main .hero-background {
-    width: 110vw;
-    top: -38vh;
-    left: -38vw;
-    transform: none;
-    opacity: 0.6;
-  }
-  .layout-container main ::deep article {
-    width: 100%;
-    margin-top: 144px;
-  }
-  .layout-container main ::deep article .page-container {
-    max-width: none;
-    width: 100%;
-    margin: 0;
+    z-index: 10;
   }
 }

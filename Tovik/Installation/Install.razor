@@ -14,13 +14,15 @@
         </header>
 
         <section class="step-1">
+            <img src="/images/Star.svg" alt="Star" />
             <header>
                 <aside>Step 1</aside>
-                <h3>Turn On Automatic Translation</h3>
+                <h3>Add Tovik's Automatic Translation to Your Site</h3>
             </header>
             <div>
                 <p>
                     Make your site instantly adapt to each visitor’s language—no coding skills required.<br />
+                    <br />
                     Add this line right before the closing <span style="color: var(--orange-200);">&lt;&sol;body&gt;</span> tag of your site’s HTML:
                 </p>
                 <div class="code-container">
@@ -44,16 +46,17 @@
         </section>
 
         <section class="step-2">
+            <img src="/images/Star.svg" alt="Star" />
             <header>
                 <aside>Step 2 (recommended)</aside>
-                <h3>Let Visitors Choose Their Language</h3>
+                <h3>Let Your Visitors Choose Their Language</h3>
             </header>
             <div>
                 <p>Automatic is great, but choice is better. Adding a language selector gives your visitors full control—especially helpful if their browser settings don’t reflect their actual language preference.</p>
                 <p>To add a dropdown language picker to your page, insert this wherever you want it to appear:</p>
                 <div class="code-container">
                     <CodeBlock CanCopy=true>
-                        @("<tovik-langselect></tovik-langselect>")
+                        @("<tovik-language></tovik-language>")
                     </CodeBlock>
                 </div>
                 <p>
@@ -61,7 +64,7 @@
                 </p>
                 <div class="code-container">
                     <CodeBlock CanCopy=true IsMultiline=true>
-                        tovik-langselect select {
+                        tovik-language select {
                         appearance: none; /* Removes default styling */
                         background-color: #f9f9f9;
                         color: #333;
@@ -77,6 +80,7 @@
         </section>
 
         <section>
+            <img src="/images/Star.svg" alt="Star" />
             <header>
                 <aside>Step 3 (optional)</aside>
                 <h3>Choose What Gets Translated</h3>

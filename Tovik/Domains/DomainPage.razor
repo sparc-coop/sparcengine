@@ -1,4 +1,4 @@
-﻿@page "/domains/{Id}"
+﻿@page "/sites/{Id}"
 @using Tovik.Domains
 @layout MainLayout
 
@@ -11,8 +11,10 @@
         </div>
         <section class="domain-summary">
             <header>
-                <h3>Domain Summary</h3>
-                <p class="subheader">Review selected domain. Press Check Connection to ensure Tovik was installed correctly to below domain.</p>
+                <h3>Site Summary</h3>
+                <p class="subheader">Review your site details below, and double-check that you have installed Tovik correctly on your site.</p>
+                <p class="subheader">Need help installing Tovik? 
+                    <a href="/Install">Follow our instructions here!</a></p>
             </header>
             <div>
                 <table>
@@ -55,7 +57,7 @@
         <section class="add-exemption">
             <header>
                 <h3>Add Exempt Words or Phrases</h3>
-                <p class="subheader">Words or phrases on your website that will not be translated by Tovik.</p>
+                <p class="subheader">Do you have any words or phrases on this website that you would like Tovik to ignore? Add them here!</p>
             </header>
             <form>
                 <label>
@@ -68,8 +70,7 @@
         </section>
         <section class="exemptions">
             <header>
-                <h3>Exemptions</h3>
-                <p class="subheader">Edit or Delete exempt words and phrases</p>
+                <h3>Exempt Words and Phrases</h3>
             </header>
             <table class="exempt-table">
                 <thead>

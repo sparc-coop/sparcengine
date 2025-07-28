@@ -68,3 +68,8 @@ article section .btn-container {
       line-height: normal;
   }*/
 }
+article aside {
+  font-size: 1.4rem;
+  margin: 24px 0;
+  font-style: italic;
+}
