@@ -17,7 +17,7 @@
                 <UsageMeter Usage=Usage Limit=Limit />
             </div>
             <div class="btn-container">
-                <button class="purchase-btn primary-btn">Need more words?</button>
+                <button class="purchase-btn primary-btn" @onclick=GoToStore>Need more words?</button>
             </div>
         </section>
 
@@ -79,6 +79,7 @@
 
 @inject Tovik.Domains.TovikDomains TovikDomains
 @inject ISparcAura Aura
+@inject IConfiguration Config
 @code {
     List<SparcDomain> Domains = new();
     string NewDomain = "";
@@ -98,6 +99,13 @@
         await LoadDomains();
         Limit = product.MaxUsage;
         Usage = Domains.Sum(d => d.TovikUsage);
+    }
+
+    private async Task GoToStore()
+    {
+        var totp = await Aura.GetSparcCode();
+        if (totp != null)
+            Nav.NavigateTo($"{Config["SparcStore"]}?_auth=totp:{totp.Code}");        
     }
 
     private async Task LoadDomains()
