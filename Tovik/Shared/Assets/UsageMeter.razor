@@ -1,6 +1,6 @@
 ﻿<div class="usage-meter">
     <div>
-        <span>@Usage.ToString("N").Replace(".00", "")</span> / <span>@Limit.ToString("N").Replace(".00", "")</span>
+        <span>@Usage.ToString("N0")</span> / <span>@Limit.ToString("N0")</span>
     </div>
     <div class="meter-container">
         <div class="meter-fill" style="width: @FillPercentage%"></div>
