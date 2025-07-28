@@ -115,6 +115,10 @@
             select {
                 background: var(--blue-600);
             }
+
+            .progress-bar-value {
+                background-color: var(--blue-300);
+            }
         }
     }
 }

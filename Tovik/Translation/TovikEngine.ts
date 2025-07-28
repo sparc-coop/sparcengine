@@ -57,6 +57,11 @@ export default class TovikEngine {
     }
 
     static async bulkTranslate(items, fromLang) {
+        var progress = document.querySelectorAll('.language-select-progress-bar');
+        for (let i = 0; i < progress.length; i++) {
+            progress[i].classList.add('show');
+        }
+
         const requests = items.map(item => ({
             id: item.hash || this.idHash(item.text, fromLang),
             Domain: window.location.host,
@@ -65,7 +70,13 @@ export default class TovikEngine {
             Text: item.text
         }));
 
-        return await this.fetch('translate/bulk', requests, this.userLang);
+        var result = await this.fetch('translate/bulk', requests, this.userLang);
+
+        for (let i = 0; i < progress.length; i++) {
+            progress[i].classList.remove('show');
+        }
+
+        return result;
     }
 
     static async fetch(url: string, body: any = null, language: string = null) {

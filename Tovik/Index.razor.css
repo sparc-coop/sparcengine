@@ -93,3 +93,6 @@ article section.demo ::deep .language-select {
 article section.demo ::deep .language-select select {
   background: var(--blue-600);
 }
+article section.demo ::deep .language-select .progress-bar-value {
+  background-color: var(--blue-300);
+}
