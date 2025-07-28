@@ -34,4 +34,10 @@ public class TovikDomains(BlossomAggregateOptions<SparcDomain> options)
         existing.TovikUserId = User.Id();
         await Repository.UpdateAsync(existing);
     }
+
+    public async Task DeleteAsync(SparcDomain domain)
+    {
+        domain.TovikUserId = null;
+        await Repository.UpdateAsync(domain);
+    }
 }

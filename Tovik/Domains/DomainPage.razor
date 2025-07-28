@@ -13,8 +13,6 @@
             <header>
                 <h3>Site Summary</h3>
                 <p class="subheader">Review your site details below, and double-check that you have installed Tovik correctly on your site.</p>
-                <p class="subheader">Need help installing Tovik? 
-                    <a href="/Install">Follow our instructions here!</a></p>
             </header>
             <div>
                 <table>
@@ -40,17 +38,31 @@
                     {
                          @if (Domain.DateConnected != null)
                         {
-                            <VerifiedIcon /> <span>This domain is connected</span>
-                        } else
+                            <VerifiedIcon /> <span>Tovik is correctly installed on this domain! Last checked @Domain.DateConnected.Value.ToShortDateString()</span>
+                        } else if (IsVerifying)
                         {
-                            <span>This domain's connection has not yet been verified. Check connection below.</span>
+                            <span>Verifying Tovik installation...</span>
+                        }
+                        else if (ErrorMessage != null)
+                        {
+                            <span class="error-message">@ErrorMessage</span>
+                            <p class="subheader">
+                                Need help installing Tovik? 
+                                <a href="/Install">Follow our instructions here!</a>
+                            </p>
+                        }
+                        else
+                        {
+                            <span>
+                                This site's Tovik installation has not yet been verified. Once you've installed Tovik on your site, click the button below to verify you've done everything correctly.
+                            </span>
                         }
                     }
                 </aside>
                 <div class="connection-loading" style="display: none;">
                 </div>
                 <div class="btn-container">
-                    <button class="connection-btn primary-btn">Check Connection</button>
+                    <button class="connection-btn primary-btn" @onclick=Verify>Verify Tovik Installation</button>
                 </div>
             </div>
         </section>
@@ -68,6 +80,9 @@
                 </div>
             </form>
         </section>
+
+        @if (Domain?.Exemptions.Any() == true)
+        {
         <section class="exemptions">
             <header>
                 <h3>Exempt Words and Phrases</h3>
@@ -98,6 +113,7 @@
                 </tbody>
             </table>
         </section>
+        }
     </div>
 </article>
 
@@ -107,6 +123,8 @@
     [Parameter] public required string Id { get; set; }
 
     SparcDomain? Domain;
+    bool IsVerifying;
+    string? ErrorMessage;
 
     private List<string> Glossaries = new();
 
@@ -116,11 +134,42 @@
         Glossaries.AddRange(new[] { "Lorem Ipsum", "Dolor Sit Amet", "Consectetur Adipiscing Elit" });
     }
 
+    private async Task Verify()
+    {
+        IsVerifying = true;
+        ErrorMessage = null;
+        StateHasChanged();
+
+        var htmlToLookFor = "https://tovik.app/tovik.js";
+        try
+        {
+            var html = await new HttpClient().GetStringAsync($"https://{Domain!.Domain}");
+
+            if (html.Contains(htmlToLookFor))
+            {
+                Domain.DateConnected = DateTime.UtcNow;
+                await TovikDomains.Update(Domain);
+                StateHasChanged();
+            }
+            else
+            {
+                ErrorMessage = $"The HTML of {Domain.Domain} does not contain the expected Tovik script link: {htmlToLookFor}. Please ensure Tovik is installed correctly.";
+            }
+        }
+        catch (Exception e)
+        {
+            ErrorMessage = $"Error verifying domain: {e.Message}";
+        }
+
+        IsVerifying = false;
+    }
+
     private async Task DeleteDomain()
     {
         if (Domain != null)
         {
-            await TovikDomains.Delete(Id);
+            await TovikDomains.DeleteAsync(Domain);
+            Nav.NavigateTo("/sites", true);
         }
     }
 

@@ -28,6 +28,11 @@
   --articulat: "articulat-cf", sans-serif;
 }
 
+.error-message {
+  font-size: 1.6rem;
+  color: var(--orange-300);
+}
+
 html, body {
   font-size: 62.5%;
   font-family: var(--articulat), Helvetica, sans-serif;

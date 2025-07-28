@@ -6,7 +6,8 @@ using Tovik.Domains;
 
 var builder = BlossomApplication.CreateBuilder<Html>(args);
 
-builder.Services.AddCosmos<TovikContext>(builder.Configuration.GetConnectionString("Cosmos")!, "sparc", ServiceLifetime.Scoped);
+var dbName = builder.Configuration["Tovik"]!.Contains("localhost") ? "sparc-dev" : "sparc";
+builder.Services.AddCosmos<TovikContext>(builder.Configuration.GetConnectionString("Cosmos")!, dbName, ServiceLifetime.Scoped);
 builder.Services.AddSparcEngine(builder.Configuration["SparcEngine"]);
 builder.Services.AddScoped<TovikDomains>();
 builder.Services.AddScoped<ICorsPolicyProvider, TovikDomainPolicyProvider>();

@@ -126,7 +126,7 @@
 
     private async Task DeleteDomain(SparcDomain domain)
     {
-        await TovikDomains.Delete(domain);
+        await TovikDomains.DeleteAsync(domain);
         await LoadDomains();
     }
 }

@@ -3,10 +3,16 @@
     {
         @if (PageType == "home")
         {
-            <td class="domain-name" @onclick='() => Nav.NavigateTo($"/sites/{Domain.Id}")'>@Domain.Domain <VerifiedIcon /></td>
+            <td class="domain-name" @onclick='() => Nav.NavigateTo($"/sites/{Domain.Id}")'>
+                @Domain.Domain
+                @if (Domain.DateConnected != null)
+                {
+                    <VerifiedIcon />
+                }
+            </td>
             <td class="domain-usage">@Domain.TovikUsage.ToString("N").Replace(".00", "")</td>
             <td class="domain-actions">
-                <button class="actions-btn icon-btn" data-id="@Domain.Id" @onclick='() => Nav.NavigateTo($"/sites/{Domain.Id}")'><ChevronRightIcon /></button>                
+                <button class="actions-btn icon-btn" data-id="@Domain.Id" @onclick='() => Nav.NavigateTo($"/sites/{Domain.Id}")'><ChevronRightIcon /></button>
                 @* <div id="@Domain.Id-actions" class="actions-menu @(showDomainActions ? "show" : "")">
                     <button class="edit-btn secondary-btn"><EditIcon />Edit</button>
                     <button @onclick="DeleteDomain" class="delete-btn secondary-btn"><TrashIcon />Delete</button>
@@ -16,7 +22,13 @@
 
         @if (PageType == "domain")
         {
-            <td class="domain-name">@Domain.Domain</td>
+            <td class="domain-name">
+                @Domain.Domain
+                @if (Domain.DateConnected != null)
+                {
+                    <VerifiedIcon />
+                }
+            </td>
             <td class="domain-usage">@Domain.TovikUsage.ToString("N").Replace(".00", "")</td>
             <td class="domain-actions">
                 <button class="edit-btn secondary-btn"><EditIcon /></button>
