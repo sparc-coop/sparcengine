@@ -25,9 +25,10 @@ article section header h3 {
 }
 article section header .subheader {
   font-family: var(--articulat);
-  font-size: 1.6rem;
+  font-size: 1.8rem;
   font-weight: 400;
   line-height: normal;
+  letter-spacing: 1.1px;
 }
 article section h4 {
   color: #FFF;
@@ -36,6 +37,25 @@ article section h4 {
   font-style: normal;
   font-weight: 700;
   line-height: normal;
+}
+article section.welcome {
+  align-items: flex-start;
+}
+article section.welcome > img {
+  height: 30px;
+}
+article section.welcome p {
+  margin: 24px 0;
+}
+article section.welcome a {
+  text-decoration: underline !important;
+}
+article section.welcome ul {
+  font-size: 1.6rem;
+  padding-left: 32px;
+}
+article section.welcome ul li {
+  margin: 8px 0;
 }
 article section.add-domain form {
   display: flex;
