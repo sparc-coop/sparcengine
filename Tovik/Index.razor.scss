@@ -113,7 +113,7 @@
             background-color: var(--blue-600);
 
             &:after {
-                border-top-color: white;
+                border-top: 5px solid white;
             }
 
             select {
