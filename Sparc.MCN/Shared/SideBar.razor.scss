@@ -1,11 +1,11 @@
 nav {
     width: var(--app-width);
+    height: calc(100% - 78px);
     padding: 40px;
-    padding-bottom: 56px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    gap: 24px;
+    gap: 0;
     background: var(--primary);
     color: white;
 
@@ -21,11 +21,21 @@ nav {
         }
     }
 
+    .sidebar-bottom {
+        display: flex;
+        flex-direction: column;
+        justify-content: start;
+        gap: 60px;
+    }
+
     .hero {
-        max-width: 800px;
+        display: flex;
+        flex-direction: column;
+        gap: 60px;
 
         &-img {
             width: var(--app-width);
+            max-width: 800px;
             margin-left: -40px;
 
             img {
