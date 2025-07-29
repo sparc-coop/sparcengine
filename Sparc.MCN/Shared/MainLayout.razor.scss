@@ -39,7 +39,9 @@ main {
 
     ::deep article {
         display: none;
+        max-width: 517px;
         padding: 40px;
+        margin: 0 auto;
 
         &.show {
             display: flex;
@@ -47,7 +49,9 @@ main {
             gap: 48px;
         }
 
-        div:first-child {
+        > * {
+            width: 100%;
+            margin: 0 auto;
         }
 
         header {
@@ -120,6 +124,9 @@ main {
                     width: fit-content;
                     margin: 0 auto;
                     margin-top: 12px;
+                    padding: 0;
+                    border: 1px solid transparent;
+                    background: none;
                 }
             }
         }
@@ -170,9 +177,51 @@ main {
             }
         }
 
-        main {
-            grid-column: 5 / span 8;
-            width: 100%;
+    }
+
+    main {
+        grid-column: 5 / span 8;
+        width: 100%;
+
+        .main-content {
+            margin: 0 auto;
+
+            > * {
+                margin: 0 auto;
+            }
+        }
+
+        ::deep article {
+            .contact-actions {
+                button {
+                    border-radius: 8px;
+                    border: 1px solid var(--grey-200, #C9C9C9);
+                    background: var(--white, #FFF);
+
+                    &.confirm-btn {
+                        svg path {
+                            stroke: var(--green);
+                        }
+                    }
+
+                    &.edit-btn {
+                        svg path {
+                            stroke: var(--tertiary-blue);
+                        }
+                    }
+
+                    &.reject-btn {
+                        svg path {
+                            stroke: var(--red);
+                        }
+                    }
+
+                    &:last-child {
+                        border: 1px solid transparent;
+                        background: none;
+                    }
+                }
+            }
         }
     }
 

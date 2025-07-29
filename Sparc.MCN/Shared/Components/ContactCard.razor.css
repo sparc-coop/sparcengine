@@ -1,5 +1,6 @@
 ﻿.contact-card {
   width: var(--container-width);
+  max-width: 339px;
   padding: 18px 23px;
   display: flex;
   flex-direction: column;

@@ -30,12 +30,18 @@ main .content-toggle.up:hover ::deep svg {
 }
 main ::deep article {
   display: none;
+  max-width: 517px;
   padding: 40px;
+  margin: 0 auto;
 }
 main ::deep article.show {
   display: flex;
   flex-direction: column;
   gap: 48px;
+}
+main ::deep article > * {
+  width: 100%;
+  margin: 0 auto;
 }
 main ::deep article header {
   display: flex;
@@ -101,6 +107,9 @@ main ::deep article .contact-actions button:last-child {
   width: fit-content;
   margin: 0 auto;
   margin-top: 12px;
+  padding: 0;
+  border: 1px solid transparent;
+  background: none;
 }
 main ::deep table {
   font-family: "Inter";
@@ -140,9 +149,33 @@ main ::deep table tbody tr:last-child {
   .layout-container ::deep nav .hero-img {
     width: 100%;
   }
-  .layout-container main {
+  main {
     grid-column: 5/span 8;
     width: 100%;
+  }
+  main .main-content {
+    margin: 0 auto;
+  }
+  main .main-content > * {
+    margin: 0 auto;
+  }
+  main ::deep article .contact-actions button {
+    border-radius: 8px;
+    border: 1px solid var(--grey-200, #C9C9C9);
+    background: var(--white, #FFF);
+  }
+  main ::deep article .contact-actions button.confirm-btn svg path {
+    stroke: var(--green);
+  }
+  main ::deep article .contact-actions button.edit-btn svg path {
+    stroke: var(--tertiary-blue);
+  }
+  main ::deep article .contact-actions button.reject-btn svg path {
+    stroke: var(--red);
+  }
+  main ::deep article .contact-actions button:last-child {
+    border: 1px solid transparent;
+    background: none;
   }
   .content-toggle {
     display: none !important;
