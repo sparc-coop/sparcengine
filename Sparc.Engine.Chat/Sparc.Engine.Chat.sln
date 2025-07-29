@@ -7,6 +7,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sparc.Engine", "..\Sparc.En
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sparc.Blossom.Chat.Example", "..\..\blossom\Sparc.Blossom.Chat.Example\Sparc.Blossom.Chat.Example.csproj", "{759BE696-4631-250A-801B-1FFAD5D2082D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sparc.Blossom", "..\..\blossom\Sparc.Blossom\Sparc.Blossom.csproj", "{325F6838-D997-B057-028D-166902C585F6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sparc.Core", "..\..\blossom\Sparc.Core\Sparc.Core.csproj", "{2AFC22D0-F874-302E-8D6A-0882D0C5F2B4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +25,14 @@ Global
 		{759BE696-4631-250A-801B-1FFAD5D2082D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{759BE696-4631-250A-801B-1FFAD5D2082D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{759BE696-4631-250A-801B-1FFAD5D2082D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{325F6838-D997-B057-028D-166902C585F6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{325F6838-D997-B057-028D-166902C585F6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{325F6838-D997-B057-028D-166902C585F6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{325F6838-D997-B057-028D-166902C585F6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2AFC22D0-F874-302E-8D6A-0882D0C5F2B4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2AFC22D0-F874-302E-8D6A-0882D0C5F2B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2AFC22D0-F874-302E-8D6A-0882D0C5F2B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2AFC22D0-F874-302E-8D6A-0882D0C5F2B4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
