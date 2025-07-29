@@ -12,8 +12,8 @@
     "inputFile": "Shared/NavMenu.razor.scss"
   },
   {
-    "outputFile": "Shared/TopBar.razor.css",
-    "inputFile": "Shared/TopBar.razor.scss"
+    "outputFile": "Shared/SideBar.razor.css",
+    "inputFile": "Shared/SideBar.razor.scss"
   },
   {
     "outputFile": "Shared/MainPage.razor.css",
@@ -26,10 +26,6 @@
   {
     "outputFile": "Shared/Components/ContactCard.razor.css",
     "inputFile": "Shared/Components/ContactCard.razor.scss"
-  },
-  {
-    "outputFile": "Pages/Index.razor.css",
-    "inputFile": "Pages/Index.razor.scss"
   },
   {
     "outputFile": "Pages/Index.razor.css",
