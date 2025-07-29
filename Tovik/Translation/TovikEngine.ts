@@ -30,11 +30,11 @@ export default class TovikEngine {
         if (this.userLang != language) {
             await db.profiles.put({ id: 'default', language: language });
             this.userLang = language;
+            document.dispatchEvent(new CustomEvent('tovik-language-changed', { detail: this.userLang }));
         }
 
         document.documentElement.lang = this.userLang;
         document.documentElement.setAttribute('dir', this.rtlLanguages.some(x => this.userLang.startsWith(x)) ? 'rtl' : 'ltr');
-        document.dispatchEvent(new CustomEvent('tovik-language-changed', { detail: this.userLang }));
     }
 
     static idHash(text, lang = null) {
