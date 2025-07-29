@@ -42,6 +42,7 @@ nav .hero-text {
   display: flex;
   flex-direction: column;
   gap: 30px;
+  margin: 0 auto;
 }
 nav .hero-text h2 {
   color: var(--white, #FFF);
@@ -66,7 +67,6 @@ nav .hero-text .subheader p {
   letter-spacing: -0.24px;
 }
 nav .confirm-contact {
-  max-width: 800px;
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -79,6 +79,8 @@ nav .confirm-contact {
   letter-spacing: -0.24px;
 }
 nav section {
+  max-width: 800px;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
   gap: 24px;
