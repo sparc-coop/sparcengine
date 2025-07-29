@@ -166,25 +166,6 @@ button {
     }
 }
 
-input {
-    width: var(--container-width);
-    display: flex;
-    padding: 16px;
-    align-items: center;
-    gap: 10px;
-    flex-shrink: 0;
-    align-self: stretch;
-    border-radius: 20px;
-    border: 1px solid var(--blue-500, #376880);
-    background: var(--blue-600, #1F5068);
-    color: var(--white, #FFF);
-    font-family: 'Inter';
-    font-size: 1.6rem;
-    font-style: normal;
-    font-weight: 400;
-    line-height: normal;
-}
-
 ul {
     margin: 0;
     padding: 0;

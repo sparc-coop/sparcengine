@@ -28,7 +28,15 @@
     "inputFile": "Shared/Components/ContactCard.razor.scss"
   },
   {
+    "outputFile": "Shared/Components/ProgressBar.razor.css",
+    "inputFile": "Shared/Components/ProgressBar.razor.scss"
+  },
+  {
     "outputFile": "Pages/Index.razor.css",
     "inputFile": "Pages/Index.razor.scss"
+  },
+  {
+    "outputFile": "Pages/EditContact.razor.css",
+    "inputFile": "Pages/EditContact.razor.scss"
   }
 ]

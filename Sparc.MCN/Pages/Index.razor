@@ -3,35 +3,37 @@
 
 <PageTitle>MyContactNetwork</PageTitle>
 
-<header>
-    <h3>Please help us confirm your contact details</h3>
-    <p class="subheader">Would you like to confirm below contact information for <strong>Adam</strong>?</p>
-</header>
-<ContactCard User=NewContact />
-<div class="contact-actions">
-    <button class="confirm-btn secondary-btn">
-        <CheckCircledIcon />
-        <div>
-            <p>Yes, it's me</p>
-            <aside>My information is up-to-date</aside>
-        </div>
-    </button>
-    <button class="edit-btn secondary-btn">
-        <EditIcon />
-        <div>
-            <p>I'd like to update</p>
-            <aside>Some information is changed</aside>
-        </div>
+<div class="home page-container">
+    <header>
+        <h3>Please help us confirm your contact details</h3>
+        <p class="subheader">Would you like to confirm below contact information for <strong>Adam</strong>?</p>
+    </header>
+    <ContactCard User=NewContact />
+    <div class="contact-actions">
+        <button class="confirm-btn secondary-btn">
+            <CheckCircledIcon />
+            <div>
+                <p>Yes, it's me</p>
+                <aside>My information is up-to-date</aside>
+            </div>
+        </button>
+        <button class="edit-btn secondary-btn">
+            <EditIcon />
+            <div>
+                <p>I'd like to update</p>
+                <aside>Some information is changed</aside>
+            </div>
 
-    </button>
-    <button class="reject-btn secondary-btn">
-        <CloseIcon />
-        <div>
-            <p>No, it's not me</p>
-            <aside>I am not this person</aside>
-        </div>
-    </button>
-    <button class="text-btn">Do you need help?</button>
+        </button>
+        <button class="reject-btn secondary-btn">
+            <CloseIcon />
+            <div>
+                <p>No, it's not me</p>
+                <aside>I am not this person</aside>
+            </div>
+        </button>
+        <button class="text-btn">Do you need help?</button>
+    </div>
 </div>
 
 @code {
@@ -55,7 +57,7 @@
 
         contact.EmailAddresses = new List<Email>() { new  Email(type : "Work", address: "beth@mcn.com") };
         contact.PhoneNumbers = new List<Phone>() {
-            new Phone(type: "Home", number: "(239) 555-0108)"),
+            new Phone(type: "Home", number: "(239) 555-0108"),
             new Phone(type: "Mobile", number: "(239) 555-0108"),
         };
 

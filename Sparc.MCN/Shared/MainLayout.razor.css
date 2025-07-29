@@ -28,38 +28,42 @@ main .content-toggle:hover ::deep svg {
 main .content-toggle.up:hover ::deep svg {
   animation: bounceUp 1s ease-out infinite;
 }
-main ::deep article {
+
+::deep article {
   display: none;
   max-width: 517px;
   padding: 40px;
   margin: 0 auto;
 }
-main ::deep article.show {
+::deep article.show {
+  display: block;
+}
+::deep article .page-container {
+  width: 100%;
   display: flex;
   flex-direction: column;
   gap: 48px;
 }
-main ::deep article > * {
+::deep article .page-container > * {
   width: 100%;
   margin: 0 auto;
 }
-main ::deep article header {
+::deep article header {
   display: flex;
   flex-direction: column;
   gap: 16px;
-}
-main ::deep article header h3 {
-  color: var(--primary, #061032);
   text-align: center;
+}
+::deep article header h3 {
+  color: var(--primary, #061032);
   font-family: Poppins;
   font-size: 3.1rem;
   font-style: normal;
   font-weight: 600;
   line-height: 36px; /* 116.129% */
 }
-main ::deep article header p {
+::deep article header p {
   color: var(--primary, #061032);
-  text-align: center;
   font-family: Inter;
   font-size: 1.7rem;
   font-style: normal;
@@ -67,12 +71,12 @@ main ::deep article header p {
   line-height: 24px; /* 141.176% */
   letter-spacing: -0.24px;
 }
-main ::deep article .contact-actions {
+::deep article .contact-actions {
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
-main ::deep article .contact-actions button {
+::deep article .contact-actions button {
   width: 100%;
   display: flex;
   flex-direction: row;
@@ -80,14 +84,14 @@ main ::deep article .contact-actions button {
   align-items: center;
   gap: 24px;
 }
-main ::deep article .contact-actions button div {
+::deep article .contact-actions button div {
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: start;
   gap: 4px;
 }
-main ::deep article .contact-actions button div p {
+::deep article .contact-actions button div p {
   color: var(--grey-900, #131313);
   font-family: Poppins;
   font-size: 1.4rem;
@@ -95,7 +99,7 @@ main ::deep article .contact-actions button div p {
   font-weight: 600;
   line-height: 20px; /* 142.857% */
 }
-main ::deep article .contact-actions button div aside {
+::deep article .contact-actions button div aside {
   color: var(--grey-600, #474747);
   font-family: Poppins;
   font-size: 1.4rem;
@@ -103,7 +107,7 @@ main ::deep article .contact-actions button div aside {
   font-weight: 400;
   line-height: 20px; /* 142.857% */
 }
-main ::deep article .contact-actions button:last-child {
+::deep article .contact-actions button:last-child {
   width: fit-content;
   margin: 0 auto;
   margin-top: 12px;
@@ -111,11 +115,12 @@ main ::deep article .contact-actions button:last-child {
   border: 1px solid transparent;
   background: none;
 }
-main ::deep table {
+
+::deep table {
   font-family: "Inter";
   color: var(--blue-50);
 }
-main ::deep table thead {
+::deep table thead {
   color: var(--white, #fff);
   leading-trim: both;
   text-edge: cap;
@@ -124,14 +129,14 @@ main ::deep table thead {
   font-weight: 700;
   line-height: normal;
 }
-main ::deep table tbody {
+::deep table tbody {
   font-size: 1.6rem;
   font-weight: 500;
 }
-main ::deep table tbody tr {
+::deep table tbody tr {
   padding-bottom: 16px;
 }
-main ::deep table tbody tr:last-child {
+::deep table tbody tr:last-child {
   padding-bottom: 0;
 }
 
@@ -155,35 +160,36 @@ main ::deep table tbody tr:last-child {
   }
   main .main-content {
     margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 48px;
   }
   main .main-content > * {
     margin: 0 auto;
   }
-  main ::deep article .contact-actions button {
+  .content-toggle {
+    display: none !important;
+  }
+  ::deep article {
+    padding-top: 96px;
+  }
+  ::deep article .contact-actions button {
     border-radius: 8px;
     border: 1px solid var(--grey-200, #C9C9C9);
     background: var(--white, #FFF);
   }
-  main ::deep article .contact-actions button.confirm-btn svg path {
+  ::deep article .contact-actions button.confirm-btn svg path {
     stroke: var(--green);
   }
-  main ::deep article .contact-actions button.edit-btn svg path {
+  ::deep article .contact-actions button.edit-btn svg path {
     stroke: var(--tertiary-blue);
   }
-  main ::deep article .contact-actions button.reject-btn svg path {
+  ::deep article .contact-actions button.reject-btn svg path {
     stroke: var(--red);
   }
-  main ::deep article .contact-actions button:last-child {
+  ::deep article .contact-actions button:last-child {
     border: 1px solid transparent;
     background: none;
-  }
-  .content-toggle {
-    display: none !important;
-  }
-  .main-content {
-    display: flex;
-    flex-direction: column;
-    gap: 48px;
   }
 }
 @keyframes bounceDown {
