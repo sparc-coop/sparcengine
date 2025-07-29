@@ -41,7 +41,7 @@ public class SparcEngineChatService(IRepository<Room> rooms, IRepository<RoomMem
         return room;
     }
 
-    private async Task<List<Room>> GetRoomsAsync(string userId)
+    private async Task<List<Room>> GetRoomsAsync()
     {
         var rooms = await Rooms.Query.ToListAsync();
         foreach (var room in rooms)
