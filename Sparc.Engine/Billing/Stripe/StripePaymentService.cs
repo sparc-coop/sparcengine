@@ -29,7 +29,9 @@ public class StripePaymentService
                 Amount = (long)basePrice,
                 Currency = currencyId,
                 Customer = customerId,
+                ReceiptEmail = order.Email,
                 SetupFutureUsage = "on_session",
+                StatementDescriptorSuffix = order.ProductId,
                 AutomaticPaymentMethods = new PaymentIntentAutomaticPaymentMethodsOptions
                 {
                     Enabled = true,
@@ -53,7 +55,9 @@ public class StripePaymentService
             var options = new PaymentIntentUpdateOptions
             {
                 Amount = (long)basePrice,
-                Currency = currencyId
+                Currency = currencyId,
+                Customer = customerId,
+                ReceiptEmail = order.Email
             };
             return await service.UpdateAsync(order.PaymentIntentId, options);
         }
@@ -119,7 +123,18 @@ public class StripePaymentService
 
             var stripeCustomerList = await customerService.SearchAsync(searchOptions);
             if (stripeCustomerList.Data.Count > 0)
+            {
+                var customer = stripeCustomerList.Data.First();
+                if (order.Email != null && customer.Email != order.Email)
+                {
+                    var updateOptions = new CustomerUpdateOptions
+                    {
+                        Email = order.Email
+                    };
+                    await customerService.UpdateAsync(customer.Id, updateOptions);
+                }
                 return stripeCustomerList.Data.First().Id;
+            }
         }
 
         if (order.Email != null)
