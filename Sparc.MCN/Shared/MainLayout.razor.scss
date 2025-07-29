@@ -9,6 +9,7 @@
 
 main {
     width: 100%;
+    height: 100%;
     background: white;
     color: var(--primary-900) !important;
 
@@ -41,6 +42,7 @@ main {
 ::deep article {
     display: none;
     max-width: 517px;
+    height: var(--app-height);
     padding: 40px;
     margin: 0 auto;
 
@@ -50,6 +52,7 @@ main {
 
     .page-container {
         width: 100%;
+        height: 100%;
         display: flex;
         flex-direction: column;
         gap: 48px;
@@ -204,6 +207,7 @@ main {
     }
 
     ::deep article {
+        height: calc(var(--app-height) - 56px);
         padding-top: 96px;
 
         .contact-actions {

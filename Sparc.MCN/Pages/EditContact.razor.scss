@@ -1,4 +1,7 @@
 .edit-contact {
+    position: relative;
+    height: 100%;
+
     header {
         text-align: left;
     }
@@ -7,6 +10,10 @@
         display: flex;
         flex-direction: row;
         justify-content: space-between;
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
 
         button {
             display: flex;
@@ -149,5 +156,9 @@
                 }
             }
         }
+    }
+
+    @media only screen and (min-width: 1080px) {
+        height: calc(var(--container-height) - 36px);
     }
 }

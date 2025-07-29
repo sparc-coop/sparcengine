@@ -1,10 +1,18 @@
-﻿.edit-contact header {
+﻿.edit-contact {
+  position: relative;
+  height: 100%;
+}
+.edit-contact header {
   text-align: left;
 }
 .edit-contact .progress-nav {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
 }
 .edit-contact .progress-nav button {
   display: flex;
@@ -124,4 +132,9 @@
 }
 .edit-contact form button:hover ::deep svg path {
   stroke: var(--secondary-600);
+}
+@media only screen and (min-width: 1080px) {
+  .edit-contact {
+    height: calc(var(--container-height) - 36px);
+  }
 }
