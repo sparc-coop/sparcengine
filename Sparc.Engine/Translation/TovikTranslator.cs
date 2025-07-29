@@ -178,10 +178,10 @@ public class TovikTranslator(
         return language;
     }
 
-    internal static Language? GetLanguage(string? languageClaim)
+    internal static List<string> GetLanguageIds(string? languageClaim)
     {
-        if (Languages == null || string.IsNullOrWhiteSpace(languageClaim))
-            return null;
+        if (string.IsNullOrWhiteSpace(languageClaim))
+            return [];
 
         var languages = languageClaim
             .Split(',')
@@ -190,8 +190,17 @@ public class TovikTranslator(
             .ToList();
 
         if (languages.Count == 0)
+            return [];
+
+        return languages;
+    }
+
+    internal static Language? GetLanguage(string? languageClaim)
+    {
+        if (Languages == null || string.IsNullOrWhiteSpace(languageClaim))
             return null;
 
+        var languages = GetLanguageIds(languageClaim);
         // Try to find a matching language in LanguagesSpoken or create a new one
         foreach (var langCode in languages)
         {
@@ -209,14 +218,7 @@ public class TovikTranslator(
 
     internal static BlossomRegion? GetLocale(string languageClaim)
     {
-        var languages = languageClaim
-            .Split(',')
-            .Select(l => l.Split(';')[0].Trim())
-            .Where(l => !string.IsNullOrWhiteSpace(l))
-            .ToList();
-
-        if (languages.Count == 0)
-            return null;
+        var languages = GetLanguageIds(languageClaim);
 
         try
         {

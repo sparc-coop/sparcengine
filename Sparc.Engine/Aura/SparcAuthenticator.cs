@@ -2,6 +2,7 @@
 using Sparc.Blossom.Authentication;
 using Sparc.Blossom.Data;
 using Sparc.Blossom.Realtime;
+using Sparc.Core.Billing;
 using Sparc.Engine.Aura;
 using System.Security.Claims;
 
@@ -202,6 +203,13 @@ public class SparcAuthenticator<T>(
                 var newLocale = TovikTranslator.GetLocale(acceptLanguage!);
                 if (newLocale != null)
                     User.Avatar.Locale = newLocale;
+
+                if (User.Avatar.Currency == null)
+                {
+                    var languageId = TovikTranslator.GetLanguageIds(acceptLanguage).FirstOrDefault();
+                    if (languageId != null)
+                        User.Avatar.Currency = SparcCurrency.From(languageId);
+                }
             }
         }
     }
