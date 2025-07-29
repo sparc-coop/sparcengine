@@ -110,10 +110,14 @@
 
         ::deep .language-select {
             margin-top: 64px;
-            background: var(--blue-600);
+            background-color: var(--blue-600);
+
+            &:after {
+                border-top-color: white;
+            }
 
             select {
-                background: var(--blue-600);
+                background-color: var(--blue-600);
             }
 
             .progress-bar-value {

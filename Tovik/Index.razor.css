@@ -88,10 +88,13 @@ article section.demo div {
 }
 article section.demo ::deep .language-select {
   margin-top: 64px;
-  background: var(--blue-600);
+  background-color: var(--blue-600);
+}
+article section.demo ::deep .language-select:after {
+  border-top-color: white;
 }
 article section.demo ::deep .language-select select {
-  background: var(--blue-600);
+  background-color: var(--blue-600);
 }
 article section.demo ::deep .language-select .progress-bar-value {
   background-color: var(--blue-300);
