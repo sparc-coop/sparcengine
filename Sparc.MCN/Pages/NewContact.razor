@@ -1,24 +1,19 @@
-﻿@page "/"
-@layout MainLayout
+﻿@page "/new-contact"
 
-<PageTitle>MyContactNetwork</PageTitle>
-
-<div class="home page-container">
+<div class="new-contact page-container">
     <header>
-        <h3>Please help us confirm your contact details</h3>
+        <h3>@(SharedContact != null ? SharedContact.FirstName : "Someone") is sharing their contact information with you</h3>
         <p class="subheader">
-            <strong>@(MyContact != null ? $"{MyContact.FirstName}" : "")</strong>@(MyContact != null ? ", would" : "")@(MyContact == null ? "Would" : "") you like to confirm your contact information below?
+            Would you like to confirm the contact information below@(SharedContact != null ? $" for " : "")<strong>@(SharedContact != null ? SharedContact.FirstName : "")</strong>?
         </p>
     </header>
-    <ContactCard User=MyContact />
-    <MyContactActions />
+    <ContactCard User=SharedContact />
+    <NewContactActions />
 </div>
 
 @code {
-    [CascadingParameter] public User User { get; set; }
-
     bool showContent;
-    User? MyContact;
+    User? SharedContact;
 
     protected override void OnInitialized()
     {
@@ -33,15 +28,15 @@
             phoneNumbers: new List<Phone>()
         );
 
-        contact.EmailAddresses = new List<Email>() { new  Email(type : "Work", address: "beth@mcn.com") };
+        contact.EmailAddresses = new List<Email>() { new Email(type: "Work", address: "adam@mcn.com") };
         contact.PhoneNumbers = new List<Phone>() {
             new Phone(type: "Home", number: "(239) 555-0108"),
             new Phone(type: "Mobile", number: "(239) 555-0108"),
         };
 
-        MyContact = new User(
-            firstName: "Beth",
-            lastName: "Jones",
+        SharedContact = new User(
+            firstName: "Adam",
+            lastName: "Wheller",
             contact: contact,
             prefix: "Miss",
             suffix: null

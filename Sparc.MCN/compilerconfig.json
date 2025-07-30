@@ -32,11 +32,23 @@
     "inputFile": "Shared/Components/ProgressBar.razor.scss"
   },
   {
+    "outputFile": "Shared/Components/MyContactActions.razor.css",
+    "inputFile": "Shared/Components/MyContactActions.razor.scss"
+  },
+  {
+    "outputFile": "Shared/Components/NewContactActions.razor.css",
+    "inputFile": "Shared/Components/NewContactActions.razor.scss"
+  },
+  {
     "outputFile": "Pages/Index.razor.css",
     "inputFile": "Pages/Index.razor.scss"
   },
   {
     "outputFile": "Pages/EditContact.razor.css",
     "inputFile": "Pages/EditContact.razor.scss"
+  },
+  {
+    "outputFile": "Pages/NewContact.razor.css",
+    "inputFile": "Pages/NewContact.razor.scss"
   }
 ]

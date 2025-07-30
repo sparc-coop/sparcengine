@@ -56,24 +56,20 @@
                 {
                     <p class="address2">@User.Contact.Address2</p>
                 }
-                <p>
-                    @if (!String.IsNullOrEmpty(User.Contact.City)) 
-                    {
-                        @User.Contact.City
-                    }, 
-                    @if (!String.IsNullOrEmpty(User.Contact.State))
-                    {
-                        @User.Contact.State
-                    }
-                    @if (!String.IsNullOrEmpty(User.Contact.PostalCode))
-                    {
-                        @User.Contact.PostalCode
-                    }
-                    @if (!String.IsNullOrEmpty(User.Contact.Country))
-                    {
+                @if (!String.IsNullOrEmpty(User.Contact.AddressString)) 
+                {
+                    <p>
+                        @User.Contact.AddressString
+                    
+                    </p>
+                }
+                @if (!String.IsNullOrEmpty(User.Contact.Country))
+                {
+                    <p>
                         @User.Contact.Country
-                    }
-                </p>
+
+                    </p>
+                }
             </div>
         </div>
         <div class="contact-methods contact-group">
@@ -86,7 +82,7 @@
                     <div class="contact-item">
                         <PhoneIcon />
                         <p>@num.Number</p>
-                        <aside>@num.Type Phone</aside>
+                        <aside>(@num.Type)</aside>
                     </div>
                 }
             }
@@ -98,7 +94,7 @@
                     <div class="contact-item">
                         <EmailIcon />
                         <p>@email.Address</p>
-                        <aside>@email.Type Email</aside>
+                        <aside>(@email.Type)</aside>
                     </div>
                 }
             }
