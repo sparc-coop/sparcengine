@@ -10,20 +10,17 @@ public interface ISparcChat
     Task<List<Room>> GetRoomsAsync();
 
     [Post("/chat/rooms/create")]
-    Task<Room> CreateRoomAsync(Room room);
-
-    [Post("/chat/rooms/join")]
-    Task<Room> JoinRoomAsync(string roomId);
+    Task<Room> CreateRoomAsync([Body] Room room);
 
     [Post("/chat/rooms/{roomId}/join")]
-    Task<Room> LeaveRoomAsync(string roomId);
+    Task JoinRoomAsync([AliasAs("roomId")] string roomId);
 
     [Post("/chat/rooms/{roomId}/leave")]
-    Task<Room> InviteRoomAsync(string roomId, string userId);
+    Task LeaveRoomAsync([AliasAs("roomId")] string roomId);
 
     [Get("/chat/rooms/{roomId}/messages")]
-    Task<List<MessageEvent>> GetMessagesAsync(string roomId);
+    Task<List<MessageEvent>> GetMessagesAsync([AliasAs("roomId")] string roomId);
 
     [Post("/chat/rooms/sendmessage")]
-    Task<Event> SendMessageAsync(MessageEvent message);
+    Task<Event> SendMessageAsync([Body] MessageEvent message);
 }
