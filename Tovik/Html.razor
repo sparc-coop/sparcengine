@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿@inject IConfiguration Config
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -8,9 +10,27 @@
     <link rel="stylesheet" href="@Assets["app.css"]" />
     <link rel="stylesheet" href="@Assets["Tovik.styles.css"]" />
     <link rel="stylesheet" href="https://use.typekit.net/bdd5udm.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Emoji:wght@300..700&display=swap" rel="stylesheet">
     <ImportMap />
-    
+
+    <Sparc.Blossom.SparcEngine.Marketing.MatomoAnalytics SiteId="2" />
+    <Sparc.Blossom.SparcEngine.Marketing.SEOTags Title="Tovik"
+                                                 Description="Your Website, Multilingual in Minutes. Meet Tovik: A simple tool that turns your website multilingual without the need for coding or developers."
+                                                 Author="Sparc Cooperative"
+                                                 Keywords="site translation"
+                                                 LogoImage="https://tovik.app/images/PrimaryLogo.svg"
+                                                 Url="https://tovik.app/" />
     <HeadOutlet @rendermode="new InteractiveServerRenderMode(false)" />
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=AW-11084766602">
+    </script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'AW-11084766602');
+    </script>
 </head>
 <body>
     <Sparc.Blossom.BlossomApp Program="Program" DefaultLayout="MainLayout" @rendermode="new InteractiveServerRenderMode(false)" />
@@ -20,5 +40,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.14.0/beautify-css.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/js-beautify/1.14.0/beautify-html.js"></script>
     <script src="/app.js"></script>
+    <script type="module" src="/tovik.js"></script>
 </body>
 </html>

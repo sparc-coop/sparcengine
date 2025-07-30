@@ -1,5 +1,6 @@
 ﻿main {
   width: var(--app-width);
+  margin-top: 100px;
   padding: 0 16px;
   padding-bottom: 24px;
   color: var(--blue-50);
@@ -38,6 +39,7 @@ main .hero-background {
   left: 50%;
   transform: translateX(-50%);
   z-index: 0;
+  opacity: 0.6;
 }
 main .hero-background ::deep svg {
   width: 100%;
@@ -61,10 +63,13 @@ main ::deep article .page-container section {
   flex-direction: column;
   gap: 24px;
   padding: 24px;
-  background: rgba(79, 129, 153, 0.2);
+  background-color: rgba(79, 129, 153, 0.2);
   border: 1px solid rgba(219, 243, 252, 0.2);
   border-radius: 24px;
   backdrop-filter: blur(4px);
+}
+main ::deep article .page-container section a {
+  text-decoration: underline;
 }
 main ::deep article .page-container section header h3 {
   font-size: 2.5rem;
@@ -76,6 +81,7 @@ main ::deep article .page-container section header .subheader {
   font-size: 1.6rem;
   font-weight: 400;
   line-height: normal;
+  margin-bottom: 16px;
 }
 main ::deep article .page-container section header aside {
   color: var(--orange-300, #FF945E);
@@ -93,26 +99,59 @@ main ::deep article .page-container section h4 {
   font-weight: 700;
   line-height: normal;
 }
-main ::deep table {
-  font-family: var(--articulat);
-  color: var(--blue-50);
-}
-main ::deep table thead {
-  color: var(--white, #fff);
-  leading-trim: both;
-  text-edge: cap;
-  font-size: 1.4rem;
-  font-style: normal;
-  font-weight: 700;
-  line-height: normal;
-}
-main ::deep table tbody {
-  font-size: 1.6rem;
-  font-weight: 500;
-}
-main ::deep table tbody tr {
-  padding-bottom: 16px;
-}
-main ::deep table tbody tr:last-child {
-  padding-bottom: 0;
+
+@media only screen and (min-width: 1024px) {
+  .layout-container {
+    width: var(--desktop-width);
+    max-width: 1400px;
+    padding: 0 64px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    column-gap: 16px;
+  }
+  .layout-container ::deep nav {
+    width: var(--app-width);
+  }
+  .layout-container ::deep nav .nav-menu {
+    display: none;
+  }
+  .layout-container ::deep .nav-sidebar {
+    grid-column: 1/span 1;
+    margin-top: 44px;
+    z-index: 10;
+  }
+  .layout-container ::deep .nav-overlay {
+    display: none !important;
+  }
+  .layout-container main {
+    width: 100%;
+    grid-column: 2/span 3;
+    margin: 0;
+    padding: 0;
+    padding-bottom: 32px;
+  }
+  .layout-container main .main-grid {
+    width: 100%;
+    display: block;
+  }
+  .layout-container main .hero-img {
+    display: none;
+  }
+  .layout-container main .hero-background {
+    width: 110vw;
+    top: -38vh;
+    left: -38vw;
+    transform: none;
+    opacity: 0.6;
+  }
+  .layout-container main ::deep article {
+    width: 100%;
+    margin-top: 144px;
+  }
+  .layout-container main ::deep article .page-container {
+    max-width: none;
+    width: 100%;
+    margin: 0;
+  }
 }

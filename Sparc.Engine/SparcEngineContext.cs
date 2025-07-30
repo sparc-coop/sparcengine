@@ -2,6 +2,7 @@
 using Sparc.Blossom.Authentication;
 using Sparc.Blossom.Data;
 using Sparc.Blossom.Data.Pouch;
+using Sparc.Core.Billing;
 using Sparc.Core.Chat;
 using Sparc.Engine;
 
@@ -27,6 +28,14 @@ internal class SparcEngineContext(DbContextOptions<SparcEngineContext> options) 
 
         model.Entity<SparcDomain>().ToContainer("Domains")
             .HasPartitionKey(x => x.Domain)
+            .HasKey(x => x.Id);
+
+        model.Entity<SparcOrder>().ToContainer("Orders")
+            .HasPartitionKey(x => x.UserId)
+            .HasKey(x => x.Id);
+
+        model.Entity<UserCharge>().ToContainer("UserCharges")
+            .HasPartitionKey(x => x.UserId)
             .HasKey(x => x.Id);
 
         model.Entity<BlossomUser>().ToContainer("Users")

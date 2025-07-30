@@ -1,0 +1,50 @@
+﻿.code-block {
+  width: 100%;
+}
+.code-block pre {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  text-wrap: wrap;
+}
+.code-block pre code {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  justify-content: start;
+  color: var(--blue-50);
+  font-family: "Courier New";
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  text-align: start;
+  opacity: 0.6;
+}
+.code-block.can-copy {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: start;
+  gap: 16px;
+  padding: 16px 8px;
+}
+.code-block.can-copy .btn-container {
+  position: relative;
+}
+.code-block.can-copy .btn-container .copy-msg {
+  position: absolute;
+  bottom: -18px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 1rem;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+}
+.code-block.can-copy .btn-container.copied .copy-msg {
+  opacity: 1 !important;
+}
+.code-block.can-copy .btn-container:hover .copy-msg {
+  opacity: 1 !important;
+}

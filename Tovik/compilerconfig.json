@@ -12,23 +12,47 @@
     "inputFile": "Shared/NavMenu.razor.scss"
   },
   {
-    "outputFile": "Pages/Index.razor.css",
-    "inputFile": "Pages/Index.razor.scss"
+    "outputFile": "Domains/DomainList.razor.css",
+    "inputFile": "Domains/DomainList.razor.scss"
   },
   {
-    "outputFile": "Pages/DomainPage.razor.css",
-    "inputFile": "Pages/DomainPage.razor.scss"
+    "outputFile": "Domains/DomainPage.razor.css",
+    "inputFile": "Domains/DomainPage.razor.scss"
   },
   {
-    "outputFile": "Pages/DomainCard.razor.css",
-    "inputFile": "Pages/DomainCard.razor.scss"
+    "outputFile": "Domains/DomainCard.razor.css",
+    "inputFile": "Domains/DomainCard.razor.scss"
   },
   {
-    "outputFile": "Pages/Install.razor.css",
-    "inputFile": "Pages/Install.razor.scss"
+    "outputFile": "Installation/Install.razor.css",
+    "inputFile": "Installation/Install.razor.scss"
   },
   {
-    "outputFile": "Pages/CodeBlock.razor.css",
-    "inputFile": "Pages/CodeBlock.razor.scss"
+    "outputFile": "Installation/CodeBlock.razor.css",
+    "inputFile": "Installation/CodeBlock.razor.scss"
+  },
+  {
+    "outputFile": "Shared/Assets/UsageMeter.razor.css",
+    "inputFile": "Shared/Assets/UsageMeter.razor.scss"
+  },
+  {
+    "outputFile": "Domains/DeleteModal.razor.css",
+    "inputFile": "Domains/DeleteModal.razor.scss"
+  },
+  {
+    "outputFile": "Installation/Demo.razor.css",
+    "inputFile": "Installation/Demo.razor.scss"
+  },
+  {
+    "outputFile": "Installation/DemoComponent.razor.css",
+    "inputFile": "Installation/DemoComponent.razor.scss"
+  },
+  {
+    "outputFile": "Index.razor.css",
+    "inputFile": "Index.razor.scss"
+  },
+  {
+    "outputFile": "Shared/HomeLayout.razor.css",
+    "inputFile": "Shared/HomeLayout.razor.scss"
   }
 ]

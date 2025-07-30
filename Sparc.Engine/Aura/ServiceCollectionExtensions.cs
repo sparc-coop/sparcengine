@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Authentication.Cookies;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Components.Authorization;
-using Passwordless;
 using Sparc.Blossom.Authentication;
 using Sparc.Blossom.Platforms.Server;
+using Sparc.Engine.Aura;
 using System.Security.Claims;
 
 namespace Sparc.Engine;
@@ -12,19 +12,21 @@ public static class ServiceCollectionExtensions
     public static WebApplicationBuilder AddSparcAuthentication<TUser>(this WebApplicationBuilder builder)
         where TUser : BlossomUser, new()
     {
-        builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-            .AddCookie(options => {
-                options.Cookie.SameSite = SameSiteMode.None;
-                options.Cookie.Name = ".Sparc.Cookie";
-                options.ExpireTimeSpan = TimeSpan.FromDays(30);
-                });
+        builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(options =>
+            {
+                options.Authority = builder.Configuration["Jwt:Authority"];
+                options.Audience = builder.Configuration["Jwt:Audience"];
+                options.TokenValidationParameters = SparcTokens.DefaultParameters(builder.Configuration);
+            });
 
         builder.Services.AddAuthorization();
         builder.Services.AddHttpContextAccessor();
 
         builder.Services.AddScoped<AuthenticationStateProvider, BlossomServerAuthenticationStateProvider<TUser>>()
             .AddScoped<SparcAuthenticator<TUser>>()
-            .AddScoped<IBlossomAuthenticator, SparcAuthenticator<TUser>>();
+            .AddScoped<IBlossomAuthenticator, SparcAuthenticator<TUser>>()
+            .AddScoped<SparcTokens>();
 
         builder.Services.AddTransient(s =>
             s.GetRequiredService<IHttpContextAccessor>().HttpContext?.User
@@ -38,9 +40,6 @@ public static class ServiceCollectionExtensions
             x.ApiSecret = builder.Configuration.GetConnectionString("Passwordless") ?? throw new InvalidOperationException("Passwordless API Secret is not configured.");
         });
 
-        //builder.Services.AddScoped<BlossomPasswordlessAuthenticator<TUser>>()
-        //    .AddScoped<IBlossomAuthenticator, BlossomPasswordlessAuthenticator<TUser>>();
-
         return builder;
     }
 
@@ -48,7 +47,7 @@ public static class ServiceCollectionExtensions
         where TUser : BlossomUser, new()
     { 
         app.UseCookiePolicy(new() { 
-            MinimumSameSitePolicy = SameSiteMode.None,
+            MinimumSameSitePolicy = SameSiteMode.Lax,
             HttpOnly = Microsoft.AspNetCore.CookiePolicy.HttpOnlyPolicy.Always,
             Secure = CookieSecurePolicy.Always
         });

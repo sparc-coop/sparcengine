@@ -19,10 +19,37 @@
   --orange-300: #FF945E;
   --orange-200: #FFB48E;
   --orange-100: #FFD4BF;
+  --purple: #6A2FD0;
   --app-width: calc(100vw - 32px);
   --container-width: calc(100% - 32px);
+  --padded-width: calc(100% - 80px);
+  --desktop-width: calc(100vw - 128px);
   --brother-printed: "brother-1816-printed", sans-serif;
   --articulat: "articulat-cf", sans-serif;
+}
+
+.error-message {
+  font-size: 1.6rem;
+  color: var(--orange-300);
+}
+
+.language-select {
+  position: relative;
+}
+.language-select:after {
+  content: " ";
+  position: absolute;
+  top: 50%;
+  margin-top: -2px;
+  right: 24px;
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid var(--purple-500);
+}
+.language-select select {
+  appearance: none;
 }
 
 html, body {
@@ -32,7 +59,6 @@ html, body {
   margin: 0;
   position: relative;
   background: var(--blue-700);
-  overflow-x: hidden;
 }
 
 html ::-webkit-scrollbar, body ::-webkit-scrollbar {
@@ -150,17 +176,70 @@ input {
   line-height: normal;
 }
 
+select {
+  display: flex;
+  padding: 10px 16px;
+  align-items: center;
+  gap: 8px;
+  border-radius: 20px;
+  border: 1px solid var(--blue-500, #376880);
+  background: var(--blue-600, #1F5068);
+  color: var(--white, #FFF);
+  font-family: var(--articulat);
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+
 ul {
   margin: 0;
   padding: 0;
-}
-ul li {
-  margin-left: 16px;
 }
 
 .hljs {
   background-color: transparent !important;
   font-weight: 600 !important;
+}
+
+hr {
+  width: 100%;
+  height: 1px;
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(to left, var(--orange-100), var(--orange-200), var(--orange-100));
+  opacity: 0.5;
+}
+
+table {
+  font-family: var(--articulat);
+  color: var(--blue-50);
+  position: static;
+  /*> * {
+      display: table;
+      width: calc(100% + 8px);
+  }*/
+}
+table th:first-child, table th:nth-child(2), table td:first-child, table td:nth-child(2) {
+  padding-right: 32px;
+}
+table thead {
+  color: var(--white, #fff);
+  font-size: 1.4rem;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+  text-align: left;
+}
+table tbody {
+  font-size: 1.6rem;
+  font-weight: 500;
+}
+table tbody tr {
+  padding-bottom: 16px;
+}
+table tbody tr:last-child {
+  padding-bottom: 0;
 }
 
 .code-container {
@@ -192,11 +271,10 @@ ul li {
 
 .code-text {
   color: var(--blue-50, #EFF7F9);
-  leading-trim: both;
-  text-edge: cap;
   font-family: "Courier New";
   font-size: 16px;
   font-style: normal;
   font-weight: 400;
   line-height: normal;
+  opacity: 0.6;
 }

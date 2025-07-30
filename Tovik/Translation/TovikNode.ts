@@ -30,10 +30,8 @@ export default class TovikNode extends HTMLElement {
         const hash = TovikEngine.idHash(this.#original);
         db.translations.get(hash).then(translation => {
             if (translation) {
-                console.log('found!', this.#original);
                 this.render(translation);
             } else {
-                console.log('not found!', this.#original);
                 this.classList.add('tovik-translating');
                 TovikEngine.translate(this.#original, this.#originalLang)
                     .then(newTranslation => {

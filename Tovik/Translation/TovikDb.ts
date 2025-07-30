@@ -2,9 +2,10 @@
 
 const db = new Dexie.Dexie('TovikTranslate');
 
-db.version(2).stores({
+db.version(4).stores({
     translations: 'id',
-    languages: 'id'
+    languages: 'id',
+    profiles: 'id'
 });
 
 export default db;

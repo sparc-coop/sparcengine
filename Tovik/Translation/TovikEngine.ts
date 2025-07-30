@@ -1,35 +1,40 @@
 import MD5 from "./MD5.js";
+import db from './TovikDb.js';
 
-const baseUrl = 'https://localhost:7185';
-//const baseUrl = 'https://engine.sparc.coop';
+const baseUrl = window.location.href.includes('localhost')
+    ? 'https://localhost:7185'
+    : 'https://engine.sparc.coop';
 
 export default class TovikEngine {
     static userLang;
+    static rtlLanguages = ['ar', 'fa', 'he', 'ur', 'ps', 'ku', 'dv', 'yi', 'sd', 'ug'];
 
     static async hi() {
-        return await this.getLanguage();
+        var profile = await db.profiles.get('default');
+        if (!profile) {
+            profile = { id: 'default', language: navigator.language };
+            await db.profiles.add(profile);
+        }
+
+        this.setLanguage(profile.language);
+        document.addEventListener('tovik-user-language-changed', async (event: CustomEvent) => {
+            await this.setLanguage(event.detail);
+        });
     }
 
     static async getLanguages() {
         return await this.fetch('translate/languages'); 
     }
 
-    static async getLanguage() {
-        const response = await this.fetch('translate/language');
-        if (response && response.id) {
-            this.userLang = response.id;
-            document.documentElement.setAttribute('dir', response.isRightToLeft ? 'rtl' : 'ltr');
-        } else {
-            return null;
-        }
-    }
-
     static async setLanguage(language) {
-        var newLang = await this.fetch('translate/language', { Id: language });
-        document.documentElement.lang = language;
-        document.documentElement.setAttribute('dir', newLang.isRightToLeft ? 'rtl' : 'ltr');
-        this.userLang = language;
-        document.dispatchEvent(new CustomEvent('tovik-language-changed', { detail: language }));
+        if (this.userLang != language) {
+            await db.profiles.put({ id: 'default', language: language });
+            this.userLang = language;
+            document.dispatchEvent(new CustomEvent('tovik-language-changed', { detail: this.userLang }));
+        }
+
+        document.documentElement.lang = this.userLang;
+        document.documentElement.setAttribute('dir', this.rtlLanguages.some(x => this.userLang.startsWith(x)) ? 'rtl' : 'ltr');
     }
 
     static idHash(text, lang = null) {
@@ -52,6 +57,11 @@ export default class TovikEngine {
     }
 
     static async bulkTranslate(items, fromLang) {
+        var progress = document.querySelectorAll('.language-select-progress-bar');
+        for (let i = 0; i < progress.length; i++) {
+            progress[i].classList.add('show');
+        }
+
         const requests = items.map(item => ({
             id: item.hash || this.idHash(item.text, fromLang),
             Domain: window.location.host,
@@ -60,7 +70,13 @@ export default class TovikEngine {
             Text: item.text
         }));
 
-        return await this.fetch('translate/bulk', requests, this.userLang);
+        var result = await this.fetch('translate/bulk', requests, this.userLang);
+
+        for (let i = 0; i < progress.length; i++) {
+            progress[i].classList.remove('show');
+        }
+
+        return result;
     }
 
     static async fetch(url: string, body: any = null, language: string = null) {

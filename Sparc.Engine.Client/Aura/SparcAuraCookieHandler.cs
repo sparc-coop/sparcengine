@@ -35,7 +35,8 @@ public class SparcAuraCookieHandler(IHttpContextAccessor httpContextAccessor) : 
                 {
                     HttpOnly = true,
                     Secure = true,
-                    SameSite = SameSiteMode.Lax
+                    SameSite = SameSiteMode.Lax,
+                    Expires = DateTimeOffset.UtcNow.AddDays(30)
                 });
             }
         }

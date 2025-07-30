@@ -1,4 +1,5 @@
-﻿using Sparc.Engine.Billing.Stripe;
+﻿using Sparc.Core.Billing;
+using Sparc.Engine.Billing.Stripe;
 
 namespace Sparc.Engine.Billing;
 
@@ -9,8 +10,9 @@ public static class ServiceCollectionExtensions
     )
     {
         builder.Services.AddScoped<StripePaymentService>();
-        builder.Services.AddScoped<ExchangeRates>();
-        builder.Services.AddTransient<SparcEngineBillingService>();
+        builder.Services.AddScoped<ExchangeRates>()
+            .AddScoped<BlossomAggregateOptions<SparcOrder>>()
+            .AddScoped<Orders>();
 
         return builder;
     }
@@ -22,7 +24,7 @@ public static class ServiceCollectionExtensions
         using var scope = app.Services.CreateScope();
         var billingSvc = scope
             .ServiceProvider
-            .GetRequiredService<SparcEngineBillingService>();
+            .GetRequiredService<Orders>();
 
         billingSvc.Map(app);
         return app;
