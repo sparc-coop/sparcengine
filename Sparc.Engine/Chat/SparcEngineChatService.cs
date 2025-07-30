@@ -9,7 +9,6 @@ public class SparcEngineChatService(
     IRepository<RoomMembership> memberships,
     IRepository<MessageEvent> messageEvents,
     IRepository<BlossomUser> users,
-    IHttpClientFactory httpClientFactory,
     IHttpContextAccessor httpContextAccessor
 ) : IBlossomEndpoints
 {
@@ -100,7 +99,7 @@ public class SparcEngineChatService(
             await Memberships.DeleteAsync(membership);
     }
 
-    private async Task InviteToRoomAsync(string roomId, InviteToRoomRequest request)
+    private Task InviteToRoomAsync(string roomId, InviteToRoomRequest request)
     {
         throw new NotImplementedException();
     }
