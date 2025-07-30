@@ -27,7 +27,7 @@ public class ExchangeRates(IConfiguration config, AzureBlobRepository blobs)
             : to == "USD" ? amount / Rates.Rates[from]
             : amount * Rates.Rates[to] / Rates.Rates[from];
 
-        if (round)
+        if (round) 
         {
             // Find the largest power of 10 less than or equal to 10% of the convertedAmount
             var tenPercent = convertedAmount * 0.1m;

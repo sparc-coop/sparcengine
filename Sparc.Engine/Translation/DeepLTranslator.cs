@@ -10,6 +10,7 @@ internal class DeepLTranslator(IConfiguration configuration) : ITranslator
     internal static List<Language> TargetLanguages = [];
 
     public int Priority => 1;
+    decimal CostPerWord => 25.00m / 1_000_000 * 5; // $25 per million characters, assuming average 5 characters per word
 
     public async Task<List<TextContent>> TranslateAsync(IEnumerable<TextContent> messages, IEnumerable<Language> toLanguages, string? additionalContext = null)
     {
@@ -33,10 +34,12 @@ internal class DeepLTranslator(IConfiguration configuration) : ITranslator
             {
                 foreach (var targetLanguage in toDeepLLanguages)
                 {
+                    var safeTargetLanguage = targetLanguage.ToString() == "en" ? "en-US" : targetLanguage.ToString(); // en is deprecated
                     var texts = batch.Select(x => x.Text).Where(x => x != null);
-                    var result = await Client.TranslateTextAsync(texts!, sourceLanguage.Key.ToString(), targetLanguage.ToString(), options);
+                    var result = await Client.TranslateTextAsync(texts!, sourceLanguage.Key.ToString(), safeTargetLanguage, options);
                     var newContent = batch.Zip(result, (message, translation) => new TextContent(message, targetLanguage, translation.Text));
                     translatedMessages.AddRange(newContent);
+                    translatedMessages.ForEach(x => x.AddCharge(CostPerWord, $"DeepL translation of {x.OriginalText} to {x.LanguageId}"));
                 }
             }
         }
@@ -75,11 +78,11 @@ internal class DeepLTranslator(IConfiguration configuration) : ITranslator
         var targets = await Client.GetTargetLanguagesAsync();
 
         SourceLanguages = sources
-            .Select(x => new Language(x.Code, x.Name, x.Name, x.CultureInfo.TextInfo.IsRightToLeft))
+            .Select(x => Language.FromCulture(x.Code))
             .ToList();
 
         TargetLanguages = targets
-            .Select(x => new Language(x.Code, x.Name, x.Name, x.CultureInfo.TextInfo.IsRightToLeft))
+            .Select(x => Language.FromCulture(x.Code))
             .ToList();
 
         return SourceLanguages.Union(TargetLanguages).ToList();

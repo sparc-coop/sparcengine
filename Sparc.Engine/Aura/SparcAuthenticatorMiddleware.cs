@@ -8,7 +8,7 @@ public class SparcAuthenticatorMiddleware(RequestDelegate next)
 
     public async Task InvokeAsync(HttpContext context, IBlossomAuthenticator auth)
     {
-        if (context.IsStaticFileRequest())
+        if (context.IsStaticFileRequest() || context.Request.Headers.ContainsKey("Stripe-Signature"))
         {
             await _next(context);
             return;

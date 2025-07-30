@@ -13,7 +13,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddOpenApi();
 builder.Services.AddScoped<FriendlyId>();
 
-builder.Services.AddCosmos<SparcEngineContext>(builder.Configuration.GetConnectionString("Cosmos")!, "sparc-dev", ServiceLifetime.Scoped);
+builder.Services.AddCosmos<SparcEngineContext>(builder.Configuration.GetConnectionString("Cosmos")!, builder.Environment.IsDevelopment() ? "sparc-dev" : "sparc", ServiceLifetime.Scoped);
 builder.Services.AddAzureStorage(builder.Configuration.GetConnectionString("Storage")!);
 
 builder.AddSparcAuthentication<BlossomUser>();
@@ -60,7 +60,7 @@ app.MapGet("/aura/friendlyid", (FriendlyId friendlyId) => friendlyId.Create());
 app.MapGet("/hi", () => "Hi from Sparc!");
 
 using var scope = app.Services.CreateScope();
-scope.ServiceProvider.GetRequiredService<Contents>().Map(app);
+scope.ServiceProvider.GetRequiredService<TovikTranslator>().Map(app);
 
 if (!string.IsNullOrWhiteSpace(app.Configuration.GetConnectionString("Cognitive")))
 {

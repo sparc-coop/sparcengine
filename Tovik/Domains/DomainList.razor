@@ -1,0 +1,169 @@
+﻿@page "/sites"
+@using Sparc.Engine.Aura
+@layout MainLayout
+
+<PageTitle>Tovik</PageTitle>
+
+<article class="home">
+    <div class="page-container">
+        @if (Usage == 0)
+        {
+            <section class="welcome">
+                <img src="/images/Star.svg" alt="Star" />
+                <header>
+                    <h3>Welcome to Tovik!</h3>
+                    <p class="subheader">
+                        We're so happy you've decided to try Tovik out. You can get started in just two easy steps:
+                        <ul>
+                            <li><a href="/install">Install the Tovik script on your site</a> (just one line of code!)</li>
+                            <li>Add your website's domain below.</li>
+                        </ul>
+                    </p>
+                    <p class="subheader">
+                        That's it! Tovik will take it from there and will make sure your site is always in your visitors' preferred language.
+                    </p>
+                    <aside>
+                        This message will disappear automatically once Tovik detects the first usage on your account. 
+                    </aside>
+                </header>
+            </section>
+        }
+
+        <section class="word-usage">
+            <header>
+                <h3>Word Usage</h3>
+                @if (Limit == 1000)
+                {
+                    <p class="subheader">Your free trial of Tovik includes 1,000 words by default. Once you need additional words, you can click the button below to purchase a word pack anytime.</p>
+                }
+                else
+                {
+                    <p class="subheader">Your purchase of Tovik includes 100,000 words by default. If you need additional words, you can purchase an additional word pack anytime.</p>
+                }
+            </header>
+            <div>
+                <h4>Words Translated</h4>
+                <UsageMeter Usage=Usage Limit=Limit />
+            </div>
+            <div class="btn-container">
+                <button class="purchase-btn primary-btn" @onclick=GoToStore>Need more words?</button>
+            </div>
+        </section>
+
+        <section class="add-domain">
+            <header>
+                <h3>Add a Website</h3>
+                <p class="subheader">Add as many websites as you want -- there's no limit. And whenever you need to, you can add new ones or remove old ones instantly.</p>
+            </header>
+
+            @if (Error != null)
+            {
+                <div class="error-message">@Error</div>
+            }
+
+            <label>
+                <input type="text" placeholder="Enter a domain name" @bind="NewDomain" @bind:event="oninput" />
+            </label>
+            <div class="btn-container">
+                <button class="add-btn primary-btn" disabled="@(string.IsNullOrWhiteSpace(NewDomain))" @onclick=AddDomain>Add Website</button>
+            </div>
+        </section>
+
+        <section class="manage-domains">
+            <header>
+                <h3>My Websites</h3>
+                <p class="subheader">Change the display name, delete a website, or add exempt words/phrases to your website glossary.</p>
+            </header>
+            <table class="domains-table">
+                <thead>
+                    <tr>
+                        <td>Domain</td>
+                        <td>Usage</td>
+                        <td></td>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var domain in Domains)
+                    {
+                        <DomainCard Domain=domain PageType="home" OnDelete=DeleteDomain />
+                    }
+                </tbody>
+                @if (!Domains.Any())
+                {
+                    <tfoot>
+                        <tr>
+                            <td colspan="3">
+                                <aside>
+                                    Looks like you haven't added any sites yet. Go ahead and add your first website in the box above!
+                                </aside>
+                            </td>
+                        </tr>
+                    </tfoot>
+                }
+            </table>
+        </section>
+
+    </div>
+</article>
+
+@inject Tovik.Domains.TovikDomains TovikDomains
+@inject ISparcAura Aura
+@inject IConfiguration Config
+@code {
+    List<SparcDomain> Domains = new();
+    string NewDomain = "";
+    string? Error;
+
+    int Usage;
+    int Limit;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var user = await Aura.UserInfo();
+        var product = user.Product("Tovik");
+
+        if (product == null) // Start free trial
+            product = await Aura.Activate("Tovik");
+
+        await LoadDomains();
+        Limit = product.MaxUsage;
+        Usage = Domains.Sum(d => d.TovikUsage);
+    }
+
+    private async Task GoToStore()
+    {
+        var totp = await Aura.GetSparcCode();
+        if (totp != null)
+            Nav.NavigateTo($"{Config["SparcStore"]}?_auth=totp:{totp.Code}");
+    }
+
+    private async Task LoadDomains()
+    {
+        Domains = await TovikDomains.All();
+    }
+
+    private async Task AddDomain()
+    {
+        if (string.IsNullOrWhiteSpace(NewDomain))
+            return;
+
+        Error = null;
+        try
+        {
+            await TovikDomains.RegisterAsync(NewDomain);
+            NewDomain = "";
+            await LoadDomains();
+        }
+        catch (Exception ex)
+        {
+            Error = ex.Message;
+            NewDomain = "";
+        }
+    }
+
+    private async Task DeleteDomain(SparcDomain domain)
+    {
+        await TovikDomains.DeleteAsync(domain);
+        await LoadDomains();
+    }
+}

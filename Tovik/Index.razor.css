@@ -1,0 +1,101 @@
+﻿article {
+  width: var(--app-width);
+  position: relative;
+}
+article .page-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+article section {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 24px;
+  background: rgba(79, 129, 153, 0.2);
+  border: 1px solid rgba(219, 243, 252, 0.2);
+  border-radius: 24px;
+  backdrop-filter: blur(4px);
+}
+article section header h3 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  line-height: normal;
+}
+article section header .subheader {
+  font-family: var(--articulat);
+  font-size: 1.6rem;
+  font-weight: 400;
+  line-height: normal;
+}
+article section h4 {
+  color: #FFF;
+  font-family: var(--brother-printed);
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+}
+article section button.primary-btn {
+  width: auto;
+  margin-top: 32px;
+}
+article section h2 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+article section p {
+  font-family: var(--articulat);
+  font-size: 1.8rem;
+  font-weight: 500;
+  margin-bottom: 24px;
+  letter-spacing: 1.1px;
+  line-height: 150%;
+}
+article section.trial {
+  padding: 64px !important;
+  align-items: flex-start;
+}
+article section.trial span {
+  display: inline-block;
+  margin-left: 4px;
+  color: var(--orange-300);
+}
+article section.trial img {
+  height: 30px;
+}
+article section.demo {
+  background-color: transparent !important;
+  border: 2px solid var(--blue-400) !important;
+  border-radius: 48px !important;
+  padding: 0 !important;
+}
+article section.demo header img {
+  width: 100%;
+  height: auto;
+}
+article section.demo h1 {
+  color: white;
+  font-family: var(--brother-printed);
+  font-size: 3.2rem;
+  font-weight: 700;
+  margin-bottom: 32px;
+}
+article section.demo div {
+  padding: 32px 64px 64px 64px;
+}
+article section.demo ::deep .language-select {
+  margin-top: 64px;
+  background-color: var(--blue-600);
+}
+article section.demo ::deep .language-select:after {
+  border-top: 5px solid white;
+}
+article section.demo ::deep .language-select select {
+  background-color: var(--blue-600);
+}
+article section.demo ::deep .language-select .progress-bar-value {
+  background-color: var(--blue-300);
+}

@@ -21,14 +21,14 @@ export default class TovikElement extends HTMLElement {
             this.#observedElement = document.querySelector(selector);
         }
 
-        await this.wrapTextNodes(this.#observedElement);
+        await this.translatePage(this.#observedElement);
+
         document.addEventListener('tovik-language-changed', async (event: any) => {
-            await this.wrapTextNodes(this.#observedElement, true);
+            await this.translatePage(this.#observedElement, true);
         });
 
         document.addEventListener('tovik-content-changed', async (event: any) => {
-            console.log('tovik-content-changed event received');
-            await this.wrapTextNodes(this.#observedElement);
+            await this.translatePage(this.#observedElement);
         });
 
 
@@ -41,6 +41,11 @@ export default class TovikElement extends HTMLElement {
             this.observer.disconnect();
     }
 
+    async translatePage(element, forceReload = false) {
+        await this.wrapTextNodes(element, forceReload);
+        await this.translateAttribute(element, 'placeholder', forceReload);
+    }
+
     async wrapTextNodes(element, forceReload = false) {
         var nodes = [];
         var treeWalker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, forceReload ? this.#tovikForceReloadIgnoreFilter : this.#tovikIgnoreFilter);
@@ -51,8 +56,8 @@ export default class TovikElement extends HTMLElement {
                 nodes.push(node);
             }
         }
-
-        await this.queueForTranslation(nodes);
+        
+        await this.translateTextNodes(nodes);
     }
 
     isValid(node) {
@@ -92,9 +97,47 @@ export default class TovikElement extends HTMLElement {
         return NodeFilter.FILTER_ACCEPT;
     }
 
-    async queueForTranslation(textNodes) {
+    async translateAttribute(element:HTMLElement, attributeName:string, forceReload = false) {
+        const elements = element.querySelectorAll('[' + attributeName + ']');
         let pendingTranslations = [];
-        console.log('oh lawd', textNodes);
+
+        for (const el of elements) {
+            const original = el['original-' + attributeName] || el.getAttribute(attributeName);
+            if (!el['original-' + attributeName]) {
+                el['original-' + attributeName] = original;
+            }
+
+            const hash = TovikEngine.idHash(original);
+            const translation = await db.translations.get(hash);
+            if (translation && !forceReload) {
+                el.setAttribute(attributeName, translation.text);
+            } else {
+                if (!pendingTranslations.some(e => e.hash === hash)) {
+                    pendingTranslations.push({ element: el, hash: hash });
+                }
+            }
+        }
+
+        if (!pendingTranslations.length)
+            return;
+
+        const textsToTranslate = pendingTranslations.map(item => ({
+            hash: item.hash,
+            text: item.element['original-' + attributeName]
+        }));
+
+        const newTranslations = await TovikEngine.bulkTranslate(textsToTranslate, this.#originalLang);
+        for (const item of pendingTranslations) {
+            const translation = newTranslations.find(t => t.id === item.hash);
+            if (translation) {
+                item.element.setAttribute(attributeName, translation.text);
+                db.translations.put(translation);
+            }
+        }
+    }
+
+    async translateTextNodes(textNodes) {
+        let pendingTranslations = [];
 
         await Promise.all(textNodes.map(async textNode => {
             if (!textNode.textContent)
@@ -102,13 +145,14 @@ export default class TovikElement extends HTMLElement {
 
             if (!textNode.originalText) {
                 textNode.originalText = textNode.textContent.trim();
+                textNode.preWhiteSpace = /^\s/.test(textNode.textContent);
+                textNode.postWhiteSpace = /\s$/.test(textNode.textContent);
             }
 
-            console.log('mapping', textNode.originalText);
             textNode.hash = TovikEngine.idHash(textNode.originalText);
             const translation = await db.translations.get(textNode.hash);
             if (translation) {
-                textNode.textContent = translation.text;
+                textNode.textContent = ' ' + translation.text + ' ';
             } else {
                 // Queue for bulk translation if not in cache
                 if (!pendingTranslations.some(node => node.hash === textNode.hash)) {
@@ -117,7 +161,6 @@ export default class TovikElement extends HTMLElement {
             }
         }));
 
-        console.log('oh lawd!', pendingTranslations);
         if (pendingTranslations.length > 0) {
             await this.processBulkTranslations(pendingTranslations);
         }
@@ -125,8 +168,6 @@ export default class TovikElement extends HTMLElement {
 
     async processBulkTranslations(pendingTranslations) {
         if (pendingTranslations.length === 0) return;
-
-        console.log(`Processing bulk translation for ${pendingTranslations.length} nodes`);
 
         const textsToTranslate = pendingTranslations.map(node => ({
             hash: node.hash,
@@ -136,9 +177,11 @@ export default class TovikElement extends HTMLElement {
         const newTranslations = await TovikEngine.bulkTranslate(textsToTranslate, this.#originalLang);
         for (const node of pendingTranslations) {
             const translation = newTranslations.find(t => t.id === node.hash);
-            console.log('checking for', newTranslations, node.hash, translation);
             if (translation) {
-                node.textContent = translation.text;
+                node.textContent =
+                    (node.preWhiteSpace ? ' ' : '')
+                    + translation.text
+                    + (node.postWhiteSpace ? ' ' : '');
                 node.translating = false;
                 node.translated = true;
                 db.translations.put(translation);
