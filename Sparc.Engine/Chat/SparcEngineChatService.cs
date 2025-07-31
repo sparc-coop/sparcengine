@@ -1,6 +1,7 @@
 ﻿using Sparc.Blossom.Authentication;
 using Sparc.Blossom.Data;
 using Sparc.Core.Chat;
+using System.Security.Claims;
 
 namespace Sparc.Engine.Chat;
 
@@ -8,7 +9,6 @@ public class SparcEngineChatService(
     IRepository<Room> rooms,
     IRepository<RoomMembership> memberships,
     IRepository<MessageEvent> messageEvents,
-    IRepository<BlossomUser> users,
     SparcAuthenticator<BlossomUser> auth,
     IHttpContextAccessor httpContextAccessor
 ) : IBlossomEndpoints
@@ -16,7 +16,6 @@ public class SparcEngineChatService(
     IRepository<Room> Rooms = rooms;
     IRepository<RoomMembership> Memberships = memberships;
     IRepository<MessageEvent> MessageEvents = messageEvents;
-    IRepository<BlossomUser> Users = users;
     IHttpContextAccessor HttpContextAccessor = httpContextAccessor;
 
     public SparcAuthenticator<BlossomUser> Auth { get; } = auth;
@@ -35,10 +34,24 @@ public class SparcEngineChatService(
         if (!user.HasIdentity("Matrix"))
         {
             user.AddIdentity("Matrix", matrixId);
-            await Users.UpdateAsync(user);
+            await Auth.UpdateAsync(user);
         }
 
         return user.Identity("Matrix")!;
+    }
+
+    // For Laura:
+    private async Task<MatrixPresence> GetPresenceAsync(ClaimsPrincipal principal, string userId)
+    {
+        var user = await Auth.GetAsync(principal);
+        return new MatrixPresence(user.Avatar);
+    }
+
+    private async Task SetPresenceAsync(ClaimsPrincipal principal, string userId, MatrixPresence presence)
+    {
+        var user = await Auth.GetAsync(principal);
+        user.UpdateAvatar(presence.ToAvatar());
+        await Auth.UpdateAsync(user);
     }
 
     private async Task<List<Room>> GetRoomsAsync()
@@ -145,5 +158,16 @@ public class SparcEngineChatService(
         chatGroup.MapPost("/rooms/{roomId}/invite", InviteToRoomAsync);
         chatGroup.MapGet("/rooms/{roomId}/messages", GetMessagesAsync);
         chatGroup.MapPost("/rooms/{roomId}/send/{eventType}/{txnId}", SendMessageAsync);
+
+        // Map the presence endpoint
+        chatGroup.MapGet("/users/{userId}/status", async (ClaimsPrincipal principal, string userId) =>
+        {
+            return await GetPresenceAsync(principal, userId);
+        });
+        chatGroup.MapPost("/users/{userId}/status", async (ClaimsPrincipal principal, string userId, MatrixPresence presence) =>
+        {
+            await SetPresenceAsync(principal, userId, presence);
+            return Results.Ok();
+        });
     }
 }
