@@ -1,6 +1,6 @@
 ﻿.chat-bar {
   width: calc(100% - 32px);
-  min-height: 31px;
+  min-height: 32px;
   padding: 16px;
   position: fixed;
   bottom: 0;
@@ -23,11 +23,11 @@
 }
 .chat-bar form .chat-input {
   width: 100%;
-  padding: 3px 12px;
+  padding: 8px 12px;
   border-radius: 8px;
   background: var(--grey-100, #F8F8FA);
 }
-.chat-bar form textarea {
+.chat-bar form #chat-textarea {
   width: 100%;
   border: transparent;
   background: none;
@@ -38,17 +38,28 @@
   font-weight: 400;
   line-height: 1.6rem; /* 123.077% */
   resize: none;
+  text-wrap: wrap;
+  word-wrap: break-word;
+  hyphens: auto;
 }
-.chat-bar button ::deep svg {
-  width: 10px;
-  height: 10px;
+.chat-bar button {
+  width: 20px;
+  height: 20px;
 }
 .chat-bar button.attach-btn ::deep svg {
   width: 11px;
   height: 11px;
 }
+.chat-bar button.send-btn ::deep svg {
+  width: 9px;
+  height: 9px;
+}
 .chat-bar button.record-btn {
   background: var(--orange);
+}
+.chat-bar button.record-btn ::deep svg {
+  width: 14px;
+  height: 14px;
 }
 .chat-bar button.record-btn ::deep svg path {
   stroke: white;

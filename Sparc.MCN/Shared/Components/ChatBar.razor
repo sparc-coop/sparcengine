@@ -1,13 +1,17 @@
 ﻿<footer class="chat-bar">
     <button class="attach-btn icon-btn"><PlusIcon /></button>
-    <form id="chat-form" @onsubmit:preventDefault="true" @onsubmit=InitiateMessage>
+    <form id="chat-form" @onsubmit=InitiateMessage>
         <div class="chat-input">
             @if (!VoiceMode)
             {
-                <textarea id="chat-textarea" type="text" rows="1" @bind=text placeholder="Type your message..." oninput='this.style.height = "";this.style.height = this.scrollHeight + "px"' style="@(string.IsNullOrEmpty(text) ? "height: fit-content;" : "")" />
+                @* <textarea id="chat-textarea" type="text" rows="1" @bind=Text placeholder="Type your message..." oninput='this.style.height = "";this.style.height = this.scrollHeight + "px"' style="@(string.IsNullOrEmpty(Text) ? "height: fit-content;" : "")" @ref=TextArea @onkeydown=InitiateMessage @onkeydown:preventDefault="preventDefault" /> *@
+                <div id="chat-textarea" placeholder="Type your message..." aria-label="Message" contenteditable  @ref=TextArea @onkeydown=HandleEnter @onkeydown:preventDefault="preventDefault">
+                </div>
             } else
             {
-                <textarea id="chat-textarea" type="text" rows="1" @bind=text placeholder="Speak anytime..." oninput='this.style.height = "";this.style.height = this.scrollHeight + "px"' style="@(string.IsNullOrEmpty(transcription) ? "height: fit-content;" : "")" />
+                @* <textarea id="chat-textarea" type="text" rows="1" @bind=Transcription placeholder="Speak anytime..." oninput='this.style.height = "";this.style.height = this.scrollHeight + "px"' style="@(string.IsNullOrEmpty(Transcription) ? "height: fit-content;" : "")" @ref=TextArea @onkeydown=InitiateMessage @onkeydown:preventDefault="preventDefault" /> *@
+                <div id="chat-textarea" placeholder="Speak anytime..." aria-label="Message" contenteditable @ref=TextArea @onkeydown=HandleEnter @onkeydown:preventDefault="preventDefault">
+                </div>
             }
         </div>
         @if (!VoiceMode)
@@ -21,13 +25,30 @@
     </form>
 </footer>
 
+<script>
+    function getInnerText(ref, elem) {
+        var text = elem.innerText
+        sendMessage(ref, text);
+    }
+
+    function sendMessage(ref, text) {
+        ref.invokeMethodAsync("SendMessage", text);
+    }
+
+    function clearTextarea(elem) {
+        elem.innerHTML = "";
+    }
+</script>
+
 @code {
     [Parameter] public bool VoiceMode { get; set; } = false;
     [Parameter] public EventCallback<string> OnSendMessage { get; set; }
     [Parameter] public bool MessageSent { get; set; } = false;
 
-    string? text;
-    string? transcription;
+    string? Text;
+    string? Transcription;
+    bool preventDefault = false;
+    ElementReference TextArea;
 
     protected override void OnParametersSet()
     {
@@ -41,13 +62,63 @@
     {
         if (!VoiceMode)
         {
-            if (!string.IsNullOrWhiteSpace(text))
-            {
-                OnSendMessage.InvokeAsync(text);
-            }
-        } else
+            Js.InvokeVoidAsync("getInnerText", DotNetObjectReference.Create(this), TextArea);
+        }
+        else
         {
             RecordVoiceMessage();
+        }
+    }
+
+    void HandleEnter(KeyboardEventArgs? args)
+    {
+        if (args.Code == "Enter" && !args.ShiftKey)
+        {
+            preventDefault = true;
+            InitiateMessage();
+        }
+        else
+        {
+            preventDefault = false;
+        }
+    }
+
+    private async Task<string> GetStringFromJs()
+    {
+        var innerText = Js.InvokeAsync<string>("getInnerHtml", "chat-textarea");
+        if (innerText != null)
+        {
+            return innerText.Result;
+        }
+        else
+        {
+            return string.Empty;
+        }
+    }
+
+    [JSInvokable("SendMessage")]
+    public async void SendMessage(string text)
+    {
+        if (!VoiceMode)
+        {
+            Text = text?.Trim('\r', '\n', ' ');
+
+            if (!string.IsNullOrWhiteSpace(Text))
+            {
+                await OnSendMessage.InvokeAsync(Text);
+                StateHasChanged();
+            }
+            // if (!string.IsNullOrWhiteSpace(Text))
+            // {
+            //     var text = Text?.Trim('\r', '\n', ' ');
+            //     Console.WriteLine($"Sending message: {text}");
+            //     OnSendMessage.InvokeAsync(text);
+            // }
+            // var newMessage = await Api.TypeMessageAsync(new TypeMessageRequest { RoomId = Room.RoomId, Text = text, MessageId = SelectedMessage?.Id });
+            // await TextArea.FocusAsync();
+
+            // if (SelectedMessage != null && OnDoneEditing.HasDelegate)
+            //     await OnDoneEditing.InvokeAsync(newMessage);
         }
     }
 
@@ -63,9 +134,11 @@
         // voice message sent as recording with transcription and translation
     }
 
-    void ResetInput()
+    async Task ResetInput()
     {
-        text = string.Empty;
-        transcription = string.Empty;
+        Text = string.Empty;
+        Transcription = string.Empty;
+        await Js.InvokeVoidAsync("clearTextarea", TextArea);
+        await TextArea.FocusAsync();
     }
 }

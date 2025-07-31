@@ -38,9 +38,9 @@ main {
             color: var(--grey-900);
             text-wrap: wrap;
             word-wrap: break-word;
+            hyphens: auto; // copy and paste maintains original formatting without hyphens
             //overflow-wrap: break-word;
             //word-break: break-all;
-            hyphens: auto;
         }
 
         aside {

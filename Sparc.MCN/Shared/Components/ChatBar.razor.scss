@@ -1,6 +1,6 @@
 .chat-bar {
     width: calc(100% - 32px);
-    min-height: 31px;
+    min-height: 32px;
     padding: 16px;
     position: fixed;
     bottom: 0;
@@ -23,13 +23,14 @@
 
         .chat-input {
             width: 100%;
-            padding: 3px 12px;
+            padding: 8px 12px;
             border-radius: 8px;
             background: var(--grey-100, #F8F8FA);
         }
 
-        textarea {
+        #chat-textarea {
             width: 100%;
+            //max-width: calc(100vw - 104px);
             border: transparent;
             background: none;
             color: var(--grey-500, #616161);
@@ -39,14 +40,15 @@
             font-weight: 400;
             line-height: 1.6rem; /* 123.077% */
             resize: none;
+            text-wrap: wrap;
+            word-wrap: break-word;
+            hyphens: auto; // copy and paste maintains original formatting without hyphens
         }
     }
 
     button {
-        ::deep svg {
-            width: 10px;
-            height: 10px;
-        }
+        width: 20px;
+        height: 20px;
 
         &.attach-btn {
             ::deep svg {
@@ -55,10 +57,20 @@
             }
         }
 
+        &.send-btn {
+            ::deep svg {
+                width: 9px;
+                height: 9px;
+            }
+        }
+
         &.record-btn {
             background: var(--orange);
 
             ::deep svg {
+                width: 14px;
+                height: 14px;
+
                 path {
                     stroke: white;
                 }
