@@ -11,11 +11,18 @@
         </div>
     </div>
     <div class="right chat-actions">
-        <button class="voice-btn icon-btn"><VoiceMessageIcon Color="#7A7A7A" /></button>
+        <button class="voice-btn icon-btn" @onclick=ToggleVoiceMode><VoiceMessageIcon Color="@(voiceMode ? "#1573FE" : "#7A7A7A")" /></button>
         <button class="more-btn icon-btn"><MoreIcon Color="#7A7A7A" /></button>
     </div>
 </nav>
 
 @code {
+    [Parameter] public EventCallback<bool> OnToggleVoiceMode { get; set; }
+    bool voiceMode = false;
 
+    void ToggleVoiceMode()
+    {
+        voiceMode = !voiceMode;
+        OnToggleVoiceMode.InvokeAsync(voiceMode);
+    }
 }

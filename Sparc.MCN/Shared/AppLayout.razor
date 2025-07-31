@@ -1,9 +1,10 @@
 ﻿@inherits LayoutComponentBase
 
 <CascadingValue Value=@User>
-    @Body
+    <div class="layout-container">
+        @Body
+    </div>
 </CascadingValue>
-
 
 @code {
     User? User;

@@ -1,6 +1,6 @@
 ﻿.chat-bar {
   width: calc(100% - 32px);
-  height: 60px;
+  min-height: 60px;
   padding: 0 16px;
   position: fixed;
   bottom: 0;
@@ -12,14 +12,23 @@
   gap: 8px;
   background: white;
   box-shadow: 0 -10px 20px 0 rgba(0, 18, 65, 0.04), 0 -2px 6px 0 rgba(0, 18, 65, 0.04), 0 0 1px 0 rgba(0, 18, 65, 0.04);
+  position: relative;
+  z-index: 20;
 }
-.chat-bar .chat-input {
+.chat-bar form {
   width: 100%;
-  padding: 4px 12px;
+  display: flex;
+  flex-direction: row;
+  gap: 8px;
+}
+.chat-bar form .chat-input {
+  width: 100%;
+  padding: 6px 12px;
   border-radius: 8px;
   background: var(--grey-100, #F8F8FA);
 }
-.chat-bar input {
+.chat-bar form input {
+  width: 100%;
   border: transparent;
   background: none;
   color: var(--grey-500, #616161);
@@ -29,7 +38,13 @@
   font-weight: 400;
   line-height: 1.6rem; /* 123.077% */
 }
-.chat-bar button ::deep svg {
+.chat-bar form button ::deep svg {
   width: 18px;
   height: 18px;
+}
+.chat-bar form button.record-btn {
+  background: var(--orange);
+}
+.chat-bar form button.record-btn ::deep svg path {
+  stroke: white;
 }

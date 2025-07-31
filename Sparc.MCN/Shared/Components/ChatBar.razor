@@ -1,17 +1,59 @@
-﻿<div class="chat-bar">
+﻿<footer class="chat-bar">
     <button class="icon-btn"><PlusIcon /></button>
-    <div class="chat-input">
-        <input type="text" @bind-value=text placeholder="Type your message..." />
-    </div>
-    <button class="icon-btn" @onclick='() => SendMessage(text)'><SendIcon /></button>
-</div>
+    <form id="chat-form" @onsubmit:preventDefault="true" @onsubmit=InitiateMessage>
+        <div class="chat-input">
+            <input type="text" @bind-value=text placeholder="Type your message..." />
+        </div>
+        @if (!VoiceMode)
+        {
+            <button class="send-btn icon-btn" type=submit><SendIcon /></button>
+        } 
+        else
+        {
+            <button class="record-btn icon-btn" type=submit @onclick:preventDefault="true"><MicrophoneIcon /></button>
+        }
+    </form>
+</footer>
 
 @code {
+    [Parameter] public bool VoiceMode { get; set; } = false;
     [Parameter] public EventCallback<string> OnSendMessage { get; set; }
-    string? text;
+    [Parameter] public bool MessageSent { get; set; } = false;
 
-    void SendMessage(string text)
+    string? text;
+    string? transcription;
+
+    protected override void OnParametersSet()
     {
-        OnSendMessage.InvokeAsync(text);
+        if (MessageSent)
+        {
+            text = string.Empty;
+        }
+    }
+
+    void InitiateMessage()
+    {
+        if (!VoiceMode)
+        {
+            if (!string.IsNullOrWhiteSpace(text))
+            {
+                OnSendMessage.InvokeAsync(text);
+            }
+        } else
+        {
+            RecordVoiceMessage();
+        }
+    }
+
+    void RecordVoiceMessage()
+    {
+        Console.WriteLine("Starting voice message...");
+        // logic to record, transcribe, and translate vooice message
+    }
+
+    void SendVoiceMessage()
+    {
+        Console.WriteLine("Sending voice message...");
+        // voice message sent as recording with transcription and translation
     }
 }

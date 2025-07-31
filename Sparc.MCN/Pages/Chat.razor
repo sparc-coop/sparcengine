@@ -1,7 +1,7 @@
 ﻿@page "/chat"
 @layout AppLayout
 
-<TopBar />
+<TopBar OnToggleVoiceMode=ToggleVoiceMode />
 
 <main>
     @foreach(var msg in Messages)
@@ -12,13 +12,16 @@
     }
 </main>
 
-<ChatBar OnSendMessage=SendMessage />
+<ChatBar OnSendMessage=SendMessage VoiceMode=@voiceMode MessageSent=messageSent />
 
 @code {
     [CascadingParameter] User? User { get; set; }
+
     List<Message> Messages = new List<Message>();
     //User User1;
     User? User2;
+    bool voiceMode = false;
+    bool messageSent = false;
 
     protected override void OnInitialized()
     {
@@ -101,7 +104,7 @@
         Messages.Add(message3);
     }
 
-    void SendMessage(string messageText)
+    async Task SendMessage(string messageText)
     {
         Messages.Add(new Message (
             sender: User,
@@ -109,5 +112,15 @@
             text: messageText,
             timestamp: DateTime.UtcNow
         ));
+
+        messageSent = true;
+        await Task.Delay(1000);
+        messageSent = false;
+        StateHasChanged();
+    }
+
+    void ToggleVoiceMode(bool voiceBool)
+    {
+        voiceMode = voiceBool;
     }
 }
