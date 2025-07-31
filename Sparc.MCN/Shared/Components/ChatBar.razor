@@ -1,16 +1,22 @@
 ﻿<footer class="chat-bar">
-    <button class="icon-btn"><PlusIcon /></button>
+    <button class="attach-btn icon-btn"><PlusIcon /></button>
     <form id="chat-form" @onsubmit:preventDefault="true" @onsubmit=InitiateMessage>
         <div class="chat-input">
-            <input type="text" @bind-value=text placeholder="Type your message..." />
+            @if (!VoiceMode)
+            {
+                <textarea id="chat-textarea" type="text" rows="1" @bind=text placeholder="Type your message..." oninput='this.style.height = "";this.style.height = this.scrollHeight + "px"' style="@(string.IsNullOrEmpty(text) ? "height: fit-content;" : "")" />
+            } else
+            {
+                <textarea id="chat-textarea" type="text" rows="1" @bind=text placeholder="Speak anytime..." oninput='this.style.height = "";this.style.height = this.scrollHeight + "px"' style="@(string.IsNullOrEmpty(transcription) ? "height: fit-content;" : "")" />
+            }
         </div>
         @if (!VoiceMode)
         {
-            <button class="send-btn icon-btn" type=submit><SendIcon /></button>
+            <button id="submit-btn" class="send-btn icon-btn" type=submit><SendIcon /></button>
         } 
         else
         {
-            <button class="record-btn icon-btn" type=submit @onclick:preventDefault="true"><MicrophoneIcon /></button>
+            <button id="send-btn" class="record-btn icon-btn" type=submit><MicrophoneIcon /></button>
         }
     </form>
 </footer>
@@ -27,7 +33,7 @@
     {
         if (MessageSent)
         {
-            text = string.Empty;
+            ResetInput();
         }
     }
 
@@ -55,5 +61,11 @@
     {
         Console.WriteLine("Sending voice message...");
         // voice message sent as recording with transcription and translation
+    }
+
+    void ResetInput()
+    {
+        text = string.Empty;
+        transcription = string.Empty;
     }
 }

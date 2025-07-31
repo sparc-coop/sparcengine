@@ -1,5 +1,5 @@
 ﻿main {
-  height: calc(100vh - 172px);
+  height: calc(100vh - 176px);
   padding: 16px;
   padding-top: 96px;
   display: flex;
@@ -29,11 +29,15 @@
   gap: 8px;
 }
 .message-container ::deep .message-card p {
+  width: fit-content;
   padding: 12px;
   border-radius: 0 8px 8px 8px;
   border: 1px solid transparent;
   background: white;
   color: var(--grey-900);
+  text-wrap: wrap;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 .message-container ::deep .message-card aside {
   color: var(--grey-500, #616161);

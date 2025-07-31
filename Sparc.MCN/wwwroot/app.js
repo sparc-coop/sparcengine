@@ -20,3 +20,34 @@ function checkClass(elem, className) {
         return false;
     }
 }
+
+function handleEnter(e) {
+    // Check if the pressed key is Enter (keyCode 13 or key 'Enter')
+    if (e.keyCode === 13 || e.key === 'Enter') {
+        // Prevent the default behavior of Enter (creating a new line)
+        e.preventDefault();
+        // Submit the form
+        document.getElementById('').submit();
+    }
+}
+
+addEventListener("keydown", function (e) {
+    if (e.target.id === "chat-textarea") {
+        if (e.keyCode == 13 && !e.shiftKey) {
+            console.log("Enter key pressed");
+            // prevent default behavior
+            e.preventDefault();
+
+            if (e.target.value.trim() === "") {
+                console.log("Empty message, not submitting");
+                return; x
+            } else {
+                document.getElementById('chat-form').submit();
+                console.log("submitting");
+                //var submit = document.getElementById('submit-btn');
+                //submit.click();
+                //console.log("submit button clicked");
+            }
+        }
+    }
+});

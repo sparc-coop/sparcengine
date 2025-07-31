@@ -1,33 +1,33 @@
 ﻿.chat-bar {
   width: calc(100% - 32px);
-  min-height: 60px;
-  padding: 0 16px;
+  min-height: 31px;
+  padding: 16px;
   position: fixed;
   bottom: 0;
   left: 0;
+  z-index: 20;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  align-items: center;
-  gap: 8px;
+  align-items: start;
+  gap: 4px;
   background: white;
   box-shadow: 0 -10px 20px 0 rgba(0, 18, 65, 0.04), 0 -2px 6px 0 rgba(0, 18, 65, 0.04), 0 0 1px 0 rgba(0, 18, 65, 0.04);
-  position: relative;
-  z-index: 20;
 }
 .chat-bar form {
   width: 100%;
   display: flex;
   flex-direction: row;
-  gap: 8px;
+  align-items: start;
+  gap: 4px;
 }
 .chat-bar form .chat-input {
   width: 100%;
-  padding: 6px 12px;
+  padding: 3px 12px;
   border-radius: 8px;
   background: var(--grey-100, #F8F8FA);
 }
-.chat-bar form input {
+.chat-bar form textarea {
   width: 100%;
   border: transparent;
   background: none;
@@ -37,14 +37,19 @@
   font-style: normal;
   font-weight: 400;
   line-height: 1.6rem; /* 123.077% */
+  resize: none;
 }
-.chat-bar form button ::deep svg {
-  width: 18px;
-  height: 18px;
+.chat-bar button ::deep svg {
+  width: 10px;
+  height: 10px;
 }
-.chat-bar form button.record-btn {
+.chat-bar button.attach-btn ::deep svg {
+  width: 11px;
+  height: 11px;
+}
+.chat-bar button.record-btn {
   background: var(--orange);
 }
-.chat-bar form button.record-btn ::deep svg path {
+.chat-bar button.record-btn ::deep svg path {
   stroke: white;
 }
