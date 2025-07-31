@@ -1,0 +1,17 @@
+﻿<div class="chat-bar">
+    <button class="icon-btn"><PlusIcon /></button>
+    <div class="chat-input">
+        <input type="text" @bind-value=text placeholder="Type your message..." />
+    </div>
+    <button class="icon-btn" @onclick='() => SendMessage(text)'><SendIcon /></button>
+</div>
+
+@code {
+    [Parameter] public EventCallback<string> OnSendMessage { get; set; }
+    string? text;
+
+    void SendMessage(string text)
+    {
+        OnSendMessage.InvokeAsync(text);
+    }
+}

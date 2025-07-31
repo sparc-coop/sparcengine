@@ -1,0 +1,35 @@
+﻿.chat-bar {
+  width: calc(100% - 32px);
+  height: 60px;
+  padding: 0 16px;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  background: white;
+  box-shadow: 0 -10px 20px 0 rgba(0, 18, 65, 0.04), 0 -2px 6px 0 rgba(0, 18, 65, 0.04), 0 0 1px 0 rgba(0, 18, 65, 0.04);
+}
+.chat-bar .chat-input {
+  width: 100%;
+  padding: 4px 12px;
+  border-radius: 8px;
+  background: var(--grey-100, #F8F8FA);
+}
+.chat-bar input {
+  border: transparent;
+  background: none;
+  color: var(--grey-500, #616161);
+  font-family: Inter;
+  font-size: 1.3rem;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 1.6rem; /* 123.077% */
+}
+.chat-bar button ::deep svg {
+  width: 18px;
+  height: 18px;
+}
