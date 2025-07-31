@@ -21,7 +21,7 @@ main {
     justify-content: start;
 
     ::deep .message-card {
-        width: 80%;
+        max-width: 80%;
         display: flex;
         flex-direction: row;
         justify-content: start;
@@ -30,14 +30,17 @@ main {
 
         p {
             width: fit-content;
+            max-width: 80%;
             padding: 12px;
             border-radius: 0 8px 8px 8px;
             border: 1px solid transparent;
             background: white;
             color: var(--grey-900);
             text-wrap: wrap;
-            overflow-y: auto;
-            overflow-x: hidden; 
+            word-wrap: break-word;
+            //overflow-wrap: break-word;
+            //word-break: break-all;
+            hyphens: auto;
         }
 
         aside {
