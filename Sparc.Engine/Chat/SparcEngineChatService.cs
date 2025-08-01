@@ -28,8 +28,8 @@ public class SparcEngineChatService(
         var user = await Auth.GetAsync(principal);
 
         // Ensure the user has a Matrix identity
-        var username = user.Avatar.Username.ToLowerInvariant();
-        var matrixId = $"@{username}:engine.sparc.coop";
+        //var username = user.Avatar.Username.ToLowerInvariant();
+        var matrixId = $"@{user.Id}:engine.sparc.coop";
 
         if (!user.HasIdentity("Matrix"))
         {
@@ -38,6 +38,14 @@ public class SparcEngineChatService(
         }
 
         return user.Identity("Matrix")!;
+    }
+
+    private async Task<BlossomAvatar> GetUserAsync(ClaimsPrincipal principal)
+    {
+        if (principal == null)
+            throw new ArgumentNullException(nameof(principal));
+        var user = await Auth.GetAsync(principal);
+        return user.Avatar;
     }
 
     // For Laura:
@@ -158,13 +166,15 @@ public class SparcEngineChatService(
         chatGroup.MapPost("/rooms/{roomId}/invite", InviteToRoomAsync);
         chatGroup.MapGet("/rooms/{roomId}/messages", GetMessagesAsync);
         chatGroup.MapPost("/rooms/{roomId}/send/{eventType}/{txnId}", SendMessageAsync);
+        chatGroup.MapGet("/matrixUser", GetMatrixUserAsync);
+        chatGroup.MapGet("/user", GetUserAsync);
 
         // Map the presence endpoint
-        chatGroup.MapGet("/users/{userId}/status", async (ClaimsPrincipal principal, string userId) =>
+        chatGroup.MapGet("/presence/{userId}/status", async (ClaimsPrincipal principal, string userId) =>
         {
             return await GetPresenceAsync(principal, userId);
         });
-        chatGroup.MapPost("/users/{userId}/status", async (ClaimsPrincipal principal, string userId, MatrixPresence presence) =>
+        chatGroup.MapPut("/presence/{userId}/status", async (ClaimsPrincipal principal, string userId, MatrixPresence presence) =>
         {
             await SetPresenceAsync(principal, userId, presence);
             return Results.Ok();
