@@ -1,8 +1,13 @@
 ﻿@page "/sites"
 @using Sparc.Engine.Aura
+@using Tovik.Installation
 @layout MainLayout
 
 <PageTitle>Tovik</PageTitle>
+
+<HeadContent>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/atom-one-dark.min.css">
+</HeadContent>
 
 <article class="home">
     <div class="page-container">
@@ -13,17 +18,28 @@
                 <header>
                     <h3>Welcome to Tovik!</h3>
                     <p class="subheader">
-                        We're so happy you've decided to try Tovik out. You can get started in just two easy steps:
-                        <ul>
-                            <li><a href="/install">Install the Tovik script on your site</a> (just one line of code!)</li>
-                            <li>Add your website's domain below.</li>
-                        </ul>
+                        We're so happy you've decided to try Tovik out. Make your site instantly adapt to each visitor’s language—no coding skills required.
                     </p>
                     <p class="subheader">
-                        That's it! Tovik will take it from there and will make sure your site is always in your visitors' preferred language.
+                        To install Tovik on your site, add this single line of code, right before the closing <span style="color: var(--orange-200);">&lt;&sol;body&gt;</span> tag:
                     </p>
+                    <div class="code-container">
+                        <CodeBlock CanCopy=true>
+                            @("<script type=\"module\" src=\"https://tovik.app/tovik.js\"></script>")
+                        </CodeBlock>
+                    </div>
+                    <p class="subheader">
+                        That’s it! Tovik will now detect your visitors’ browser language and display your site accordingly.
+                    </p>
+                    <ul>
+                        <li>One line of code</li>
+                        <li>No setup dashboard</li>
+                        <li>No privacy-invading user tracking</li>
+                        <li>No API keys</li>
+                        <li>No stress</li>
+                    </ul>
                     <aside>
-                        This message will disappear automatically once Tovik detects the first usage on your account. 
+                        This message will disappear automatically once we detect the Tovik tag on your website.
                     </aside>
                 </header>
             </section>
@@ -47,25 +63,6 @@
             </div>
             <div class="btn-container">
                 <button class="purchase-btn primary-btn" @onclick=GoToStore>Need more words?</button>
-            </div>
-        </section>
-
-        <section class="add-domain">
-            <header>
-                <h3>Add a Website</h3>
-                <p class="subheader">Add as many websites as you want -- there's no limit. And whenever you need to, you can add new ones or remove old ones instantly.</p>
-            </header>
-
-            @if (Error != null)
-            {
-                <div class="error-message">@Error</div>
-            }
-
-            <label>
-                <input type="text" placeholder="Enter a domain name" @bind="NewDomain" @bind:event="oninput" />
-            </label>
-            <div class="btn-container">
-                <button class="add-btn primary-btn" disabled="@(string.IsNullOrWhiteSpace(NewDomain))" @onclick=AddDomain>Add Website</button>
             </div>
         </section>
 
@@ -103,6 +100,24 @@
             </table>
         </section>
 
+        <section class="add-domain">
+            <header>
+                <h3>Add a Website</h3>
+                <p class="subheader">Add as many additional websites as you want -- there's no limit. And whenever you need to, you can add new ones or remove old ones instantly.</p>
+            </header>
+
+            @if (Error != null)
+            {
+                <div class="error-message">@Error</div>
+            }
+
+            <label>
+                <input type="text" placeholder="Enter a domain name" @bind="NewDomain" @bind:event="oninput" />
+            </label>
+            <div class="btn-container">
+                <button class="add-btn primary-btn" disabled="@(string.IsNullOrWhiteSpace(NewDomain))" @onclick=AddDomain>Add Website</button>
+            </div>
+        </section>
     </div>
 </article>
 

@@ -5,6 +5,7 @@
 
 <PageTitle>Tovik</PageTitle>
 
+
 @if (Avatar != null)
 {
     <article class="home">
@@ -16,14 +17,14 @@
                 <div>
                     <h1>Your Website, Multilingual in Minutes</h1>
                     <p>
-                        Meet Tovik: A simple tool that turns your website multilingual without the need for coding or developers.
+                        Meet Tovik: A simple website plugin that turns your site multilingual without the need for coding or developers.
                     </p>
                     <p>
-                        Whether you're a small business owner, startup founder, or part of a growing team, Tovik helps you speak your customers’ language with ease. Tovik detects your users’ language preferences and seamlessly translates your content, helping you connect with more people around the world.
+                        With one line of code, Tovik detects your users' native language and translates your entire site into their language, helping you connect with more people around the world. It’s fast, easy, and requires no technical expertise.
 
                     </p>
                     <p>
-                        Try it out! This site’s already running Tovik behind the scenes.
+                        In fact, this site’s running Tovik behind the scenes. If you can read this, Tovik has done its job!
                     </p>
                     <Sparc.Blossom.SparcEngine.Tovik.LanguageSelector Avatar="Avatar" />
                 </div>
@@ -33,18 +34,22 @@
                 <img src="/images/Star.svg" alt="Star" />
                 <div>
                     <h2>
-                        Try It On Your Site
+                        Try It On Your Website
                         <span>Free</span>
                     </h2>
                     <p>
-                        Try our complimentary 1,000 word trial, no strings attached, and no login required. Once you need additional words, you can purchase a word pack anytime.
+                        Enter your website's domain name below to activate our complimentary 1,000 word trial, no strings attached, and no login required. Once you need additional words, you can purchase a word pack anytime.
                     </p>
-                    <div>
-                        <h4>Words Translated</h4>
-                        <UsageMeter Usage=0 Limit=1000 />
-                    </div>
+                    @if (Error != null)
+                    {
+                        <div class="error-message">@Error</div>
+                    }
+
+                    <label>
+                        <input type="text" placeholder="Enter your website's domain name" @bind="NewDomain" @bind:event="oninput" />
+                    </label>
                     <div class="btn-container">
-                        <button class="purchase-btn primary-btn" @onclick=Start>Start Free Trial</button>
+                        <button class="add-btn primary-btn" disabled="@(string.IsNullOrWhiteSpace(NewDomain))" @onclick=AddDomain>Activate Your Free Trial</button>
                     </div>
                 </div>
             </section>
@@ -56,6 +61,8 @@
 @inject ISparcAura Aura
 @code {
     BlossomAvatar? Avatar;
+    string NewDomain = "";
+    string? Error;
 
     protected override async Task OnInitializedAsync()
     {
@@ -69,5 +76,25 @@
     void Start()
     {
         Nav.NavigateTo("/sites");
+    }
+
+
+    private async Task AddDomain()
+    {
+        if (string.IsNullOrWhiteSpace(NewDomain))
+            return;
+
+        Error = null;
+        try
+        {
+            await TovikDomains.RegisterAsync(NewDomain);
+            NewDomain = "";
+            Nav.NavigateTo("/sites");
+        }
+        catch (Exception ex)
+        {
+            Error = ex.Message;
+            NewDomain = "";
+        }
     }
 }
