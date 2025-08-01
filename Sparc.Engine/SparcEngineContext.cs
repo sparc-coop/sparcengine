@@ -55,7 +55,7 @@ internal class SparcEngineContext(DbContextOptions<SparcEngineContext> options) 
           .WithMany(r => r.Memberships)
           .HasForeignKey(rm => rm.RoomId);
 
-        model.Entity<MessageEvent>()
+        model.Entity<MatrixMessage>()
           .ToContainer("Events")
           .HasPartitionKey(e => e.RoomId)
           .HasKey(x => x.Id);

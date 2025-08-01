@@ -7,14 +7,14 @@ namespace Sparc.Engine.Chat;
 public class SparcEngineChatService(
     IRepository<Room> rooms,
     IRepository<RoomMembership> memberships,
-    IRepository<MessageEvent> messageEvents,
+    IRepository<MatrixMessage> messageEvents,
     IRepository<BlossomUser> users,
     IHttpContextAccessor httpContextAccessor
 ) : IBlossomEndpoints
 {
     IRepository<Room> Rooms = rooms;
     IRepository<RoomMembership> Memberships = memberships;
-    IRepository<MessageEvent> MessageEvents = messageEvents;
+    IRepository<MatrixMessage> MessageEvents = messageEvents;
     IRepository<BlossomUser> Users = users;
     IHttpContextAccessor HttpContextAccessor = httpContextAccessor;
 
@@ -104,11 +104,11 @@ public class SparcEngineChatService(
         throw new NotImplementedException();
     }
 
-    private async Task<Event> SendMessageAsync(string roomId, string eventType, string txnId, SendMessageRequest request)
+    private async Task<MatrixEvent> SendMessageAsync(string roomId, string eventType, string txnId, SendMessageRequest request)
     {
         var matrixId = await GetMatrixUserAsync();
 
-        var message = new MessageEvent()
+        var message = new MatrixMessage()
         {
             Body = request.Body,
             MsgType = request.MsgType,
@@ -122,7 +122,7 @@ public class SparcEngineChatService(
         return message;
     }
 
-    private async Task<List<MessageEvent>> GetMessagesAsync(string roomId)
+    private async Task<List<MatrixMessage>> GetMessagesAsync(string roomId)
     {
         var messages = await MessageEvents.Query
             .Where(m => m.RoomId == roomId)
