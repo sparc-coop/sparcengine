@@ -2,44 +2,36 @@
   width: var(--app-width);
   padding: 0 16px;
   padding-bottom: 24px;
-  color: var(--blue-50);
-}
-main .main-grid {
-  width: 100%;
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  column-gap: 16px;
-}
-main .main-grid ::deep article {
-  grid-column: 1/span 4;
-  margin-top: 200px;
-}
-main .hero {
-  width: var(--app-width);
-  height: fit-content;
-  position: relative;
-}
-main .hero-img {
-  position: absolute;
-  top: 40px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 1;
-}
-main .hero-img ::deep svg {
-  width: 263px;
-  height: auto;
-}
-main .hero-background {
-  width: 827px;
-  height: auto;
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 0;
-}
-main .hero-background ::deep svg {
-  width: 100%;
-  height: auto;
-}
+  color: var(--blue-50); }
+  main .main-grid {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    column-gap: 16px; }
+    main .main-grid ::deep article {
+      grid-column: 1 / span 4;
+      margin-top: 200px; }
+  main .hero {
+    width: var(--app-width);
+    height: fit-content;
+    position: relative; }
+    main .hero-img {
+      position: absolute;
+      top: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1; }
+      main .hero-img ::deep svg {
+        width: 263px;
+        height: auto; }
+    main .hero-background {
+      width: 827px;
+      height: auto;
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 0; }
+      main .hero-background ::deep svg {
+        width: 100%;
+        height: auto; }
