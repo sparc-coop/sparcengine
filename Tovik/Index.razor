@@ -1,6 +1,9 @@
 ﻿@page "/"
+@page "/home"
 @using Sparc.Blossom.Authentication
 @using Sparc.Engine.Aura
+@using Sparc.Engine.Billing
+@using Tovik.Installation
 @layout HomeLayout
 
 <PageTitle>Tovik</PageTitle>
@@ -17,62 +20,102 @@
                 <div>
                     <h1>Your Website, Multilingual in Minutes</h1>
                     <p>
-                        Meet Tovik: A simple website plugin that turns your site multilingual without the need for coding or developers.
+                        Tovik is a simple website plugin that turns your entire site multilingual with just one line of code.
                     </p>
+                    <CodeBlock CanCopy=true>
+                        @("<script type=\"module\" src=\"https://tovik.app/tovik.js\"></script>")
+                    </CodeBlock>
                     <p>
-                        With one line of code, Tovik detects your users' native language and translates your entire site into their language, helping you connect with more people around the world. It’s fast, easy, and requires no technical expertise.
+                        Once installed, Tovik instantly recognizes your visitors' native language and automatically translates your entire site for them--no translation plugin needed on their end. It’s quick, painless to install, and it helps you connect with more folks around the world. 
 
                     </p>
-                    <p>
-                        In fact, this site’s running Tovik behind the scenes. If you can read this, Tovik has done its job!
-                    </p>
 
-                    <h2>Try Tovik in Any Language:</h2>
+                    <h2>See This Site in 130+ Languages, thanks to Tovik:</h2>
                     <Sparc.Blossom.SparcEngine.Tovik.LanguageSelector Avatar="Avatar" />
                 </div>
             </section>
 
-            <section class="trial">
-                <img src="/images/Star.svg" alt="Star" />
-                <div>
-                    <h2>
-                        Try It On Your Website
-                        <span>Free</span>
-                    </h2>
-                    <p>
-                        Enter your website's domain name below to get 1,000 words of translation completely free, no strings attached, no expiration date, and no login required.
-                    </p>
-                    @if (Error != null)
-                    {
-                        <div class="error-message">@Error</div>
-                    }
+            <div class="two">
+                <section class="trial">
+                    <img src="/images/Star.svg" alt="Star" />
+                    <div>
+                        <h2>
+                            Try Tovik
+                            <span>Free!</span>
+                        </h2>
+                        <ul>
+                            <li>Up to <b>1,000</b> words</li>
+                            <li>No strings attached</li>
+                            <li>No expiration date</li>
+                            <li>No invasive user tracking</li>
+                            <li>No login required</li>
+                        </ul>
 
-                    <label>
-                        <input type="text" placeholder="Enter your website's domain name" @bind="NewDomain" @bind:event="oninput" />
-                    </label>
-                    <div class="btn-container">
-                        <button class="add-btn primary-btn" disabled="@(string.IsNullOrWhiteSpace(NewDomain))" @onclick=AddDomain>Activate Tovik</button>
+                        @if (Error != null)
+                        {
+                            <div class="error-message">@Error</div>
+                        }
+
+
+                        <footer>
+                            <label>
+                                Your website's domain name:
+                                <input type="text" placeholder="mywebsite.com" @bind="NewDomain" @bind:event="oninput" />
+                            </label>
+                            <button class="add-btn primary-btn" disabled="@(string.IsNullOrWhiteSpace(NewDomain))" @onclick=AddDomain>Try Tovik</button>
+                        </footer>
                     </div>
-                </div>
-            </section>
+                </section>
+
+                @if (Product != null)
+                {
+                    <section class="trial">
+                        <img src="/images/Star.svg" alt="Star" />
+                        <div>
+                            <h2>
+                                Buy Tovik
+                                <span>@Product.FormattedPrice</span>
+                            </h2>
+                            <ul>
+                                <li>Up to <b>100,000</b> words</li>
+                                <li>Purchase in your currency</li>
+                                <li>Zero subscription fees</li>
+                                <li>No invasive user tracking</li>
+                                <li>Unlimited domain names</li>
+                                <li>No login required</li>
+                            </ul>
+
+                            <footer>
+                                <button class="add-btn primary-btn" @onclick=Buy>Buy Tovik</button>
+                            </footer>
+                        </div>
+                    </section>
+                }
+            </div>
+
         </div>
     </article>
 }
 
 @inject Tovik.Domains.TovikDomains TovikDomains
 @inject ISparcAura Aura
+@inject ISparcBilling Billing
+@inject IConfiguration Config
+
 @code {
     BlossomAvatar? Avatar;
     string NewDomain = "";
     string? Error;
+    GetProductResponse? Product;
 
     protected override async Task OnInitializedAsync()
     {
         var user = await Aura.UserInfo();
-        if (user.HasProduct("Tovik"))
+        if (!Nav.Uri.Contains("home") && user.HasProduct("Tovik"))
             Start();
 
         Avatar = user.Avatar;
+        Product = await Billing.GetProductAsync(Config["ProductId"]!);
     }
 
     void Start()
@@ -80,6 +123,12 @@
         Nav.NavigateTo("/sites");
     }
 
+    async Task Buy()
+    {
+        var totp = await Aura.GetSparcCode();
+        if (totp != null)
+            Nav.NavigateTo($"{Config["SparcStore"]}?_auth=totp:{totp.Code}");
+    }
 
     private async Task AddDomain()
     {

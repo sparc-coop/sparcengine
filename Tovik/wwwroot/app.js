@@ -8,10 +8,13 @@
 }
 
 function highlight(codeBlock) {
-    // decode HTML entities
-    var txt = document.createElement('textarea');
-    txt.innerHTML = codeBlock.innerHTML;
-    codeBlock.originalCode = txt.value;
+    if (!codeBlock.originalCode) {
+
+        // decode HTML entities
+        var txt = document.createElement('textarea');
+        txt.innerHTML = codeBlock.innerHTML;
+        codeBlock.originalCode = txt.value;
+    }
 
     hljs.highlightElement(codeBlock);
     console.log('highlighted', codeBlock.originalCode);

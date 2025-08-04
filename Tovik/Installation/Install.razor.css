@@ -1,9 +1,4 @@
-﻿.install-page p, .install-page ul {
-  font-size: 1.8rem;
-  letter-spacing: 1.1px;
-  line-height: 150%;
-}
-.install-page ul {
+﻿.install-page ul {
   padding-left: 32px;
 }
 .install-page .page-header {
@@ -19,12 +14,6 @@
 .install-page .page-header h2 {
   font-size: 3.125rem;
   font-weight: 700;
-  line-height: normal;
-}
-.install-page .page-header .subheader {
-  font-family: var(--articulat);
-  font-size: 1.8rem;
-  font-weight: 400;
   line-height: normal;
 }
 .install-page section {
@@ -51,12 +40,6 @@
   font-style: normal;
   font-weight: 400;
   line-height: normal;
-}
-
-pre code {
-  background-color: #eee;
-  color: var(--blue-50);
-  border: 1px solid #999;
-  display: block;
-  padding: 20px;
+  max-width: 100%;
+  box-sizing: border-box;
 }

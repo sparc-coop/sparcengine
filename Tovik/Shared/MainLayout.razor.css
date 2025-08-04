@@ -78,7 +78,7 @@ main ::deep article .page-container section header h3 {
 }
 main ::deep article .page-container section header .subheader {
   font-family: var(--articulat);
-  font-size: 1.8rem;
+  font-size: 1.6rem;
   font-weight: 400;
   line-height: 140%;
   margin-bottom: 16px;
