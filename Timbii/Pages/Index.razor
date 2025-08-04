@@ -1,0 +1,56 @@
+﻿@page "/"
+@layout MainLayout
+
+<PageTitle>MyContactNetwork</PageTitle>
+
+<div class="home page-container">
+    <header>
+        <h3>Please help us confirm your contact details</h3>
+        <p class="subheader">
+            <strong>@(MyContact != null ? $"{MyContact.FirstName}" : "")</strong>@(MyContact != null ? ", would" : "")@(MyContact == null ? "Would" : "") you like to confirm your contact information below?
+        </p>
+    </header>
+    <ContactCard User=MyContact />
+    <MyContactActions />
+</div>
+
+@code {
+    [CascadingParameter] public User User { get; set; }
+
+    bool showContent;
+    User? MyContact;
+
+    protected override void OnInitialized()
+    {
+        Contact contact = new Contact(
+            address1: "4228 Homestead Rd",
+            address2: null,
+            city: "Cedar Hill",
+            state: "California",
+            postalCode: "38597",
+            country: "United States",
+            emails: new List<Email>(),
+            phoneNumbers: new List<Phone>()
+        );
+
+        contact.EmailAddresses = new List<Email>() { new  Email(type : "Work", address: "beth@mcn.com") };
+        contact.PhoneNumbers = new List<Phone>() {
+            new Phone(type: "Home", number: "(239) 555-0108"),
+            new Phone(type: "Mobile", number: "(239) 555-0108"),
+        };
+
+        MyContact = new User(
+            firstName: "Beth",
+            lastName: "Jones",
+            contact: contact,
+            prefix: "Miss",
+            suffix: null
+        );
+    }
+
+    void ToggleContent()
+    {
+        showContent = !showContent;
+        Js.InvokeVoidAsync("scrollToElement", "main-content");
+    }
+}

@@ -1,0 +1,51 @@
+﻿@page "/new-contact"
+
+<div class="new-contact page-container">
+    <header>
+        <h3>@(SharedContact != null ? SharedContact.FirstName : "Someone") is sharing their contact information with you</h3>
+        <p class="subheader">
+            Would you like to confirm the contact information below@(SharedContact != null ? $" for " : "")<strong>@(SharedContact != null ? SharedContact.FirstName : "")</strong>?
+        </p>
+    </header>
+    <ContactCard User=SharedContact />
+    <NewContactActions />
+</div>
+
+@code {
+    bool showContent;
+    User? SharedContact;
+
+    protected override void OnInitialized()
+    {
+        Contact contact = new Contact(
+            address1: "4228 Homestead Rd",
+            address2: null,
+            city: "Cedar Hill",
+            state: "California",
+            postalCode: "38597",
+            country: "United States",
+            emails: new List<Email>(),
+            phoneNumbers: new List<Phone>()
+        );
+
+        contact.EmailAddresses = new List<Email>() { new Email(type: "Work", address: "adam@mcn.com") };
+        contact.PhoneNumbers = new List<Phone>() {
+            new Phone(type: "Home", number: "(239) 555-0108"),
+            new Phone(type: "Mobile", number: "(239) 555-0108"),
+        };
+
+        SharedContact = new User(
+            firstName: "Adam",
+            lastName: "Wheller",
+            contact: contact,
+            prefix: "Mr",
+            suffix: null
+        );
+    }
+
+    void ToggleContent()
+    {
+        showContent = !showContent;
+        Js.InvokeVoidAsync("scrollToElement", "main-content");
+    }
+}

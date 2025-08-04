@@ -1,0 +1,90 @@
+﻿@page "/edit-contact"
+
+<div class="edit-contact page-container">
+    <ProgressBar Step=1 />
+    <header>
+        <h3>Contact Detail</h3>
+        <p class="subheader">Please take a moment to check your details and make any necessary updates. Keeping your contact info accurate ensure your friends, family, and coworkers can reach you easily. </p>
+    </header>
+    <form>
+        <div class="name">
+            <label class="contact-group">
+                <span>First Name</span>
+                <input type="text" @bind-value=@User.FirstName />
+            </label>
+            <label class="contact-group">
+                <span>Last Name</span>
+                <input type="text" @bind-value=@User.LastName />
+            </label>
+        </div>
+        <div class="email contact-group">
+            <aside>Email</aside>
+            @foreach (var email in User.Contact.EmailAddresses)
+            {
+                <label class="contact-item">
+                    <select class="email-type" @bind=@email.Type>
+                        <option value="Work">Work</option>
+                        <option value="Personal">Personal</option>
+                        <option value="Other">Other</option>
+                    </select>
+                    <input type="email" value="@email.Address" />
+                </label>
+            }
+            <button class="add-email"><PlusCircled /> Add another email</button>
+        </div>
+        <div class="phone contact-group">
+            <aside>Phone Number</aside>
+            @foreach (var num in User.Contact.PhoneNumbers)
+            {
+                <label class="contact-item">
+                    <select @bind=num.Type>
+                        <option value="Mobile">Mobile</option>
+                        <option value="Home">Home</option>
+                        <option value="Work">Work</option>
+                        <option value="Other">Other</option>
+                    </select>
+                    <input type="tel" @bind="num.Number" />
+                </label>
+            }
+            <button class="add-phone"><PlusCircled /> Add another phone number</button>
+        </div>
+        <div>
+        </div>
+    </form>
+    <div class="progress-nav">
+        <button class="back-btn secondary-btn">Back</button>
+        <button class="next-btn primary-btn">Next</button>
+    </div>
+</div>
+
+@code {
+    [Parameter] public User User { get; set; }
+
+    protected override void OnInitialized()
+    {
+        Contact contact = new Contact(
+            address1: "4228 Homestead Rd",
+            address2: null,
+            city: "Cedar Hill",
+            state: "California",
+            postalCode: "38597",
+            country: "United States",
+            emails: new List<Email>(),
+            phoneNumbers: new List<Phone>()
+        );
+
+        contact.EmailAddresses = new List<Email>() { new Email(type: "Work", address: "beth@mcn.com") };
+        contact.PhoneNumbers = new List<Phone>() {
+            new Phone(type: "Home", number: "(239) 555-0108"),
+            new Phone(type: "Mobile", number: "(239) 555-0108"),
+        };
+
+        User = new User(
+            firstName: "Beth",
+            lastName: "Jones",
+            contact: contact,
+            prefix: "Miss",
+            suffix: null
+        );
+    }
+}

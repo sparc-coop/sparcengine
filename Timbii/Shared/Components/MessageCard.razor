@@ -1,0 +1,13 @@
+﻿<div class="message-card">
+    <p>
+        @Message.Text
+    </p>
+    <aside>@Message.Timestamp.ToShortTimeString()</aside>
+</div>
+
+@code {
+    [CascadingParameter] User? User { get; set; }
+    [Parameter] public Message Message { get; set; }
+
+    // need logic for handling long strings
+}

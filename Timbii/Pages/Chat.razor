@@ -1,0 +1,126 @@
+﻿@page "/chat"
+@layout AppLayout
+
+<TopBar OnToggleVoiceMode=ToggleVoiceMode />
+
+<main>
+    @foreach(var msg in Messages)
+    {
+        <div class="message-container @(msg.Sender == User ? "my-message" : "")">
+            <MessageCard Message=@msg />
+        </div>
+    }
+</main>
+
+<ChatBar OnSendMessage=SendMessage VoiceMode=@voiceMode MessageSent=messageSent />
+
+@code {
+    [CascadingParameter] User? User { get; set; }
+
+    List<Message> Messages = new List<Message>();
+    //User User1;
+    User? User2;
+    bool voiceMode = false;
+    bool messageSent = false;
+
+    protected override void OnInitialized()
+    {
+        // Contact contact1 = new Contact(
+        //     address1: "4228 Homestead Rd",
+        //     address2: null,
+        //     city: "Cedar Hill",
+        //     state: "California",
+        //     postalCode: "38597",
+        //     country: "United States",
+        //     emails: new List<Email>(),
+        //     phoneNumbers: new List<Phone>()
+        // );
+
+        // contact1.EmailAddresses = new List<Email>() { new Email(type: "Work", address: "beth@mcn.com") };
+        // contact1.PhoneNumbers = new List<Phone>() {
+        //     new Phone(type: "Home", number: "(239) 555-0108"),
+        //     new Phone(type: "Mobile", number: "(239) 555-0108"),
+        // };
+
+        // User1 = new User(
+        //     firstName: "Beth",
+        //     lastName: "Jones",
+        //     contact: contact1,
+        //     prefix: "Miss",
+        //     suffix: null
+        // );
+
+        Contact contact2 = new Contact(
+            address1: "4228 Homestead Rd",
+            address2: null,
+            city: "Cedar Hill",
+            state: "California",
+            postalCode: "38597",
+            country: "United States",
+            emails: new List<Email>(),
+            phoneNumbers: new List<Phone>()
+        );
+
+        contact2.EmailAddresses = new List<Email>() { new Email(type: "Work", address: "adam@mcn.com") };
+        contact2.PhoneNumbers = new List<Phone>() {
+            new Phone(type: "Home", number: "(239) 555-0108"),
+            new Phone(type: "Mobile", number: "(239) 555-0108"),
+        };
+
+        User2 = new User(
+            firstName: "Adam",
+            lastName: "Wheller",
+            contact: contact2,
+            prefix: "Mr",
+            suffix: null
+        );
+
+        Message message1 = new Message
+        (
+            sender: User2,
+            chatId: "1",
+            text: "Curabitur tempor quis eros tempus lacinia. Nam bibendum pellentesque quam a convallis. Sed ut vulputate nisi. Integer in felis sed leo vestibulum venenatis. Suspendisse quis arcu sem. Aenean feugiat ex eu vestibulum vestibulum. ",
+            timestamp: DateTime.Now.AddMinutes(-12)
+        );
+
+        Message message2 = new Message
+        (
+            sender: User2,
+            chatId: "1",
+            text: "Nam pulvinar blandit velit!! 😊",
+            timestamp: DateTime.Now.AddMinutes(-10)
+        );
+
+        Message message3 = new Message
+        (
+            sender:  User,
+            chatId: "1",
+            text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+            timestamp: DateTime.Now.AddMinutes(-8)
+        );
+
+        Messages.Add(message1);
+        Messages.Add(message2);
+        Messages.Add(message3);
+    }
+
+    async Task SendMessage(string messageText)
+    {
+        Messages.Add(new Message (
+            sender: User,
+            chatId: "1",
+            text: messageText,
+            timestamp: DateTime.UtcNow
+        ));
+
+        messageSent = true;
+        await Task.Delay(3000);
+        messageSent = false;
+        StateHasChanged();
+    }
+
+    void ToggleVoiceMode(bool voiceBool)
+    {
+        voiceMode = voiceBool;
+    }
+}
