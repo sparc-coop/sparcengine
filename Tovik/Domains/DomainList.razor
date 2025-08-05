@@ -32,11 +32,40 @@
             </section>
         }
 
+        <section class="word-usage">
+            <header>
+                <h3>Word Usage</h3>
+            </header>
+
+            @if (IsTrial)
+            {
+                <p>Your free trial of Tovik includes 1,000 words by default. Once you need additional words, you can click the button below to purchase a word pack anytime.</p>
+            }
+            else
+            {
+                <p>Thank you for purchasing Tovik! Your purchase includes 100,000 words to get you started. If you ever need additional words, you can purchase an additional word pack anytime.</p>
+            }
+            <div>
+                <h4>Words Translated</h4>
+                <UsageMeter Usage=Usage Limit=Limit />
+            </div>
+            <div class="btn-container">
+                <button class="purchase-btn primary-btn" @onclick=GoToStore>Need more words?</button>
+            </div>
+        </section>
+
         <section class="manage-domains">
             <header>
                 <h3>My Websites</h3>
             </header>
-            <p>You can install Tovik on as many websites as you like! Just make sure you list them here, as Tovik will only be enabled on the websites you specify below.</p>
+            @if (IsTrial)
+            {
+                <p>Once you purchase Tovik, make sure you add your websites here. Tovik usage over 1,000 words will only be allowed on the websites you specify below.</p>
+            }
+            else
+            {
+                <p>Add all of your Tovik-enabled websites here. Tovik usage over 1,000 words will only be allowed on the websites you specify below.</p>
+            }
             <table class="domains-table">
                 <thead>
                     <tr>
@@ -77,30 +106,6 @@
                 <button class="add-btn primary-btn" disabled="@(string.IsNullOrWhiteSpace(NewDomain))" @onclick=AddDomain>Add This Website</button>
             </div>
         </section>
-
-        <section class="word-usage">
-            <header>
-                <h3>Word Usage</h3>
-            </header>
-
-            @if (Limit == 1000)
-            {
-                <p>Your free trial of Tovik includes 1,000 words by default. Once you need additional words, you can click the button below to purchase a word pack anytime.</p>
-            }
-            else
-            {
-                <p>Thank you for purchasing Tovik! Your purchase includes 100,000 words to get you started. If you ever need additional words, you can purchase an additional word pack anytime.</p>
-            }
-            <div>
-                <h4>Words Translated</h4>
-                <UsageMeter Usage=Usage Limit=Limit />
-            </div>
-            <div class="btn-container">
-                <button class="purchase-btn primary-btn" @onclick=GoToStore>Need more words?</button>
-            </div>
-        </section>
-
-        
     </div>
 </article>
 
@@ -114,6 +119,7 @@
 
     int Usage;
     int Limit;
+    bool IsTrial => Limit < 100000;
 
     protected override async Task OnInitializedAsync()
     {

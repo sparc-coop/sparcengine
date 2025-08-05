@@ -146,6 +146,12 @@
                 padding: 32px;
             }
         }
+
+        &.mini {
+            @media screen and (min-width: 1024px) {
+                padding: 64px 64px 120px 64px !important;
+            }
+        }
     }
 
     section.demo {
@@ -178,6 +184,7 @@
 
         div {
             padding: 32px;
+
             @media screen and (min-width: 1024px) {
                 padding: 32px 64px 64px 64px;
             }

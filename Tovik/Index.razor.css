@@ -121,6 +121,11 @@ article section.trial footer button:hover {
     padding: 32px;
   }
 }
+@media screen and (min-width: 1024px) {
+  article section.trial.mini {
+    padding: 64px 64px 120px 64px !important;
+  }
+}
 article section.demo {
   background-color: transparent !important;
   border: 2px solid var(--blue-400) !important;

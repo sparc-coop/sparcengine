@@ -8,7 +8,8 @@
     <div class="nav-menu @(showMobileMenu ? "show" : "")">
         <SecondaryLogo />
         <ul>
-            <li><NavLink class="nav-link" href="/" Match=NavLinkMatch.All ActiveClass="active" @onclick=ToggleMobileMenu><BubbleTail />My Websites</NavLink></li>
+            <li><NavLink class="nav-link" href="/" Match=NavLinkMatch.All ActiveClass="active" @onclick=ToggleMobileMenu><BubbleTail />Home</NavLink></li>
+            <li><NavLink class="nav-link" href="/sites" Match=NavLinkMatch.All ActiveClass="active" @onclick=ToggleMobileMenu><BubbleTail />My Websites</NavLink></li>
             <li><NavLink class="nav-link" href="/install" ActiveClass="active" @onclick=ToggleMobileMenu><BubbleTail />Instructions</NavLink></li>
             <li><NavLink class="nav-link" href="/credits" ActiveClass="active" @onclick=ToggleMobileMenu><BubbleTail />Made with ❤️</NavLink></li>
         </ul>
@@ -22,7 +23,8 @@
     <div class="nav-menu @(showMobileMenu ? "show" : "")">
         <PrimaryLogo FontColor="#FF945E" />
         <ul>
-            <li><NavLink class="nav-link" href="/sites" Match=NavLinkMatch.All ActiveClass ="active" @onclick =ToggleMobileMenu><BubbleTail />My Websites</NavLink></li>
+            <li><NavLink class="nav-link" href="/" Match=NavLinkMatch.All ActiveClass ="active" @onclick =ToggleMobileMenu><BubbleTail />Home</NavLink></li>
+            <li><NavLink class="nav-link" href="/sites" Match=NavLinkMatch.All ActiveClass="active" @onclick=ToggleMobileMenu><BubbleTail />My Websites</NavLink></li>
             <li><NavLink class="nav-link" href="/install" ActiveClass="active" @onclick=ToggleMobileMenu><BubbleTail />Instructions</NavLink></li>
             <li><NavLink class="nav-link" href="/credits" ActiveClass="active" @onclick=ToggleMobileMenu><BubbleTail />Made with ❤️</NavLink></li>
         </ul>
