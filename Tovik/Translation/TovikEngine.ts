@@ -7,6 +7,7 @@ const baseUrl = window.location.href.includes('localhost')
 
 export default class TovikEngine {
     static userLang;
+    static documentLang;
     static rtlLanguages = ['ar', 'fa', 'he', 'ur', 'ps', 'ku', 'dv', 'yi', 'sd', 'ug'];
 
     static async getUserLanguage() {
@@ -24,6 +25,7 @@ export default class TovikEngine {
 
     static async hi() {
         let lang = await this.getUserLanguage();
+        this.documentLang = document.documentElement.lang;
 
         this.setLanguage(lang);
         document.addEventListener('tovik-user-language-changed', async (event: CustomEvent) => {

@@ -13,7 +13,7 @@ export default class TovikElement extends HTMLElement {
 
     async connectedCallback() {
         this.#observedElement = this;
-        this.#originalLang = this.lang || document.documentElement.lang;
+        this.#originalLang = this.lang || TovikEngine.documentLang;
 
         // if the attribute 'for' is set, observe the element with that selector
         if (this.hasAttribute('for')) {
