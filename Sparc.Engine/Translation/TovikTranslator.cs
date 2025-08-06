@@ -1,5 +1,10 @@
-﻿using Sparc.Blossom.Authentication;
+﻿using HtmlAgilityPack;
+using OpenQA.Selenium;
+using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.Support.UI;
+using Sparc.Blossom.Authentication;
 using Sparc.Blossom.Data;
+using Sparc.Engine.Tovik;
 using System.Collections.Concurrent;
 using System.Globalization;
 using System.Security.Claims;
@@ -72,43 +77,41 @@ public class TovikTranslator(
         return translation;
     }
 
-    public async Task<List<TextContent>> BulkTranslate(List<TextContent> contents)
+    public async Task<List<TextContent>> BulkTranslate(List<TextContent> contents, List<Language>? toLanguages = null)
     {
         var user = await auth.GetAsync(principal);
 
-        var toLanguage = user?.Avatar.Language;
-        if (toLanguage == null)
-            return contents;
+        toLanguages ??= [user?.Avatar.Language];
 
         var results = new ConcurrentBag<TextContent>();
-        await Parallel.ForEachAsync(contents, async (content, _) =>
+        var needsTranslation = new List<TextContent>();
+        foreach (var toLanguage in toLanguages)
         {
-            var newId = TextContent.IdHash(content.Text, toLanguage);
-            var existing = await Content.Query
-                .Where(x => x.Domain == content.Domain && x.Id == newId)
-                .FirstOrDefaultAsync();
+            await Parallel.ForEachAsync(contents, async (content, _) =>
+            {
+                var newId = TextContent.IdHash(content.Text, toLanguage);
+                var existing = await Content.Query
+                    .Where(x => x.Domain == content.Domain && x.Id == newId)
+                    .FirstOrDefaultAsync();
 
-            if (existing != null)
-                results.Add(existing);
-        });
+                if (existing != null)
+                    results.Add(existing);
+            });
 
-        var needsTranslation = contents
-            .Where(content => !results.Any(x => x.Id == TextContent.IdHash(content.Text, toLanguage)))
-            .ToList();
-
-        if (!await CanTranslate(needsTranslation))
-            throw new Exception("You've reached your Tovik translation limit!");
-
+            needsTranslation.AddRange(contents
+                .Where(content => !results.Any(x => x.Id == TextContent.IdHash(content.Text, toLanguage)))
+                .ToList());
+        }
+        
         var additionalContext = string.Join("\n", contents.Select(x => x.Text));
-        var translations = await TranslateAsync(needsTranslation, [toLanguage], additionalContext);
+        var translations = await TranslateAsync(needsTranslation, toLanguages, additionalContext);
         await Content.AddAsync(translations);
 
         return results.Union(translations).ToList();
     }
 
-    private async Task<bool> CanTranslate(List<TextContent> contents)
+    private async Task<bool> CanTranslate(string domainName)
     {
-        var domainName = contents.FirstOrDefault()?.Domain;
         if (string.IsNullOrWhiteSpace(domainName))
             return true;
 
@@ -165,6 +168,78 @@ public class TovikTranslator(
         var message = new TextContent("", from!, text);
         var result = await TranslateAsync([message], [language]);
         return result?.FirstOrDefault()?.Text;
+    }
+
+    public async Task CrawlAsync(TovikCrawlRequest request)
+    {
+        var domain = await domains.Query
+            .Where(x => x.Domain == request.Domain)
+            .FirstOrDefaultAsync();
+
+        if (domain == null)
+            return;
+
+        var firstUrl = domain.ToUri();
+
+        var text = new HashSet<string>();
+        List<Uri> pagesDiscovered = [firstUrl];
+        Queue<Uri> pagesToVisit = new();
+        pagesToVisit.Enqueue(firstUrl);
+
+        var iteration = 0;
+        var limit = 500;
+
+        var options = new ChromeOptions();
+        options.AddArgument("--headless");
+
+        using IWebDriver driver = new ChromeDriver(options);
+
+        while (pagesToVisit.Count != 0 && iteration < limit)
+        {
+            var currentPage = pagesToVisit.Dequeue();
+            driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(5);
+            driver.Navigate().GoToUrl(currentPage);
+
+            var doc = new HtmlDocument();
+            doc.LoadHtml(driver.PageSource);
+            
+            var links = doc.DocumentNode.SelectNodes("//a[@href]")
+                ?.Select(x => x.GetAttributeValue("href", ""))
+                .Where(x => !string.IsNullOrWhiteSpace(x));
+
+            foreach (var link in links)
+            {
+                try
+                {
+                    var uri = new Uri(currentPage, link);
+                    if (uri.Host != firstUrl.Host || pagesDiscovered.Contains(uri))
+                        continue;
+
+                    if (!pagesToVisit.Contains(uri))
+                        pagesToVisit.Enqueue(uri);
+                    pagesDiscovered.Add(uri);
+                }
+                catch
+                { }
+            }
+
+            foreach (var node in doc.DocumentNode.SelectNodes("//text()[normalize-space(.) != '']"))
+            {
+                var trimmedText = node.InnerText.Trim();
+                if (!string.IsNullOrWhiteSpace(trimmedText))
+                    text.Add(trimmedText);
+            }
+
+            iteration++;
+        }
+
+        var fromLanguage = await GetLanguageAsync("en");
+        var toLanguages = new List<Language>();
+        foreach (var language in request.ToLanguages)
+            toLanguages.Add(await GetLanguageAsync(language));
+
+        var textContent = text.Select(x => new TextContent(domain.Domain, fromLanguage, x)).ToList();
+        await BulkTranslate(textContent, toLanguages);
     }
 
     internal ITranslator GetBestTranslator(Language fromLanguage, Language toLanguage)
@@ -267,5 +342,6 @@ public class TovikTranslator(
                 return Results.StatusCode(429);
             }
         });
+        group.MapPost("crawl", async (TovikTranslator translator, TovikCrawlRequest request) => await translator.CrawlAsync(request));
     }
 }

@@ -1,4 +1,5 @@
 ﻿@page "/sites/{Id}"
+@using Sparc.Engine.Tovik
 @using Tovik.Domains
 @layout MainLayout
 
@@ -9,6 +10,7 @@
         <div class="back">
             <button class="back-btn secondary-btn" @onclick=NavBack><ArrowLeftIcon /> Back</button>
         </div>
+
         <section class="domain-summary">
             <header>
                 <h3>Site Summary</h3>
@@ -66,6 +68,17 @@
                 </div>
             </div>
         </section>
+
+        <section class="add-exemption">
+            <header>
+                <h3>Preload Translations</h3>
+                <p class="subheader">If you'd like Tovik to crawl your site and preload translations for any specific languages, choose your languages here! Note that Tovik usage increase as Tovik crawls your site.</p>
+            </header>
+                <div class="btn-container">
+                    <button class="add-btn primary-btn" @onclick=Crawl>Start Preloading Translations</button>
+                </div>
+        </section>
+
         <section class="add-exemption">
             <header>
                 <h3>Add Exempt Words or Phrases</h3>
@@ -115,7 +128,7 @@
 </article>
 
 @inject TovikDomains TovikDomains
-
+@inject ITovik Tovik
 @code {
     [Parameter] public required string Id { get; set; }
 
@@ -130,6 +143,12 @@
     {
         Domain = await TovikDomains.Get(Id);
         Glossaries.AddRange(new[] { "Lorem Ipsum", "Dolor Sit Amet", "Consectetur Adipiscing Elit" });
+    }
+
+    async Task Crawl()
+    {
+        var request = new TovikCrawlRequest(Domain!.Domain, ["fr", "es", "de", "it", "pt", "ru", "zh"]);
+        await Tovik.CrawlAsync(request);
     }
 
     async Task AddExemption()
