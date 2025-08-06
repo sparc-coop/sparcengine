@@ -125,6 +125,8 @@ public class TovikTranslator(
             var tovik = domainOwner?.Product("Tovik");
             if (tovik == null || tovik.HasExceededUsage)
                 return false;
+            else
+                return true;
         }
 
         return false;
