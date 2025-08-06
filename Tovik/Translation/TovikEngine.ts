@@ -115,7 +115,11 @@ export default class TovikEngine {
 
         if (response.ok)
             return await response.json();
-        else
+        else if (response.status === 429) {
+            console.warn("Tovik tried to translate your site into " + language + ", but your site has reached the Tovik translation limit!");
+        }
+        else {
             throw new Error(`Failed to fetch data from ${url}`);
+        }
     }
 }

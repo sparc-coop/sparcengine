@@ -44,7 +44,6 @@ export default class TovikElement extends HTMLElement {
     async translatePage(element, forceReload = false) {
         // Only translate if the first two characters of originalLang don't match the first two characters of TovikEngine.userLang
         if (this.#originalLang && this.#originalLang.substring(0, 2) === TovikEngine.userLang.substring(0, 2) && !forceReload) {
-            console.log('Tovik is relaxing');
             return;
         }
 
@@ -133,11 +132,13 @@ export default class TovikElement extends HTMLElement {
         }));
 
         const newTranslations = await TovikEngine.bulkTranslate(textsToTranslate, this.#originalLang);
-        for (const item of pendingTranslations) {
-            const translation = newTranslations.find(t => t.id === item.hash);
-            if (translation) {
-                item.element.setAttribute(attributeName, translation.text);
-                db.translations.put(translation);
+        if (newTranslations) {
+            for (const item of pendingTranslations) {
+                const translation = newTranslations.find(t => t.id === item.hash);
+                if (translation) {
+                    item.element.setAttribute(attributeName, translation.text);
+                    db.translations.put(translation);
+                }
             }
         }
     }
@@ -181,6 +182,9 @@ export default class TovikElement extends HTMLElement {
         }));
 
         const newTranslations = await TovikEngine.bulkTranslate(textsToTranslate, this.#originalLang);
+        if (!newTranslations)
+            return;
+
         for (const node of pendingTranslations) {
             const translation = newTranslations.find(t => t.id === node.hash);
             if (translation) {
