@@ -1,5 +1,6 @@
 ﻿<div class="message-card">
     <p>
+        <MessageBubbleTail IsMine=@(Message.Sender == User ? true : false) />
         @Message.Text
     </p>
     <aside>@Message.Timestamp.ToShortTimeString()</aside>

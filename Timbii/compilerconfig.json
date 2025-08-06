@@ -56,6 +56,10 @@
     "inputFile": "Shared/Components/MessageCard.razor.scss"
   },
   {
+    "outputFile": "Shared/Components/MessageGroup.razor.css",
+    "inputFile": "Shared/Components/MessageGroup.razor.scss"
+  },
+  {
     "outputFile": "Shared/Components/ChatBar.razor.css",
     "inputFile": "Shared/Components/ChatBar.razor.scss"
   },

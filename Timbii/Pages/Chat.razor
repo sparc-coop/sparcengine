@@ -18,6 +18,7 @@
     [CascadingParameter] User? User { get; set; }
 
     List<Message> Messages = new List<Message>();
+    IEnumerable<Message> GroupedMessages = new List<Message>();
     //User User1;
     User? User2;
     bool voiceMode = false;
@@ -102,6 +103,17 @@
         Messages.Add(message1);
         Messages.Add(message2);
         Messages.Add(message3);
+
+        TimeSpan interval = TimeSpan.FromMinutes(15);
+
+        // Group messages by 15-minute intervals
+        GroupedMessages = Messages
+            .OrderBy(m => m.Timestamp)
+            .GroupBy(m => new DateTime((m.Timestamp.Ticks / interval.Ticks) * interval.Ticks))
+            .SelectMany(g => g)
+            .ToList();
+
+        Console.WriteLine(GroupedMessages);
     }
 
     async Task SendMessage(string messageText)

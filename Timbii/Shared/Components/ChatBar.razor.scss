@@ -1,7 +1,6 @@
 .chat-bar {
-    width: calc(100% - 32px);
-    min-height: 32px;
-    padding: 16px;
+    width: calc(100% - 24px);
+    padding: 8px 12px;
     position: fixed;
     bottom: 0;
     left: 0;
@@ -9,32 +8,35 @@
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    align-items: start;
+    align-items: center;
     gap: 4px;
-    background: white;
+    background: var(--egg-50);
+    border-radius: 24px 24px 0 0;
     box-shadow: 0 -10px 20px 0 rgba(0, 18, 65, 0.04), 0 -2px 6px 0 rgba(0, 18, 65, 0.04), 0 0 1px 0 rgba(0, 18, 65, 0.04);
 
     form {
         width: 100%;
+        border-radius: 16px;
         display: flex;
         flex-direction: row;
-        align-items: start;
+        align-items: center;
         gap: 4px;
 
         .chat-input {
             width: 100%;
-            padding: 8px 12px;
-            border-radius: 8px;
-            background: var(--grey-100, #F8F8FA);
+            padding: 13px 16px;
+            border-radius: 16px;
+            background: var(--egg-100);
         }
 
         #chat-textarea {
             width: 100%;
             //max-width: calc(100vw - 104px);
+            max-height: 110px;
             border: transparent;
             background: none;
-            color: var(--grey-500, #616161);
-            font-family: Inter;
+            color: var(-- grey-500, #616161);
+            font-family: var(--halcom);
             font-size: 1.3rem;
             font-style: normal;
             font-weight: 400;
@@ -43,24 +45,37 @@
             text-wrap: wrap;
             word-wrap: break-word;
             hyphens: auto; // copy and paste maintains original formatting without hyphens
+
+            &:empty:not(:focus):before {
+                content: attr(data-text);
+                color: var(--olive-700);
+            }
         }
     }
 
     button {
-        width: 20px;
-        height: 20px;
-
         &.attach-btn {
             ::deep svg {
-                width: 11px;
-                height: 11px;
+                width: 20px;
+                height: 20px;
             }
         }
 
         &.send-btn {
+            padding: 4px;
+            background: var(--orange-500);
+
             ::deep svg {
-                width: 9px;
-                height: 9px;
+                width: 20px;
+                height: 20px;
+
+                path {
+                    stroke: var(--egg-50)
+                }
+            }
+
+            &:disabled {
+                opacity: 0.5;
             }
         }
 

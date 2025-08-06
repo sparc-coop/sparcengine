@@ -91,8 +91,6 @@ a:visited {
 
 button {
     display: inline-flex;
-    height: 40px;
-    padding: 16px;
     justify-content: center;
     align-items: center;
     gap: 10px;
@@ -135,6 +133,8 @@ button {
     }
 
     &.primary-btn {
+        height: 40px;
+        padding: 16px;
         background: var(--orange-500);
         color: var(--white, #FFF);
         font-weight: 400;
@@ -177,18 +177,18 @@ button {
 
     &.icon-btn {
         aspect-ratio: 1/1;
-        padding: 4px;
+        padding: 8px;
         display: flex;
         justify-content: center;
         align-items: center;
-        border-radius: 9px;
+        border-radius: 12px;
         border: 1px solid transparent;
         background: none;
         transition: .2s ease-in-out;
 
         ::deep svg {
-            height: 100%;
-            width: auto;
+            width: 20px;
+            height: 20px;
         }
 
         &:hover {
