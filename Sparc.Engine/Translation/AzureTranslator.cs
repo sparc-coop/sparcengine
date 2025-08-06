@@ -1,5 +1,6 @@
 ﻿using Azure;
 using Azure.AI.Translation.Text;
+using System.Text.Json;
 
 namespace Sparc.Engine;
 
@@ -36,7 +37,7 @@ internal class AzureTranslator(IConfiguration configuration) : ITranslator
                     new TextContent(sourceContent, toLanguages.First(x => x.Matches(translation.TargetLanguage)), translation.Text));
 
                 translatedMessages.AddRange(newContent);
-                translatedMessages.ForEach(x => x.AddCharge(CostPerWord, $"Azure translation of {x.OriginalText} to {x.LanguageId}"));
+                translatedMessages.ForEach(x => x.AddCharge(CostPerWord, $"Azure translation of {x.OriginalText} to {x.LanguageId}", JsonSerializer.Serialize(response.Value)));
             }
         }
 
