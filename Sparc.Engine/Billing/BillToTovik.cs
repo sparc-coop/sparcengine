@@ -16,11 +16,13 @@ public class BillToTovik(
         var domain = await domains.Query.Where(d => d.Domain == item.Content.Domain)
             .FirstOrDefaultAsync();
 
-        if (domain?.TovikUserId == null)
-            return;
-
-        var charge = new UserCharge(domain.TovikUserId, item);
+        var userToCharge = domain?.TovikUserId ?? Guid.Empty.ToString();
+        
+        var charge = new UserCharge(userToCharge, item);
         await charges.AddAsync(charge);
+
+        if (domain == null)
+            return;
 
         // Every 100th or so call, recalculate usage and bill Tovik user
         var random = new Random().Next(100);
