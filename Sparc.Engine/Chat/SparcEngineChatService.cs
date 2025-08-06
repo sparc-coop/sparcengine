@@ -28,8 +28,8 @@ public class SparcEngineChatService(
         var user = await Auth.GetAsync(principal);
 
         // Ensure the user has a Matrix identity
-        //var username = user.Avatar.Username.ToLowerInvariant();
-        var matrixId = $"@{user.Id}:engine.sparc.coop";
+        var username = user.Avatar.Username.ToLowerInvariant();
+        var matrixId = $"@{username}:engine.sparc.coop";
 
         if (!user.HasIdentity("Matrix"))
         {
@@ -48,7 +48,6 @@ public class SparcEngineChatService(
         return user.Avatar;
     }
 
-    // For Laura:
     private async Task<MatrixPresence> GetPresenceAsync(ClaimsPrincipal principal, string userId)
     {
         var user = await Auth.GetAsync(principal);
@@ -58,7 +57,8 @@ public class SparcEngineChatService(
     private async Task SetPresenceAsync(ClaimsPrincipal principal, string userId, MatrixPresence presence)
     {
         var user = await Auth.GetAsync(principal);
-        user.UpdateAvatar(presence.ToAvatar());
+        presence.ApplyToAvatar(user.Avatar);
+        user.UpdateAvatar(user.Avatar);
         await Auth.UpdateAsync(user);
     }
 
