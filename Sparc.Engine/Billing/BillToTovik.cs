@@ -35,7 +35,9 @@ public class BillToTovik(
         if (product == null)
             return;
 
-        product.TotalUsage = charges.Query.Sum(x => x.Amount);
+        product.TotalUsage = charges.Query
+            .Where(x => x.UserId == domain.TovikUserId)
+            .Sum(x => x.Amount);
         await users.UpdateAsync(user!);
 
         domain.TovikUsage = (int)charges.Query.Where(x => x.Domain == item.Content.Domain)
