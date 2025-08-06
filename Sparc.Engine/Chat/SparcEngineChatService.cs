@@ -1,6 +1,9 @@
 ﻿using Sparc.Blossom.Authentication;
 using Sparc.Blossom.Data;
 using Sparc.Core.Chat;
+using Twilio.TwiML.Voice;
+using Room = Sparc.Core.Chat.Room;
+using Task = System.Threading.Tasks.Task;
 
 namespace Sparc.Engine.Chat;
 
@@ -74,6 +77,27 @@ public class SparcEngineChatService(
         return room;
     }
 
+    private async Task<Room> DeleteRoomAsync(string roomId)
+    {
+        var memberships = await Memberships.Query
+            .Where(m => m.RoomId == roomId)
+            .ToListAsync();
+
+        if (memberships != null)
+        {
+            foreach (var membership in memberships)
+            {
+                await Memberships.DeleteAsync(membership);
+            }
+        }
+
+        var room = await Rooms.FindAsync(roomId);
+        if (room != null)
+            await Rooms.DeleteAsync(room);
+
+        return room;
+    }
+
     private async Task JoinRoomAsync(string roomId)
     {
         var matrixId = await GetMatrixUserAsync();
@@ -138,6 +162,7 @@ public class SparcEngineChatService(
 
         chatGroup.MapGet("/publicRooms", GetRoomsAsync);
         chatGroup.MapPost("/createRoom", CreateRoomAsync);
+        chatGroup.MapPost("/deleteRoom/{roomId}", DeleteRoomAsync);
         chatGroup.MapPost("/join/{roomId}", JoinRoomAsync);
         chatGroup.MapPost("/rooms/{roomId}/leave", LeaveRoomAsync);
         chatGroup.MapPost("/rooms/{roomId}/invite", InviteToRoomAsync);
