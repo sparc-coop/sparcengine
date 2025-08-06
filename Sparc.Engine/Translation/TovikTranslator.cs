@@ -116,6 +116,9 @@ public class TovikTranslator(
             .Where(x => x.Domain == domainName)
             .FirstOrDefaultAsync();
 
+        if (domain?.TovikUsage < 1000)
+            return true;
+
         if (domain?.TovikUserId != null)
         {
             var domainOwner = await users.FindAsync(domain.TovikUserId);
