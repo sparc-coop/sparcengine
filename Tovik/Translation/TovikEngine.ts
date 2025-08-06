@@ -9,14 +9,23 @@ export default class TovikEngine {
     static userLang;
     static rtlLanguages = ['ar', 'fa', 'he', 'ur', 'ps', 'ku', 'dv', 'yi', 'sd', 'ug'];
 
-    static async hi() {
+    static async getUserLanguage() {
+        if (this.userLang)
+            return this.userLang;
         var profile = await db.profiles.get('default');
-        if (!profile) {
-            profile = { id: 'default', language: navigator.language };
-            await db.profiles.add(profile);
+        if (profile) {
+            this.userLang = profile.language;
+        } else {
+            this.userLang = navigator.language;
+            await db.profiles.add({ id: 'default', language: this.userLang });
         }
+        return this.userLang;
+    }
 
-        this.setLanguage(profile.language);
+    static async hi() {
+        let lang = await this.getUserLanguage();
+
+        this.setLanguage(lang);
         document.addEventListener('tovik-user-language-changed', async (event: CustomEvent) => {
             await this.setLanguage(event.detail);
         });
@@ -33,6 +42,7 @@ export default class TovikEngine {
             document.dispatchEvent(new CustomEvent('tovik-language-changed', { detail: this.userLang }));
         }
 
+        document.dispatchEvent(new CustomEvent('tovik-language-set', { detail: this.userLang }));
         document.documentElement.lang = this.userLang;
         document.documentElement.setAttribute('dir', this.rtlLanguages.some(x => this.userLang.startsWith(x)) ? 'rtl' : 'ltr');
     }
@@ -69,6 +79,10 @@ export default class TovikEngine {
             Language: { Id: fromLang },
             Text: item.text
         }));
+
+        if (!this.userLang) {
+            await this.getUserLanguage();
+        }
 
         var result = await this.fetch('translate/bulk', requests, this.userLang);
 

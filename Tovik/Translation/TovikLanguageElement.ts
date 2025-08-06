@@ -38,6 +38,12 @@ export default class TovikLanguageElement extends HTMLElement {
             select.appendChild(option);
         });
 
+        document.addEventListener('tovik-language-set', async (event:any) => {
+            // select the language if it exists in the select options
+            if (languages.some(lang => lang.id === event.detail))
+                select.value = event.detail;
+        }); 
+
         select.addEventListener('change', () => {
             document.dispatchEvent(new CustomEvent('tovik-user-language-changed', { detail: select.value }));
         });
