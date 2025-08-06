@@ -42,6 +42,12 @@ export default class TovikElement extends HTMLElement {
     }
 
     async translatePage(element, forceReload = false) {
+        // Only translate if the first two characters of originalLang don't match the first two characters of TovikEngine.userLang
+        if (this.#originalLang && this.#originalLang.substring(0, 2) === TovikEngine.userLang.substring(0, 2) && !forceReload) {
+            console.log('Tovik is relaxing');
+            return;
+        }
+
         await this.wrapTextNodes(element, forceReload);
         await this.translateAttribute(element, 'placeholder', forceReload);
     }
