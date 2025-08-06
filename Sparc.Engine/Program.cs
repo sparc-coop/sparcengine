@@ -1,6 +1,7 @@
 using MediatR.NotificationPublishers;
 using Microsoft.AspNetCore.Cors.Infrastructure;
 using Microsoft.AspNetCore.Http.Json;
+using OpenAI;
 using Scalar.AspNetCore;
 using Sparc.Blossom.Authentication;
 using Sparc.Blossom.Data;
@@ -14,6 +15,8 @@ builder.Services.AddScoped<FriendlyId>();
 
 builder.Services.AddCosmos<SparcEngineContext>(builder.Configuration.GetConnectionString("Cosmos")!, builder.Environment.IsDevelopment() ? "sparc-dev" : "sparc", ServiceLifetime.Scoped);
 builder.Services.AddAzureStorage(builder.Configuration.GetConnectionString("Storage")!);
+builder.Services.AddScoped(_ => new OpenAIClient(builder.Configuration.GetConnectionString("OpenAI")!));
+
 
 builder.AddSparcAuthentication<BlossomUser>();
 builder.AddSparcBilling();
