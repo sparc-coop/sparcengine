@@ -1,6 +1,7 @@
 ﻿using Sparc.Blossom.Authentication;
 using Sparc.Blossom.Data;
 using Sparc.Core.Chat;
+using Twilio.TwiML.Voice;
 
 namespace Sparc.Engine.Chat;
 
@@ -38,6 +39,12 @@ public class MatrixEvents(
             .ToListAsync();
 
         return result.Cast<MatrixEvent<T>>().ToList();
+    }
+
+    internal async Task<MatrixRoom> GetRoomAsync(string roomId)
+    {
+        var allRoomEvents = await GetAllAsync(roomId);
+        return MatrixRoom.From(allRoomEvents);
     }
 
     internal IQueryable<MatrixEvent> Query<T>()

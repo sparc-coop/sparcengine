@@ -30,11 +30,19 @@ public class SparcEngineChatService(MatrixEvents events, SparcAuthenticator<Blos
         // Eventually do this in the background to show a published room directory
         foreach (var createdRoom in createdRooms)
         {
-            var allRoomEvents = await events.GetAllAsync(createdRoom.RoomId);
-            rooms.Add(MatrixRoom.From(allRoomEvents));
+            var room = await events.GetRoomAsync(createdRoom.RoomId);
+            rooms.Add(room);
         }
 
         return new(rooms);
+    }
+
+    private async Task<MatrixRoom> GetRoomSummaryAsync(string roomId)
+    {
+        if (!roomId.Contains(':'))
+            roomId = roomId + ":" + MatrixEvents.Domain;
+
+        return await events.GetRoomAsync(roomId);
     }
 
     private async Task<CreateRoomResponse> CreateRoomAsync(CreateRoomRequest request)
@@ -130,5 +138,8 @@ public class SparcEngineChatService(MatrixEvents events, SparcAuthenticator<Blos
             await SetPresenceAsync(principal, userId, presence);
             return Results.Ok();
         });
+
+        var legacyChatGroup = endpoints.MapGroup("/_matrix/client/v1");
+        legacyChatGroup.MapGet("/room_summary/{roomId}", GetRoomSummaryAsync);
     }
 }
