@@ -8,7 +8,9 @@ public static class ServiceCollectionExtensions
         this WebApplicationBuilder builder
     )
     {
-        builder.Services.AddTransient<SparcEngineChatService>();
+        builder.Services
+            .AddTransient<MatrixEvents>()
+            .AddTransient<SparcEngineChatService>();
 
         return builder;
     }

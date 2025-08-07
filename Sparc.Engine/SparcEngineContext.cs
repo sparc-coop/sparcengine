@@ -41,20 +41,6 @@ internal class SparcEngineContext(DbContextOptions<SparcEngineContext> options) 
         model.Entity<BlossomUser>().ToContainer("Users")
             .HasPartitionKey(x => x.UserId);
 
-        model.Entity<MatrixRoom>().ToContainer("Rooms")
-            .HasPartitionKey(x => x.RoomId)
-            .HasKey(x => x.Id);
-
-        model.Entity<RoomMembership>()
-          .ToContainer("Memberships")
-          .HasPartitionKey(rm => rm.RoomId)
-          .HasKey(x => x.Id);
-
-        model.Entity<RoomMembership>()
-          .HasOne(rm => rm.Room)
-          .WithMany(r => r.Memberships)
-          .HasForeignKey(rm => rm.RoomId);
-
         model.Entity<MatrixEvent>()
           .ToContainer("Events")
           .HasPartitionKey(e => e.RoomId)

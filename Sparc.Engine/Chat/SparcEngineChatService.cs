@@ -5,42 +5,9 @@ using System.Security.Claims;
 
 namespace Sparc.Engine.Chat;
 
-public class SparcEngineChatService(
-    IRepository<MatrixRoom> rooms,
-    IRepository<RoomMembership> memberships,
-    IRepository<MatrixEvent> events,
-    SparcAuthenticator<BlossomUser> auth,
-    IHttpContextAccessor httpContextAccessor
-) : IBlossomEndpoints
+public class SparcEngineChatService(MatrixEvents events, SparcAuthenticator<BlossomUser> auth)
+    : IBlossomEndpoints
 {
-    private async Task<string> GetMatrixUserAsync()
-    {
-        var principal = httpContextAccessor.HttpContext?.User
-            ?? throw new InvalidOperationException("User not authenticated");
-
-        var user = await auth.GetAsync(principal);
-
-        // Ensure the user has a Matrix identity
-        var username = user.Avatar.Username.ToLowerInvariant();
-        var matrixId = $"@{username}:engine.sparc.coop";
-
-        if (!user.HasIdentity("Matrix"))
-        {
-            user.AddIdentity("Matrix", matrixId);
-            await auth.UpdateAsync(user);
-        }
-
-        return user.Identity("Matrix")!;
-    }
-
-    private async Task<BlossomAvatar> GetUserAsync(ClaimsPrincipal principal)
-    {
-        if (principal == null)
-            throw new ArgumentNullException(nameof(principal));
-        var user = await auth.GetAsync(principal);
-        return user.Avatar;
-    }
-
     private async Task<MatrixPresence> GetPresenceAsync(ClaimsPrincipal principal, string userId)
     {
         var user = await auth.GetAsync(principal);
@@ -55,89 +22,90 @@ public class SparcEngineChatService(
         await auth.UpdateAsync(user);
     }
 
-    private async Task<List<MatrixRoom>> GetRoomsAsync()
+    private async Task<GetPublicRoomsResponse> GetRoomsAsync(int? limit = null, string? since = null, string? server = null)
     {
-        var allRooms = await rooms.Query.ToListAsync();
-        foreach (var room in allRooms)
+        var createdRooms = await events.Query<CreateRoom>().ToListAsync();
+
+        var rooms = new List<MatrixRoom>();
+        // Eventually do this in the background to show a published room directory
+        foreach (var createdRoom in createdRooms)
         {
-            var allMemberships = await memberships.Query.Where(x => x.RoomId == room.RoomId).ToListAsync();
-            room.Memberships = allMemberships;
+            var allRoomEvents = await events.GetAllAsync(createdRoom.RoomId);
+            rooms.Add(MatrixRoom.From(allRoomEvents));
         }
 
-        return allRooms;
+        return new(rooms);
     }
 
-    private async Task<MatrixRoom> CreateRoomAsync(CreateRoomRequest request)
+    private async Task<CreateRoomResponse> CreateRoomAsync(CreateRoomRequest request)
     {
-        var matrixId = await GetMatrixUserAsync();
-        var room = new MatrixRoom(request.Name)
-        {
-            CreatorUserId = matrixId,
-            IsPrivate = request.Visibility == "private"
-        };
-        await rooms.AddAsync(room);
+        var roomId = "!" + MatrixEvent.OpaqueId() + ":" + MatrixEvents.Domain;
+        await events.PublishAsync(roomId, new CreateRoom());
+        await events.PublishAsync(roomId, new ChangeMembershipState("join", events.MatrixSenderId!));
+        await events.PublishAsync(roomId, new AdjustPowerLevels());
 
-        var membership = new RoomMembership
-        {
-            RoomId = room.RoomId,
-            UserId = matrixId,
-            Membership = "join",
-            AssignedAt = DateTimeOffset.UtcNow
-        };
+        if (!string.IsNullOrWhiteSpace(request.RoomAliasName))
+            await events.PublishAsync(roomId, new CanonicalAlias(request.RoomAliasName));
 
-        room.Memberships.Add(membership);
-        await memberships.AddAsync(membership);
-        return room;
+        if (!string.IsNullOrWhiteSpace(request.Preset))
+        {
+            switch (request.Preset)
+            {
+                case "public_chat":
+                    await events.PublishAsync(roomId, new JoinRules("public"));
+                    await events.PublishAsync(roomId, HistoryVisibility.Shared);
+                    await events.PublishAsync(roomId, GuestAccess.Forbidden);
+                    break;
+                case "private_chat":
+                case "trusted_private_chat":
+                    await events.PublishAsync(roomId, new JoinRules("invite"));
+                    await events.PublishAsync(roomId, HistoryVisibility.Shared);
+                    await events.PublishAsync(roomId, GuestAccess.CanJoin);
+                    break;
+                default:
+                    throw new NotSupportedException($"Preset '{request.Preset}' is not supported.");
+            }
+        }
+
+        if (!string.IsNullOrWhiteSpace(request.Name))
+            await events.PublishAsync(roomId, new RoomName(request.Name));
+
+        if (!string.IsNullOrWhiteSpace(request.Topic))
+            await events.PublishAsync(roomId, new RoomTopic(request.Topic));
+
+        if (request.Invite?.Count > 0)
+        {
+            foreach (var userId in request.Invite)
+                await events.PublishAsync(roomId, new ChangeMembershipState("invite", userId));
+        }
+
+        return new(roomId);
     }
 
     private async Task JoinRoomAsync(string roomId)
     {
-        var matrixId = await GetMatrixUserAsync();
-        var membership = new RoomMembership
-        {
-            RoomId = roomId,
-            UserId = matrixId,
-            Membership = "join",
-            AssignedAt = DateTimeOffset.UtcNow
-        };
-
-        await memberships.AddAsync(membership);
+        await events.PublishAsync(roomId, new ChangeMembershipState("join", events.MatrixSenderId!));
     }
 
     private async Task LeaveRoomAsync(string roomId)
     {
-        var matrixId = await GetMatrixUserAsync();
-        var membership = await memberships.Query
-            .Where(m => m.RoomId == roomId && m.UserId == matrixId)
-            .FirstOrDefaultAsync();
-
-        if (membership != null)
-            await memberships.DeleteAsync(membership);
+        await events.PublishAsync(roomId, new ChangeMembershipState("leave", events.MatrixSenderId!));
     }
 
-    private Task InviteToRoomAsync(string roomId, InviteToRoomRequest request)
+    private async Task InviteToRoomAsync(string roomId, InviteToRoomRequest request)
     {
-        throw new NotImplementedException();
+        await events.PublishAsync(roomId, new ChangeMembershipState("invite", request.UserId));
     }
 
-    private async Task<MatrixEvent<MatrixMessage>> SendMessageAsync(string roomId, string eventType, string txnId, SendMessageRequest request)
+    private async Task<SendMessageReponse> SendMessageAsync(string roomId, string eventType, string txnId, SendMessageRequest request)
     {
-        var matrixId = await GetMatrixUserAsync();
-
-        var message = MatrixEvent.Create(roomId, matrixId, new MatrixMessage(request.Body));
-        await events.AddAsync(message);
-
-        return message;
+        var ev = await events.PublishAsync(roomId, new MatrixMessage(request.Body));
+        return new(ev.EventId);
     }
 
-    private async Task<List<MatrixEvent>> GetMessagesAsync(string roomId)
+    private async Task<List<MatrixEvent<MatrixMessage>>> GetMessagesAsync(string roomId)
     {
-        var messages = await events.Query
-            .Where(x => x.Type == MatrixEvent.Types<MatrixMessage>() && x.RoomId == roomId)
-            .OrderBy(m => m.Depth)
-            .ToListAsync();
-
-        return messages;
+        return await events.GetAllAsync<MatrixMessage>(roomId);
     }
 
     public void Map(IEndpointRouteBuilder endpoints)
@@ -151,8 +119,6 @@ public class SparcEngineChatService(
         chatGroup.MapPost("/rooms/{roomId}/invite", InviteToRoomAsync);
         chatGroup.MapGet("/rooms/{roomId}/messages", GetMessagesAsync);
         chatGroup.MapPost("/rooms/{roomId}/send/{eventType}/{txnId}", SendMessageAsync);
-        chatGroup.MapGet("/matrixUser", GetMatrixUserAsync);
-        chatGroup.MapGet("/user", GetUserAsync);
 
         // Map the presence endpoint
         chatGroup.MapGet("/presence/{userId}/status", async (ClaimsPrincipal principal, string userId) =>
