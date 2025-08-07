@@ -27,7 +27,7 @@ article section header .subheader {
   font-family: var(--articulat);
   font-size: 1.6rem;
   font-weight: 400;
-  line-height: normal;
+  line-height: 140%;
 }
 article section h4 {
   color: #FFF;
@@ -41,21 +41,43 @@ article section button.primary-btn {
   width: auto;
   margin-top: 32px;
 }
+article section ::deep .code-block {
+  background-color: var(--blue-600);
+  margin: 24px 0;
+}
 article section h2 {
   font-size: 2.5rem;
   font-weight: 700;
   margin-bottom: 16px;
 }
-article section p {
+article section p, article section li {
   font-family: var(--articulat);
-  font-size: 1.8rem;
+  font-size: 1.6rem;
   font-weight: 500;
   margin-bottom: 24px;
   letter-spacing: 1.1px;
   line-height: 150%;
 }
+article section ul {
+  padding-left: 16px;
+}
+article section li {
+  margin-bottom: 8px;
+}
+article div.two {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+}
+article div.two p, article div.two li {
+  font-size: 1.6rem;
+}
+@media screen and (min-width: 1024px) {
+  article div.two {
+    grid-template-columns: 1fr 1fr;
+  }
+}
 article section.trial {
-  padding: 64px !important;
   align-items: flex-start;
 }
 article section.trial span {
@@ -63,8 +85,46 @@ article section.trial span {
   margin-left: 4px;
   color: var(--orange-300);
 }
+article section.trial label {
+  display: block;
+  font-weight: 600;
+  font-size: 1.6rem;
+  margin: 32px 0;
+}
+article section.trial > div {
+  width: 100%;
+}
+article section.trial input {
+  margin-top: 8px;
+}
 article section.trial img {
   height: 30px;
+}
+article section.trial footer button {
+  width: 100%;
+}
+article section.trial footer button[disabled] {
+  opacity: 0.3;
+}
+article section.trial footer button:hover {
+  font-weight: 600;
+}
+@media screen and (min-width: 1024px) {
+  article section.trial {
+    padding: 64px 64px 200px 64px !important;
+  }
+  article section.trial footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 32px;
+  }
+}
+@media screen and (min-width: 1024px) {
+  article section.trial.mini {
+    padding: 64px 64px 120px 64px !important;
+  }
 }
 article section.demo {
   background-color: transparent !important;
@@ -83,11 +143,21 @@ article section.demo h1 {
   font-weight: 700;
   margin-bottom: 32px;
 }
+article section.demo h2 {
+  font-size: 2.2rem;
+  margin-bottom: 8px;
+  margin-top: 32px;
+}
 article section.demo div {
-  padding: 32px 64px 64px 64px;
+  padding: 32px;
+}
+@media screen and (min-width: 1024px) {
+  article section.demo div {
+    padding: 32px 64px 64px 64px;
+  }
 }
 article section.demo ::deep .language-select {
-  margin-top: 64px;
+  margin-top: 16px;
   background-color: var(--blue-600);
 }
 article section.demo ::deep .language-select:after {

@@ -1,8 +1,9 @@
 ﻿@page "/sites"
 @using Sparc.Engine.Aura
+@using Tovik.Installation
 @layout MainLayout
 
-<PageTitle>Tovik</PageTitle>
+<PageTitle>Tovik - My Websites</PageTitle>
 
 <article class="home">
     <div class="page-container">
@@ -12,35 +13,38 @@
                 <img src="/images/Star.svg" alt="Star" />
                 <header>
                     <h3>Welcome to Tovik!</h3>
-                    <p class="subheader">
-                        We're so happy you've decided to try Tovik out. You can get started in just two easy steps:
-                        <ul>
-                            <li><a href="/install">Install the Tovik script on your site</a> (just one line of code!)</li>
-                            <li>Add your website's domain below.</li>
-                        </ul>
-                    </p>
-                    <p class="subheader">
-                        That's it! Tovik will take it from there and will make sure your site is always in your visitors' preferred language.
-                    </p>
-                    <aside>
-                        This message will disappear automatically once Tovik detects the first usage on your account. 
-                    </aside>
                 </header>
+                <p>
+                    We're so happy you've decided to try Tovik.
+                </p>
+                <p>
+                    To install Tovik, add this line of code to your site, preferably just before the closing <code>&lt;&sol;body&gt;</code> tag:
+                </p>
+                <CodeBlock CanCopy=true>
+                    @("<script type=\"module\" src=\"https://tovik.app/tovik.js\"></script>")
+                </CodeBlock>
+                <p>
+                    That’s it! Tovik will now detect your visitors’ browser language and display your site accordingly.
+                </p>
+                <aside>
+                    This message will disappear automatically once we detect the Tovik tag on your website.
+                </aside>
             </section>
         }
 
         <section class="word-usage">
             <header>
                 <h3>Word Usage</h3>
-                @if (Limit == 1000)
-                {
-                    <p class="subheader">Your free trial of Tovik includes 1,000 words by default. Once you need additional words, you can click the button below to purchase a word pack anytime.</p>
-                }
-                else
-                {
-                    <p class="subheader">Your purchase of Tovik includes 100,000 words by default. If you need additional words, you can purchase an additional word pack anytime.</p>
-                }
             </header>
+
+            @if (IsTrial)
+            {
+                <p>Your free trial of Tovik includes 1,000 words by default. Once you need additional words, you can click the button below to purchase a word pack anytime.</p>
+            }
+            else
+            {
+                <p>Thank you for purchasing Tovik! Your purchase includes 100,000 words to get you started. If you ever need additional words, you can purchase an additional word pack anytime.</p>
+            }
             <div>
                 <h4>Words Translated</h4>
                 <UsageMeter Usage=Usage Limit=Limit />
@@ -50,30 +54,18 @@
             </div>
         </section>
 
-        <section class="add-domain">
-            <header>
-                <h3>Add a Website</h3>
-                <p class="subheader">Add as many websites as you want -- there's no limit. And whenever you need to, you can add new ones or remove old ones instantly.</p>
-            </header>
-
-            @if (Error != null)
-            {
-                <div class="error-message">@Error</div>
-            }
-
-            <label>
-                <input type="text" placeholder="Enter a domain name" @bind="NewDomain" @bind:event="oninput" />
-            </label>
-            <div class="btn-container">
-                <button class="add-btn primary-btn" disabled="@(string.IsNullOrWhiteSpace(NewDomain))" @onclick=AddDomain>Add Website</button>
-            </div>
-        </section>
-
         <section class="manage-domains">
             <header>
                 <h3>My Websites</h3>
-                <p class="subheader">Change the display name, delete a website, or add exempt words/phrases to your website glossary.</p>
             </header>
+            @if (IsTrial)
+            {
+                <p>Once you purchase Tovik, make sure you add your websites here. Tovik usage over 1,000 words will only be allowed on the websites you specify below.</p>
+            }
+            else
+            {
+                <p>Add all of your Tovik-enabled websites here. Tovik usage over 1,000 words will only be allowed on the websites you specify below.</p>
+            }
             <table class="domains-table">
                 <thead>
                     <tr>
@@ -94,15 +86,26 @@
                         <tr>
                             <td colspan="3">
                                 <aside>
-                                    Looks like you haven't added any sites yet. Go ahead and add your first website in the box above!
+                                    Looks like you haven't added any sites yet. Go ahead and add your first website in the box below!
                                 </aside>
                             </td>
                         </tr>
                     </tfoot>
                 }
             </table>
-        </section>
 
+            @if (Error != null)
+            {
+                <div class="error-message">@Error</div>
+            }
+
+            <label>
+                <input type="text" placeholder="Enter a domain name" @bind="NewDomain" @bind:event="oninput" />
+            </label>
+            <div class="btn-container">
+                <button class="add-btn primary-btn" disabled="@(string.IsNullOrWhiteSpace(NewDomain))" @onclick=AddDomain>Add This Website</button>
+            </div>
+        </section>
     </div>
 </article>
 
@@ -116,6 +119,7 @@
 
     int Usage;
     int Limit;
+    bool IsTrial => Limit < 100000;
 
     protected override async Task OnInitializedAsync()
     {

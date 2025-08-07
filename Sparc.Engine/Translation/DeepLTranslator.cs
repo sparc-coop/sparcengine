@@ -1,4 +1,5 @@
 ﻿using DeepL;
+using System.Text.Json;
 
 namespace Sparc.Engine;
 
@@ -30,14 +31,18 @@ internal class DeepLTranslator(IConfiguration configuration) : ITranslator
         var translatedMessages = new List<TextContent>();
         foreach (var batch in batches)
         {
+            var safeBatch = batch.Where(x => !string.IsNullOrWhiteSpace(x.Text)).ToList();
+            if (!safeBatch.Any())
+                continue;
+
             foreach (var sourceLanguage in fromLanguages)
             {
                 foreach (var targetLanguage in toDeepLLanguages)
                 {
                     var safeTargetLanguage = targetLanguage.ToString() == "en" ? "en-US" : targetLanguage.ToString(); // en is deprecated
-                    var texts = batch.Select(x => x.Text).Where(x => x != null);
+                    var texts = safeBatch.Select(x => x.Text);
                     var result = await Client.TranslateTextAsync(texts!, sourceLanguage.Key.ToString(), safeTargetLanguage, options);
-                    var newContent = batch.Zip(result, (message, translation) => new TextContent(message, targetLanguage, translation.Text));
+                    var newContent = safeBatch.Zip(result, (message, translation) => new TextContent(message, targetLanguage, translation.Text));
                     translatedMessages.AddRange(newContent);
                     translatedMessages.ForEach(x => x.AddCharge(CostPerWord, $"DeepL translation of {x.OriginalText} to {x.LanguageId}"));
                 }

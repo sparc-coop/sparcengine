@@ -80,7 +80,7 @@ main ::deep article .page-container section header .subheader {
   font-family: var(--articulat);
   font-size: 1.6rem;
   font-weight: 400;
-  line-height: normal;
+  line-height: 140%;
   margin-bottom: 16px;
 }
 main ::deep article .page-container section header aside {

@@ -35,7 +35,7 @@ public class TovikDomainPolicyProvider(
         }
 
         // Check usage
-        if (domain.TovikUserId == null && !domain.Domain.Contains("localhost") && domain.TovikUsage > 500)
+        if (domain.TovikUserId == null && !domain.Domain.Contains("localhost") && domain.TovikUsage > 1000)
             return DenyAll;
 
         if (_policies.TryGetValue(domain.Domain, out var existingPolicy))

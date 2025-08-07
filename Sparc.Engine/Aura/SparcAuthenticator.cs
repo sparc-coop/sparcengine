@@ -139,6 +139,12 @@ public class SparcAuthenticator<T>(
         User = SparcUser;
     }
 
+    public async Task<BlossomUser> UpdateAsync(BlossomUser user)
+    {
+        await Users.UpdateAsync((T)user);
+        return user;
+    }
+
     public override async Task<BlossomUser> UpdateAsync(ClaimsPrincipal principal, BlossomAvatar avatar)
     {
         await base.UpdateAsync(principal, avatar);
