@@ -7,16 +7,27 @@ const baseUrl = window.location.href.includes('localhost')
 
 export default class TovikEngine {
     static userLang;
+    static documentLang;
     static rtlLanguages = ['ar', 'fa', 'he', 'ur', 'ps', 'ku', 'dv', 'yi', 'sd', 'ug'];
 
-    static async hi() {
+    static async getUserLanguage() {
+        if (this.userLang)
+            return this.userLang;
         var profile = await db.profiles.get('default');
-        if (!profile) {
-            profile = { id: 'default', language: navigator.language };
-            await db.profiles.add(profile);
+        if (profile) {
+            this.userLang = profile.language;
+        } else {
+            this.userLang = navigator.language;
+            await db.profiles.add({ id: 'default', language: this.userLang });
         }
+        return this.userLang;
+    }
 
-        this.setLanguage(profile.language);
+    static async hi() {
+        let lang = await this.getUserLanguage();
+        this.documentLang = document.documentElement.lang;
+
+        this.setLanguage(lang);
         document.addEventListener('tovik-user-language-changed', async (event: CustomEvent) => {
             await this.setLanguage(event.detail);
         });
@@ -33,6 +44,7 @@ export default class TovikEngine {
             document.dispatchEvent(new CustomEvent('tovik-language-changed', { detail: this.userLang }));
         }
 
+        document.dispatchEvent(new CustomEvent('tovik-language-set', { detail: this.userLang }));
         document.documentElement.lang = this.userLang;
         document.documentElement.setAttribute('dir', this.rtlLanguages.some(x => this.userLang.startsWith(x)) ? 'rtl' : 'ltr');
     }
@@ -70,6 +82,10 @@ export default class TovikEngine {
             Text: item.text
         }));
 
+        if (!this.userLang) {
+            await this.getUserLanguage();
+        }
+
         var result = await this.fetch('translate/bulk', requests, this.userLang);
 
         for (let i = 0; i < progress.length; i++) {
@@ -99,7 +115,11 @@ export default class TovikEngine {
 
         if (response.ok)
             return await response.json();
-        else
-            throw new Error(`Failed to fetch data from ${url}`);
+        else if (response.status === 429) {
+            console.warn(`Tovik tried to translate your site into ${language}, but your site has reached the Tovik translation limit!`);
+        }
+        else {
+            console.error(`Tovik was unable to translate part of your site. Contact Tovik support to assist: Error code ${response.status}`);
+        }
     }
 }

@@ -97,7 +97,7 @@ public class TovikTranslator(
             .ToList();
 
         if (!await CanTranslate(needsTranslation))
-            throw new Exception("Usage limits exceeded for Tovik translation.");
+            throw new Exception("You've reached your Tovik translation limit!");
 
         var additionalContext = string.Join("\n", contents.Select(x => x.Text));
         var translations = await TranslateAsync(needsTranslation, [toLanguage], additionalContext);
@@ -116,15 +116,20 @@ public class TovikTranslator(
             .Where(x => x.Domain == domainName)
             .FirstOrDefaultAsync();
 
+        if (domain?.TovikUsage < 1000)
+            return true;
+
         if (domain?.TovikUserId != null)
         {
             var domainOwner = await users.FindAsync(domain.TovikUserId);
             var tovik = domainOwner?.Product("Tovik");
             if (tovik == null || tovik.HasExceededUsage)
                 return false;
+            else
+                return true;
         }
 
-        return true;
+        return false;
     }
 
     public async Task<TextContent?> TranslateAsync(TextContent message, Language toLanguage, string? additionalContext = null)
@@ -251,6 +256,16 @@ public class TovikTranslator(
         group.MapGet("languages", GetLanguagesAsync).CacheOutput(x => x.Expire(TimeSpan.FromHours(1)));
         group.MapGet("language", (ClaimsPrincipal principal, HttpRequest request) => GetLanguage(principal.Get("language") ?? request.Headers.AcceptLanguage));
         group.MapPost("language", async (TovikTranslator translator, Language language) => await translator.SetLanguage(language));
-        group.MapPost("bulk", async (TovikTranslator translator, List<TextContent> contents) => await translator.BulkTranslate(contents));
+        group.MapPost("bulk", async (TovikTranslator translator, List<TextContent> contents) =>
+        {
+            try
+            {
+                return Results.Ok(await translator.BulkTranslate(contents));
+            }
+            catch (Exception ex) when (ex.Message.Contains("limit"))
+            {
+                return Results.StatusCode(429);
+            }
+        });
     }
 }

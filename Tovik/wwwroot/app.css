@@ -59,6 +59,12 @@ html, body {
   margin: 0;
   position: relative;
   background: var(--blue-700);
+  overflow-x: hidden;
+}
+@media screen and (min-width: 1024px) {
+  html, body {
+    overflow-x: initial;
+  }
 }
 
 html ::-webkit-scrollbar, body ::-webkit-scrollbar {
@@ -79,6 +85,13 @@ p, ul, li {
   margin: 0;
   padding: 0;
   font-family: var(--articulat);
+}
+
+p {
+  font-size: 1.6rem;
+  font-weight: 400;
+  line-height: 140%;
+  letter-spacing: 1.05px;
 }
 
 button, input, select, textarea {
@@ -104,6 +117,10 @@ button {
   line-height: 120%; /* 16.8px */
   letter-spacing: -0.14px;
   cursor: pointer;
+}
+button[disabled] {
+  opacity: 0.3;
+  pointer-events: none;
 }
 button > * {
   cursor: pointer;
@@ -211,6 +228,11 @@ hr {
   opacity: 0.5;
 }
 
+p > code {
+  color: var(--orange-300);
+  font-weight: 600;
+}
+
 table {
   font-family: var(--articulat);
   color: var(--blue-50);
@@ -240,41 +262,4 @@ table tbody tr {
 }
 table tbody tr:last-child {
   padding-bottom: 0;
-}
-
-.code-container {
-  display: flex;
-  padding: 8px;
-  align-items: center;
-  gap: 8px;
-  align-self: stretch;
-  border-radius: 24px;
-  background: var(--blue-700, #07374F);
-}
-.code-container code {
-  color: var(--blue-50, #EFF7F9);
-  font-family: "Courier New";
-  font-size: 16px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: normal;
-}
-.code-container code.can-copy {
-  display: flex;
-  padding: 8px;
-  align-items: center;
-  gap: 8px;
-  align-self: stretch;
-  border-radius: 24px;
-  background: var(--blue-700, #07374F);
-}
-
-.code-text {
-  color: var(--blue-50, #EFF7F9);
-  font-family: "Courier New";
-  font-size: 16px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: normal;
-  opacity: 0.6;
 }

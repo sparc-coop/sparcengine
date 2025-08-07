@@ -1,31 +1,20 @@
 ﻿@using System.Net
 
 <div class="code-block @(CanCopy ? "can-copy" : "")" translate="no">
-    @if (IsMultiline)
-    {
-        <pre><code @ref=CodeRef class="language-html">
-@ChildContent</code></pre>
-    }
-    else
-    {
-        <code @ref=CodeRef class="language-html">@ChildContent</code>
-    }
-
-
+    <pre><code @ref=CodeRef class="language-@(Language)">@ChildContent</code></pre>
+    
     @if (CanCopy)
     {
         <div class="btn-container @(isCopied ? "copied" : "")">
             <button class="copy-btn icon-btn" @onclick=Copy><CopyIcon /></button>
-            <div class="copy-msg">
-                @if (isCopied)
-                {
-                    <span>Copied!</span>
-                }
-                else
-                {
-                    <span>Copy</span>
-                }
-            </div>
+            @if (isCopied)
+            {
+                <span>Copied!</span>
+            }
+            else
+            {
+                <span>Copy</span>
+            }
         </div>
     }
 </div>
@@ -35,6 +24,7 @@
     [Parameter] public required RenderFragment ChildContent { get; set; }
     [Parameter] public bool CanCopy { get; set; }
     [Parameter] public bool IsMultiline { get; set; }
+    [Parameter] public string Language { get; set; } = "html";
     bool isCopied = false;
 
     ElementReference CodeRef;

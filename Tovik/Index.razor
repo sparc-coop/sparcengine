@@ -1,14 +1,34 @@
 ﻿@page "/"
+@page "/home"
 @using Sparc.Blossom.Authentication
 @using Sparc.Engine.Aura
+@using Sparc.Engine.Billing
+@using Tovik.Installation
 @layout HomeLayout
 
 <PageTitle>Tovik</PageTitle>
+
 
 @if (Avatar != null)
 {
     <article class="home">
         <div class="page-container">
+            @if (IsACustomer)
+            {
+                <section class="trial mini">
+                    <img src="/images/Star.svg" alt="Star" />
+                    <div>
+                        <h2>
+                            Welcome back, friend!
+                        </h2>
+                        <p>Your Tovik setup is right where you left it. Click the button below to enter your dashboard.</p>
+                    </div>
+                    <footer>
+                        <button class="add-btn primary-btn" @onclick=Start>Go To My Websites &rarr;</button>
+                    </footer>
+                </section>
+            }
+
             <section class="demo">
                 <header>
                     <img src="/images/site-frame.svg" alt="Web browser facade" />
@@ -16,58 +36,129 @@
                 <div>
                     <h1>Your Website, Multilingual in Minutes</h1>
                     <p>
-                        Meet Tovik: A simple tool that turns your website multilingual without the need for coding or developers.
+                        Tovik is a simple website plugin that turns your entire site multilingual with just one line of code.
                     </p>
+                    <CodeBlock CanCopy=true>
+                        @("<script type=\"module\" src=\"https://tovik.app/tovik.js\"></script>")
+                    </CodeBlock>
                     <p>
-                        Whether you're a small business owner, startup founder, or part of a growing team, Tovik helps you speak your customers’ language with ease. Tovik detects your users’ language preferences and seamlessly translates your content, helping you connect with more people around the world.
+                        Once installed, Tovik instantly recognizes your visitors' native language and automatically translates your entire site for them--no translation plugin needed on their end. It’s quick, painless to install, and it helps you connect with more folks around the world.
 
                     </p>
-                    <p>
-                        Try it out! This site’s already running Tovik behind the scenes.
-                    </p>
+
+                    <h2>See This Site in 130+ Languages, thanks to Tovik:</h2>
                     <Sparc.Blossom.SparcEngine.Tovik.LanguageSelector Avatar="Avatar" />
                 </div>
             </section>
 
-            <section class="trial">
-                <img src="/images/Star.svg" alt="Star" />
-                <div>
-                    <h2>
-                        Try It On Your Site
-                        <span>Free</span>
-                    </h2>
-                    <p>
-                        Try our complimentary 1,000 word trial, no strings attached, and no login required. Once you need additional words, you can purchase a word pack anytime.
-                    </p>
+            <div class="two">
+                <section class="trial">
+                    <img src="/images/Star.svg" alt="Star" />
                     <div>
-                        <h4>Words Translated</h4>
-                        <UsageMeter Usage=0 Limit=1000 />
+                        <h2>
+                            Try Tovik
+                            <span>Free!</span>
+                        </h2>
+                        <ul>
+                            <li>Up to <b>1,000</b> words</li>
+                            <li>No strings attached</li>
+                            <li>No expiration date</li>
+                            <li>No invasive user tracking</li>
+                            <li>No login required</li>
+                            <li>Just install the script and go!</li>
+                        </ul>
+
+                        @if (Error != null)
+                        {
+                            <div class="error-message">@Error</div>
+                        }
+
+
+                        <footer>
+                            <button class="add-btn primary-btn" @onclick=Start>Try Tovik &rarr;</button>
+                        </footer>
                     </div>
-                    <div class="btn-container">
-                        <button class="purchase-btn primary-btn" @onclick=Start>Start Free Trial</button>
-                    </div>
-                </div>
-            </section>
+                </section>
+
+                @if (Product != null)
+                {
+                    <section class="trial">
+                        <img src="/images/Star.svg" alt="Star" />
+                        <div>
+                            <h2>
+                                Buy Tovik
+                                <span>@Product.FormattedPrice</span>
+                            </h2>
+                            <ul>
+                                <li>Up to <b>100,000</b> words</li>
+                                <li>One-time payment, no subscription</li>
+                                <li>No invasive user tracking</li>
+                                <li>Unlimited domain names</li>
+                                <li>Buy in your native currency</li>
+                                <li>No login required</li>
+                            </ul>
+
+                            <footer>
+                                <button class="add-btn primary-btn" @onclick=Buy>Buy Tovik &rarr;</button>
+                            </footer>
+                        </div>
+                    </section>
+                }
+            </div>
+
         </div>
     </article>
 }
 
 @inject Tovik.Domains.TovikDomains TovikDomains
 @inject ISparcAura Aura
+@inject ISparcBilling Billing
+@inject IConfiguration Config
+
 @code {
     BlossomAvatar? Avatar;
+    string NewDomain = "";
+    string? Error;
+    GetProductResponse? Product;
+    bool IsACustomer;
 
     protected override async Task OnInitializedAsync()
     {
         var user = await Aura.UserInfo();
-        if (user.HasProduct("Tovik"))
-            Start();
+        IsACustomer = user.HasProduct("Tovik");
 
         Avatar = user.Avatar;
+        Product = await Billing.GetProductAsync(Config["ProductId"]!);
     }
 
     void Start()
     {
         Nav.NavigateTo("/sites");
+    }
+
+    async Task Buy()
+    {
+        var totp = await Aura.GetSparcCode();
+        if (totp != null)
+            Nav.NavigateTo($"{Config["SparcStore"]}?_auth=totp:{totp.Code}");
+    }
+
+    private async Task AddDomain()
+    {
+        if (string.IsNullOrWhiteSpace(NewDomain))
+            return;
+
+        Error = null;
+        try
+        {
+            await TovikDomains.RegisterAsync(NewDomain);
+            NewDomain = "";
+            Nav.NavigateTo("/sites");
+        }
+        catch (Exception ex)
+        {
+            Error = ex.Message;
+            NewDomain = "";
+        }
     }
 }
