@@ -1,5 +1,96 @@
-﻿<h3>ChatCard</h3>
+﻿<div class="chat-card">
+    <div class="left">
+        <div class="chat-img">
+        </div>
+        <div class="chat-info">
+            <h4>@Room.Name</h4>
+            <p>@MessagePreview</p>
+        </div>
+    </div>
+    <div class="right">
+        <aside>@Messages.LastOrDefault().Timestamp.ToShortTimeString()</aside>
+        <div class="notification-bubble">
+            <span>1</span>
+        </div>
+    </div>
+</div>
 
 @code {
+    [CascadingParameter] public User User { get; set; }
+    [Parameter] public Room Room { get; set; }
 
+    IEnumerable<User> Members = new List<User>();
+    User Member1 = new User(
+        firstName: "John",
+        lastName: "Doe",
+        contact: new Contact(
+            address1: "123 Main St",
+            address2: null,
+            city: "Springfield",
+            state: "IL",
+            postalCode: "62701",
+            country: "USA",
+            emails: new List<Email>(),
+            phoneNumbers: new List<Phone>()
+        ),
+        prefix: "Mr.",
+        suffix: null
+    );
+    List<Message> Messages = new List<Message>();
+    string? RoomName;
+    string? MessagePreview;
+
+    protected override void OnInitialized()
+    {
+        Member1.Contact.EmailAddresses = new List<Email>() { new Email(type: "Personal", address: "johndoe1@gmail.com") };
+        Member1.Contact.PhoneNumbers = new List<Phone>() {
+            new Phone(type: "Home", number: "(239) 555-0108"),
+            new Phone(type: "Mobile", number: "(239) 555-0108"),
+        };
+
+        Message message1 = new Message
+        (
+            sender: Member1,
+            roomId: "1",
+            text: "Curabitur tempor quis eros tempus lacinia. Nam bibendum pellentesque quam a convallis. Sed ut vulputate nisi. Integer in felis sed leo vestibulum venenatis. Suspendisse quis arcu sem. Aenean feugiat ex eu vestibulum vestibulum. ",
+            timestamp: DateTime.Now.AddMinutes(-12)
+        );
+
+        Message message2 = new Message
+        (
+            sender: Member1,
+            roomId: "1",
+            text: "Nam pulvinar blandit velit!! 😊",
+            timestamp: DateTime.Now.AddMinutes(-10)
+        );
+
+        Message message3 = new Message
+        (
+            sender: User,
+            roomId: "1",
+            text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+            timestamp: DateTime.Now.AddMinutes(-8)
+        );
+
+        Messages.Add(message1);
+        Messages.Add(message2);
+        Messages.Add(message3);
+
+        Members.Append(Member1);
+        //Room = new Room(User, Members);
+        GetMessagePreview(Messages.LastOrDefault()?.Text ?? string.Empty);
+    }
+
+    public void GetMessagePreview(string message)
+    {
+        int maxLength = 50;
+
+        if (message.Length <= maxLength)
+        {
+            MessagePreview = message;
+        } else
+        {
+            MessagePreview = message.Substring(0, maxLength) + "...";
+        }
+    }
 }

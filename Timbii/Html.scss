@@ -1,56 +1,8 @@
-:root {
-    --black: #000000;
-    --white: #FFFFFF;
-    --grey-100: #F8F8FA;
-    --grey-200: #C9C9C9;
-    --grey-300: #999;
-    --grey-400: #7A7A7A;
-    --grey-500: #616161;
-    --grey-600: #474747;
-    --grey-700: #333;
-    --grey-800: #212121;
-    --grey-900: #131313;
-    --orange-50: #FCEFE9;
-    --orange-100: #F3C7B3;
-    --orange-200: #EEAA8E;
-    --orange-300: #E88E68;
-    --orange-400: #E27242;
-    --orange-500: #DB571F;
-    --orange-600: #DB571F;
-    --orange-700: #AE4619;
-    --orange-800: #823312;
-    --orange-900: #55220C;
-    --olive-50: #F3F3F2;
-    --olive-100: #E2E1DF;
-    --olive-200: #C9C8C5;
-    --olive-300: #B0AFAA;
-    --olive-400: #89867F;
-    --olive-500: #75726C;
-    --olive-600: #615E55;
-    --olive-700: #4F4B40;
-    --olive-800: #3A362A;
-    --olive-900: #2C2920;
-    --blue-50: #ECF0F5;
-    --blue-75: #E2E9F0;
-    --blue-100: #E2E9F0;
-    --blue-200: #CFDAE6;
-    --blue-300: #ADC1D7;
-    --egg-50: #F7F6EF;
-    --egg-100: #EBE8D7;
-    --egg-200: #DDD8BB;
-    --egg-300: #CFC9A5;
-    --egg-400: #BBB386;
-    --app-width: calc(100vw - 80px);
-    --container-width: calc(100% - 46px);
-    --sidebar-width: calc(100% - 64px);
-    --app-height: calc(100vh - 80px);
-    --formiga: formiga, Helvetica, sans-serif;
-    --halcom: halcom, Helvetica, sans-serif;
-}
+@import "_variables.scss";
 
 html, body {
     font-size: 62.5%;
-    font-family: var(--halcom);
+    font-family: Halcom;
     margin: 0;
     position: relative;
     overflow-x: hidden;
@@ -67,17 +19,17 @@ html.modal-open, body.modal-open {
 h1, h2, h3, h4, h5, h6, h7 {
     margin: 0;
     padding: 0;
-    font-family: var(--formiga);
+    font-family: Formiga;
 }
 
 p, ul, li {
     margin: 0;
     padding: 0;
-    font-family: var(--halcom);
+    font-family: Halcom;
 }
 
 button, input, select, textarea {
-    font-family: var(--halcom), Helvetica, sans-serif;
+    font-family: Halcom, Helvetica, sans-serif;
 }
 
 a {
@@ -97,7 +49,7 @@ button {
     flex-shrink: 0;
     border: 1px solid transparent;
     cursor: pointer;
-    font-family: var(--halcom);
+    font-family: Halcom;
     font-size: 1.6rem;
     font-style: normal;
     font-weight: 500;
@@ -134,43 +86,44 @@ button {
 
     &.primary-btn {
         height: 40px;
-        padding: 16px;
-        background: var(--orange-500);
-        color: var(--white, #FFF);
+        background: var(--button-primary-normal);
+        color: var(--button-text-invert);
         font-weight: 400;
         line-height: 18px; /* 150% */
 
         &:active {
-            background: var(--orange-700);
+            background: var(--button-primary-pressed);
         }
 
         &.outlined-btn {
-            border-color: rgba(219, 87, 31, 0.20);
-            color: var(--orange-500);
+            border-color: var(--button-primary-border);
+            color: var(--button-primary-normal);
 
             &:disabled {
-                color: var(--orange-500)
+                color: var(--button-primary-normal)
             }
         }
     }
 
     &.secondary-btn {
-        background: var(--olive-700);
+        background: var(--button-secondary);
+        color: var(--button-text-invert);
 
         &:active {
-            background: var(--olive-900);
+            background: var(--button-secondary-pressed);
         }
 
         &.outlined-btn {
             border-color: rgba(79, 75, 64, 0.20);
-            color: var(--olive-900);
+            color: var(--button-ghost-text-normal);
 
             &:active {
                 border-color: transparent;
+                color: var(--button-ghost-text-pressed);
             }
 
             &:disabled {
-                color: var(--olive-700);
+                color: var(--button-secondary);
             }
         }
     }
@@ -208,9 +161,9 @@ button {
         padding: 0;
         background: none;
         border: none;
-        color: var(--grey-600, #474747);
+        color: var(--text-primary);
         text-align: center;
-        font-family: Poppins;
+        font-family: Halcom;
         font-size: 1.4rem;
         font-style: normal;
         font-weight: 400;
@@ -223,20 +176,20 @@ button {
     }
 
     &.large-btn {
-        height: 64px;
-        padding: 16px 24px;
+        height: var(--button-height-large);
+        padding: var(--button-border-large);
         border-radius: 20px;
     }
 
     &.medium-btm {
-        height: 40px;
-        padding: 16px;
+        height: var(--button-height-medium);
+        padding: var(--button-border-medium);
         border-radius: 16px;
     }
 
     &.small-btn {
-        height: 32px;
-        padding: 16px;
+        height: var(--button-height-small);
+        padding: var(--button-border-small);
         border-radius: 16px;
     }
 }

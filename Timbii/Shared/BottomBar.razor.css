@@ -1,9 +1,39 @@
 ﻿footer {
-  width: 100%;
+  width: calc(100% - 64px);
+  height: 64px;
+  padding: 16px 32px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
   position: fixed;
   bottom: 0;
   left: 0;
-  border-radius: 16px 16px 0 0;
-  box-shadow: 0 -10px 20px 0 rgba(0, 18, 65, 0.04), 0 -2px 6px 0 rgba(0, 18, 65, 0.04), 0 0 1px 0 rgba(0, 18, 65, 0.04);
-  background: white;
+  border-radius: 32px 32px 0 0;
+  background: var(--surface-high-contrast);
+}
+footer button {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  color: var(--menu-icon-normal);
+}
+footer button.active {
+  color: var(--menu-icon-selected);
+}
+footer button.active ::deep svg path {
+  stroke: var(--menu-icon-selected);
+}
+footer button span {
+  text-align: center;
+  font-family: Halcom;
+  font-size: 1.2rem;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 120%; /* 14.4px */
+  letter-spacing: -0.12px;
 }

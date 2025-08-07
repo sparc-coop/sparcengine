@@ -10,7 +10,7 @@
   justify-content: space-between;
   align-items: center;
   gap: 4px;
-  background: var(--egg-50);
+  background: var(--surface-secondary);
   border-radius: 24px 24px 0 0;
   box-shadow: 0 -10px 20px 0 rgba(0, 18, 65, 0.04), 0 -2px 6px 0 rgba(0, 18, 65, 0.04), 0 0 1px 0 rgba(0, 18, 65, 0.04);
 }
@@ -26,15 +26,16 @@
   width: 100%;
   padding: 13px 16px;
   border-radius: 16px;
-  background: var(--egg-100);
+  background: var(--input-background);
 }
 .chat-bar form #chat-textarea {
   width: 100%;
   max-height: 110px;
+  overflow-y: auto;
   border: transparent;
   background: none;
-  color: var(-- grey-500, #616161);
-  font-family: var(--halcom);
+  color: var(--input-label);
+  font-family: Halcom;
   font-size: 1.3rem;
   font-style: normal;
   font-weight: 400;
@@ -46,7 +47,7 @@
 }
 .chat-bar form #chat-textarea:empty:not(:focus):before {
   content: attr(data-text);
-  color: var(--olive-700);
+  color: var(--input-label);
 }
 .chat-bar button.attach-btn ::deep svg {
   width: 20px;
@@ -54,14 +55,14 @@
 }
 .chat-bar button.send-btn {
   padding: 4px;
-  background: var(--orange-500);
+  background: var(--button-primary-normal);
 }
 .chat-bar button.send-btn ::deep svg {
   width: 20px;
   height: 20px;
 }
 .chat-bar button.send-btn ::deep svg path {
-  stroke: var(--egg-50);
+  stroke: var(--icon-invert);
 }
 .chat-bar button.send-btn:disabled {
   opacity: 0.5;

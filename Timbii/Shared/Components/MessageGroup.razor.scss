@@ -12,7 +12,7 @@
             height: 48px;
             aspect-ratio: 1/1;
             border-radius: 20px;
-            background: var(--egg-200, #DDD8BB);
+            background: var(--surface-minimal, #DDD8BB);
         }
     }
 
@@ -24,7 +24,7 @@
         gap: 8px;
 
         h5 {
-            color: var(--olive-900);
+            color: var(--text-primary);
             text-align: center;
             leading-trim: both;
             text-edge: cap;

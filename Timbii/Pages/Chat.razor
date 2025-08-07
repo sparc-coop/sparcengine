@@ -1,7 +1,7 @@
 ﻿@page "/chat"
 @layout AppLayout
 
-<TopBar OnToggleVoiceMode=ToggleVoiceMode />
+<TopBar Page="Chat" OnToggleVoiceMode=ToggleVoiceMode />
 
 <main>
     @foreach(var msg in Messages)
@@ -79,7 +79,7 @@
         Message message1 = new Message
         (
             sender: User2,
-            chatId: "1",
+            roomId: "1",
             text: "Curabitur tempor quis eros tempus lacinia. Nam bibendum pellentesque quam a convallis. Sed ut vulputate nisi. Integer in felis sed leo vestibulum venenatis. Suspendisse quis arcu sem. Aenean feugiat ex eu vestibulum vestibulum. ",
             timestamp: DateTime.Now.AddMinutes(-12)
         );
@@ -87,7 +87,7 @@
         Message message2 = new Message
         (
             sender: User2,
-            chatId: "1",
+            roomId: "1",
             text: "Nam pulvinar blandit velit!! 😊",
             timestamp: DateTime.Now.AddMinutes(-10)
         );
@@ -95,7 +95,7 @@
         Message message3 = new Message
         (
             sender:  User,
-            chatId: "1",
+            roomId: "1",
             text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
             timestamp: DateTime.Now.AddMinutes(-8)
         );
@@ -120,7 +120,7 @@
     {
         Messages.Add(new Message (
             sender: User,
-            chatId: "1",
+            roomId: "1",
             text: messageText,
             timestamp: DateTime.UtcNow
         ));

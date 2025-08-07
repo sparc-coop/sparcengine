@@ -1,17 +1,18 @@
 ﻿<footer class="bottom-bar">
-    <button>
-        <span>Messages</span>
+    <button class="friends-btn @(ActiveTab == "Friends" ? "active" : "")">
+        <FriendsIcon Color="var(--egg-50)" />
+        <span>Friends</span>
     </button>
-    <button>
-        <span>Contacts</span>
+    <button class="chats-btn @(ActiveTab == "Chats" ? "active" : "")">
+        <ChatsIcon Color="var(--egg-50)" />
+        <span>Chats</span>
     </button>
-    <button>
-        <span>Team</span>
-    </button>
-    <button>
-        <span>You</span>
+    <button class="more-btn @(ActiveTab == "More" ? "active" : "")">
+        <MoreSettingsIcon Color="var(--egg-50)" />
+        <span>More</span>
     </button>
 </footer>
 
 @code {
+    [Parameter] public string ActiveTab { get; set; } = "Friends";
 }

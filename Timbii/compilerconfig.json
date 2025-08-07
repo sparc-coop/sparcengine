@@ -78,5 +78,9 @@
   {
     "outputFile": "Pages/Chat.razor.css",
     "inputFile": "Pages/Chat.razor.scss"
+  },
+  {
+    "outputFile": "Pages/Chats.razor.css",
+    "inputFile": "Pages/Chats.razor.scss"
   }
 ]
