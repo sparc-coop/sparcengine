@@ -8,25 +8,17 @@ namespace Sparc.Engine.Chat;
 public class SparcEngineChatService(
     IRepository<Room> rooms,
     IRepository<RoomMembership> memberships,
-    IRepository<MatrixMessage> messageEvents,
-    IRepository<BlossomUser> users,
+    IRepository<MatrixEvent> events,
+    SparcAuthenticator<BlossomUser> auth,
     IHttpContextAccessor httpContextAccessor
 ) : IBlossomEndpoints
 {
-    IRepository<Room> Rooms = rooms;
-    IRepository<RoomMembership> Memberships = memberships;
-    IRepository<MatrixMessage> MessageEvents = messageEvents;
-    IRepository<BlossomUser> Users = users;
-    IHttpContextAccessor HttpContextAccessor = httpContextAccessor;
-
-    public SparcAuthenticator<BlossomUser> Auth { get; } = auth;
-
     private async Task<string> GetMatrixUserAsync()
     {
-        var principal = HttpContextAccessor.HttpContext?.User
+        var principal = httpContextAccessor.HttpContext?.User
             ?? throw new InvalidOperationException("User not authenticated");
 
-        var user = await Auth.GetAsync(principal);
+        var user = await auth.GetAsync(principal);
 
         // Ensure the user has a Matrix identity
         var username = user.Avatar.Username.ToLowerInvariant();
@@ -35,7 +27,7 @@ public class SparcEngineChatService(
         if (!user.HasIdentity("Matrix"))
         {
             user.AddIdentity("Matrix", matrixId);
-            await Auth.UpdateAsync(user);
+            await auth.UpdateAsync(user);
         }
 
         return user.Identity("Matrix")!;
@@ -45,34 +37,34 @@ public class SparcEngineChatService(
     {
         if (principal == null)
             throw new ArgumentNullException(nameof(principal));
-        var user = await Auth.GetAsync(principal);
+        var user = await auth.GetAsync(principal);
         return user.Avatar;
     }
 
     private async Task<MatrixPresence> GetPresenceAsync(ClaimsPrincipal principal, string userId)
     {
-        var user = await Auth.GetAsync(principal);
+        var user = await auth.GetAsync(principal);
         return new MatrixPresence(user.Avatar);
     }
 
     private async Task SetPresenceAsync(ClaimsPrincipal principal, string userId, MatrixPresence presence)
     {
-        var user = await Auth.GetAsync(principal);
+        var user = await auth.GetAsync(principal);
         presence.ApplyToAvatar(user.Avatar);
         user.UpdateAvatar(user.Avatar);
-        await Auth.UpdateAsync(user);
+        await auth.UpdateAsync(user);
     }
 
     private async Task<List<Room>> GetRoomsAsync()
     {
-        var rooms = await Rooms.Query.ToListAsync();
-        foreach (var room in rooms)
+        var allRooms = await rooms.Query.ToListAsync();
+        foreach (var room in allRooms)
         {
-            var memberships = await Memberships.Query.Where(x => x.RoomId == room.RoomId).ToListAsync();
-            room.Memberships = memberships;
+            var allMemberships = await memberships.Query.Where(x => x.RoomId == room.RoomId).ToListAsync();
+            room.Memberships = allMemberships;
         }
 
-        return rooms;
+        return allRooms;
     }
 
     private async Task<Room> CreateRoomAsync(CreateRoomRequest request)
@@ -83,7 +75,7 @@ public class SparcEngineChatService(
             CreatorUserId = matrixId,
             IsPrivate = request.Visibility == "private"
         };
-        await Rooms.AddAsync(room);
+        await rooms.AddAsync(room);
 
         var membership = new RoomMembership
         {
@@ -94,7 +86,7 @@ public class SparcEngineChatService(
         };
 
         room.Memberships.Add(membership);
-        await Memberships.AddAsync(membership);
+        await memberships.AddAsync(membership);
         return room;
     }
 
@@ -109,18 +101,18 @@ public class SparcEngineChatService(
             AssignedAt = DateTimeOffset.UtcNow
         };
 
-        await Memberships.AddAsync(membership);
+        await memberships.AddAsync(membership);
     }
 
     private async Task LeaveRoomAsync(string roomId)
     {
         var matrixId = await GetMatrixUserAsync();
-        var membership = await Memberships.Query
+        var membership = await memberships.Query
             .Where(m => m.RoomId == roomId && m.UserId == matrixId)
             .FirstOrDefaultAsync();
 
         if (membership != null)
-            await Memberships.DeleteAsync(membership);
+            await memberships.DeleteAsync(membership);
     }
 
     private Task InviteToRoomAsync(string roomId, InviteToRoomRequest request)
@@ -142,13 +134,13 @@ public class SparcEngineChatService(
             CreatedDate = DateTimeOffset.UtcNow
         };
 
-        await MessageEvents.AddAsync(message);
+        await events.AddAsync(message);
         return message;
     }
 
     private async Task<List<MatrixMessage>> GetMessagesAsync(string roomId)
     {
-        var messages = await MessageEvents.Query
+        var messages = await events.Query
             .Where(m => m.RoomId == roomId)
             .OrderByDescending(m => m.CreatedDate)
             .ToListAsync();
