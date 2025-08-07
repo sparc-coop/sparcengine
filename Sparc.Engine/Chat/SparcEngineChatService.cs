@@ -41,7 +41,14 @@ public class SparcEngineChatService(
         return user.Identity("Matrix")!;
     }
 
-    // For Laura:
+    private async Task<BlossomAvatar> GetUserAsync(ClaimsPrincipal principal)
+    {
+        if (principal == null)
+            throw new ArgumentNullException(nameof(principal));
+        var user = await Auth.GetAsync(principal);
+        return user.Avatar;
+    }
+
     private async Task<MatrixPresence> GetPresenceAsync(ClaimsPrincipal principal, string userId)
     {
         var user = await Auth.GetAsync(principal);
@@ -51,7 +58,8 @@ public class SparcEngineChatService(
     private async Task SetPresenceAsync(ClaimsPrincipal principal, string userId, MatrixPresence presence)
     {
         var user = await Auth.GetAsync(principal);
-        user.UpdateAvatar(presence.ToAvatar());
+        presence.ApplyToAvatar(user.Avatar);
+        user.UpdateAvatar(user.Avatar);
         await Auth.UpdateAsync(user);
     }
 
@@ -159,13 +167,15 @@ public class SparcEngineChatService(
         chatGroup.MapPost("/rooms/{roomId}/invite", InviteToRoomAsync);
         chatGroup.MapGet("/rooms/{roomId}/messages", GetMessagesAsync);
         chatGroup.MapPost("/rooms/{roomId}/send/{eventType}/{txnId}", SendMessageAsync);
+        chatGroup.MapGet("/matrixUser", GetMatrixUserAsync);
+        chatGroup.MapGet("/user", GetUserAsync);
 
         // Map the presence endpoint
-        chatGroup.MapGet("/users/{userId}/status", async (ClaimsPrincipal principal, string userId) =>
+        chatGroup.MapGet("/presence/{userId}/status", async (ClaimsPrincipal principal, string userId) =>
         {
             return await GetPresenceAsync(principal, userId);
         });
-        chatGroup.MapPost("/users/{userId}/status", async (ClaimsPrincipal principal, string userId, MatrixPresence presence) =>
+        chatGroup.MapPut("/presence/{userId}/status", async (ClaimsPrincipal principal, string userId, MatrixPresence presence) =>
         {
             await SetPresenceAsync(principal, userId, presence);
             return Results.Ok();
