@@ -6,9 +6,9 @@ using System.Security.Claims;
 namespace Sparc.Engine.Chat;
 
 public class SparcEngineChatService(
-    IRepository<Room> rooms,
+    IRepository<MatrixRoom> rooms,
     IRepository<RoomMembership> memberships,
-    IRepository<MatrixMessageEvent> events,
+    IRepository<MatrixEvent> events,
     SparcAuthenticator<BlossomUser> auth,
     IHttpContextAccessor httpContextAccessor
 ) : IBlossomEndpoints
@@ -55,7 +55,7 @@ public class SparcEngineChatService(
         await auth.UpdateAsync(user);
     }
 
-    private async Task<List<Room>> GetRoomsAsync()
+    private async Task<List<MatrixRoom>> GetRoomsAsync()
     {
         var allRooms = await rooms.Query.ToListAsync();
         foreach (var room in allRooms)
@@ -67,10 +67,10 @@ public class SparcEngineChatService(
         return allRooms;
     }
 
-    private async Task<Room> CreateRoomAsync(CreateRoomRequest request)
+    private async Task<MatrixRoom> CreateRoomAsync(CreateRoomRequest request)
     {
         var matrixId = await GetMatrixUserAsync();
-        var room = new Room(request.Name)
+        var room = new MatrixRoom(request.Name)
         {
             CreatorUserId = matrixId,
             IsPrivate = request.Visibility == "private"
@@ -120,20 +120,20 @@ public class SparcEngineChatService(
         throw new NotImplementedException();
     }
 
-    private async Task<MatrixMessageEvent> SendMessageAsync(string roomId, string eventType, string txnId, SendMessageRequest request)
+    private async Task<MatrixEvent<MatrixMessage>> SendMessageAsync(string roomId, string eventType, string txnId, SendMessageRequest request)
     {
         var matrixId = await GetMatrixUserAsync();
 
-        var message = new MatrixMessageEvent(roomId, matrixId, new MatrixMessage(request.Body));
+        var message = MatrixEvent.Create(roomId, matrixId, new MatrixMessage(request.Body));
         await events.AddAsync(message);
 
         return message;
     }
 
-    private async Task<List<MatrixMessageEvent>> GetMessagesAsync(string roomId)
+    private async Task<List<MatrixEvent>> GetMessagesAsync(string roomId)
     {
         var messages = await events.Query
-            .Where(m => m.RoomId == roomId && m.Type == "m.room.message")
+            .Where(x => x.Type == MatrixEvent.Types<MatrixMessage>() && x.RoomId == roomId)
             .OrderBy(m => m.Depth)
             .ToListAsync();
 
