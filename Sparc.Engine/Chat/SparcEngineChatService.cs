@@ -90,25 +90,26 @@ public class SparcEngineChatService(MatrixEvents events, SparcAuthenticator<Blos
         return new(roomId);
     }
 
-    private async Task<Room> DeleteRoomAsync(string roomId)
+    private async Task<MatrixRoom> DeleteRoomAsync(string roomId)
     {
-        var memberships = await Memberships.Query
-            .Where(m => m.RoomId == roomId)
-            .ToListAsync();
+        //var memberships = await Memberships.Query
+        //    .Where(m => m.RoomId == roomId)
+        //    .ToListAsync();
 
-        if (memberships != null)
-        {
-            foreach (var membership in memberships)
-            {
-                await Memberships.DeleteAsync(membership);
-            }
-        }
+        //if (memberships != null)
+        //{
+        //    foreach (var membership in memberships)
+        //    {
+        //        await Memberships.DeleteAsync(membership);
+        //    }
+        //}
 
-        var room = await Rooms.FindAsync(roomId);
-        if (room != null)
-            await Rooms.DeleteAsync(room);
+        //var room = await Rooms.FindAsync(roomId);
+        //if (room != null)
+        //    await Rooms.DeleteAsync(room);
 
-        return room;
+        //return room;
+        return null;
     }
 
     private async Task JoinRoomAsync(string roomId)
@@ -142,7 +143,6 @@ public class SparcEngineChatService(MatrixEvents events, SparcAuthenticator<Blos
         var chatGroup = endpoints.MapGroup("/_matrix/client/v3");
 
         chatGroup.MapGet("/publicRooms", GetRoomsAsync);
-        chatGroup.MapGet("/getRoomInfo/{roomId}", GetRoomInfoAsync);
         chatGroup.MapPost("/createRoom", CreateRoomAsync);
         chatGroup.MapPost("/deleteRoom/{roomId}", DeleteRoomAsync);
         chatGroup.MapPost("/join/{roomId}", JoinRoomAsync);
