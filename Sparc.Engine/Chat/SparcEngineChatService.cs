@@ -8,7 +8,7 @@ namespace Sparc.Engine.Chat;
 public class SparcEngineChatService(
     IRepository<Room> rooms,
     IRepository<RoomMembership> memberships,
-    IRepository<MatrixEvent> events,
+    IRepository<MatrixMessageEvent> events,
     SparcAuthenticator<BlossomUser> auth,
     IHttpContextAccessor httpContextAccessor
 ) : IBlossomEndpoints
@@ -120,29 +120,21 @@ public class SparcEngineChatService(
         throw new NotImplementedException();
     }
 
-    private async Task<MatrixEvent> SendMessageAsync(string roomId, string eventType, string txnId, SendMessageRequest request)
+    private async Task<MatrixMessageEvent> SendMessageAsync(string roomId, string eventType, string txnId, SendMessageRequest request)
     {
         var matrixId = await GetMatrixUserAsync();
 
-        var message = new MatrixMessage()
-        {
-            Body = request.Body,
-            MsgType = request.MsgType,
-            Sender = matrixId,
-            RoomId = roomId,
-            Type = eventType,
-            CreatedDate = DateTimeOffset.UtcNow
-        };
-
+        var message = new MatrixMessageEvent(roomId, matrixId, new MatrixMessage(request.Body));
         await events.AddAsync(message);
+
         return message;
     }
 
-    private async Task<List<MatrixMessage>> GetMessagesAsync(string roomId)
+    private async Task<List<MatrixMessageEvent>> GetMessagesAsync(string roomId)
     {
         var messages = await events.Query
-            .Where(m => m.RoomId == roomId)
-            .OrderByDescending(m => m.CreatedDate)
+            .Where(m => m.RoomId == roomId && m.Type == "m.room.message")
+            .OrderBy(m => m.Depth)
             .ToListAsync();
 
         return messages;
