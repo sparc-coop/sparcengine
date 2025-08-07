@@ -54,6 +54,15 @@ public class SparcEngineChatService(
         return rooms;
     }
 
+    private async Task<Room> GetRoomInfoAsync(string roomId)
+    {
+        var room = await Rooms.Query.Where(x => x.RoomId == roomId).FirstOrDefaultAsync();
+        if (room == null)
+            throw new KeyNotFoundException($"Room with ID {roomId} not found");
+
+        return room;
+    }
+
     private async Task<Room> CreateRoomAsync(CreateRoomRequest request)
     {
         var matrixId = await GetMatrixUserAsync();
@@ -150,7 +159,7 @@ public class SparcEngineChatService(
     {
         var messages = await MessageEvents.Query
             .Where(m => m.RoomId == roomId)
-            .OrderByDescending(m => m.CreatedDate)
+            .OrderBy(m => m.CreatedDate)
             .ToListAsync();
 
         return messages;
@@ -161,6 +170,7 @@ public class SparcEngineChatService(
         var chatGroup = endpoints.MapGroup("/_matrix/client/v3");
 
         chatGroup.MapGet("/publicRooms", GetRoomsAsync);
+        chatGroup.MapGet("/getRoomInfo/{roomId}", GetRoomInfoAsync);
         chatGroup.MapPost("/createRoom", CreateRoomAsync);
         chatGroup.MapPost("/deleteRoom/{roomId}", DeleteRoomAsync);
         chatGroup.MapPost("/join/{roomId}", JoinRoomAsync);
