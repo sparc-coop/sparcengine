@@ -27,7 +27,6 @@
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
-  gap: 8px;
   flex: 1 0 0;
   align-self: stretch;
 }
@@ -58,9 +57,9 @@
 .chat-card .right {
   display: flex;
   flex-direction: column;
-  justify-content: start;
+  justify-content: center;
   align-items: end;
-  gap: 8px;
+  gap: 4px;
 }
 .chat-card .right aside {
   color: var(--button-subtitle, #4F4B40);
@@ -71,7 +70,7 @@
   font-size: 1.4rem;
   font-style: normal;
   font-weight: 400;
-  line-height: 120%; /* 16.8px */
+  line-height: 1.92rem;
   letter-spacing: -0.14px;
   text-wrap: nowrap;
 }
