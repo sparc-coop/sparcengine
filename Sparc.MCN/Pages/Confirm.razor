@@ -1,4 +1,4 @@
-﻿@page "/"
+﻿@page "/confirm"
 @layout MainLayout
 
 <PageTitle>MyContactNetwork</PageTitle>
@@ -15,7 +15,7 @@
 </div>
 
 @code {
-    [CascadingParameter] public User User { get; set; }
+    [CascadingParameter] public required User User { get; set; }
 
     bool showContent;
     User? MyContact;

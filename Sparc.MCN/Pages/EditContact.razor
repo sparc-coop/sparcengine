@@ -19,7 +19,7 @@
         </div>
         <div class="email contact-group">
             <aside>Email</aside>
-            @foreach (var email in User.Contact.EmailAddresses)
+            @foreach (var email in User.Contact.EmailAddresses!)
             {
                 <label class="contact-item">
                     <select class="email-type" @bind=@email.Type>
@@ -34,7 +34,7 @@
         </div>
         <div class="phone contact-group">
             <aside>Phone Number</aside>
-            @foreach (var num in User.Contact.PhoneNumbers)
+            @foreach (var num in User.Contact.PhoneNumbers!)
             {
                 <label class="contact-item">
                     <select @bind=num.Type>
@@ -58,7 +58,7 @@
 </div>
 
 @code {
-    [Parameter] public User User { get; set; }
+    [Parameter] public required User User { get; set; }
 
     protected override void OnInitialized()
     {

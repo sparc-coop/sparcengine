@@ -50,11 +50,11 @@
     bool preventDefault = false;
     ElementReference TextArea;
 
-    protected override void OnParametersSet()
+    protected override async Task OnParametersSetAsync()
     {
         if (MessageSent)
         {
-            ResetInput();
+            await ResetInput();
         }
     }
 
@@ -72,7 +72,7 @@
 
     void HandleEnter(KeyboardEventArgs? args)
     {
-        if (args.Code == "Enter" && !args.ShiftKey)
+        if (args?.Code == "Enter" && !args.ShiftKey)
         {
             preventDefault = true;
             InitiateMessage();
@@ -85,10 +85,10 @@
 
     private async Task<string> GetStringFromJs()
     {
-        var innerText = Js.InvokeAsync<string>("getInnerHtml", "chat-textarea");
+        var innerText = await Js.InvokeAsync<string>("getInnerHtml", "chat-textarea");
         if (innerText != null)
         {
-            return innerText.Result;
+            return innerText;
         }
         else
         {

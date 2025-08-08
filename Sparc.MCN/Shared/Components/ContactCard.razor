@@ -75,7 +75,7 @@
         <div class="contact-methods contact-group">
             <aside>Contact Info</aside>
 
-            @foreach (var num in User.Contact.PhoneNumbers)
+            @foreach (var num in User.Contact.PhoneNumbers!)
             {
                 if (!String.IsNullOrEmpty(num.Number))
                 {
@@ -87,7 +87,7 @@
                 }
             }
 
-            @foreach (var email in User.Contact.EmailAddresses)
+            @foreach (var email in User.Contact.EmailAddresses!)
             {
                 if (!String.IsNullOrEmpty(email.Address))
                 {
@@ -139,5 +139,5 @@
 </div>
 
 @code {
-    [Parameter] public User User { get; set; }
+    [Parameter] public required User User { get; set; }
 }
