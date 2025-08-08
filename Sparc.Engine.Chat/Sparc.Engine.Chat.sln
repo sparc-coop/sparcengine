@@ -19,8 +19,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sparc.Blossom.Data.AzureSto
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sparc.Blossom.Realtime.Twilio", "..\..\blossom\Sparc.Blossom.Realtime.Twilio\Sparc.Blossom.Realtime.Twilio.csproj", "{19C5F091-1947-2959-F0B1-CF6D54BA454D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sparc.MCN", "..\Sparc.MCN\Sparc.MCN.csproj", "{04DB077E-0F1A-852F-D454-0036ABBEBD01}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -55,10 +53,6 @@ Global
 		{19C5F091-1947-2959-F0B1-CF6D54BA454D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{19C5F091-1947-2959-F0B1-CF6D54BA454D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{19C5F091-1947-2959-F0B1-CF6D54BA454D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{04DB077E-0F1A-852F-D454-0036ABBEBD01}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{04DB077E-0F1A-852F-D454-0036ABBEBD01}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{04DB077E-0F1A-852F-D454-0036ABBEBD01}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{04DB077E-0F1A-852F-D454-0036ABBEBD01}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
