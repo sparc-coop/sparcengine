@@ -1,7 +1,7 @@
-﻿using Microsoft.Azure.Cosmos.Linq;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Sparc.MCN.Messages;
+
 public class Message : BlossomEntity<string>
 {
     [Required(ErrorMessage = "Sender is required")]
