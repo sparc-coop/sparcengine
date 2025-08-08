@@ -14,8 +14,4 @@
 		<ProjectReference Include="..\..\blossom\Sparc.Core\Sparc.Core.csproj" />
 		<ServiceWorker Include="wwwroot\service-worker.js" PublishedContent="wwwroot\service-worker.published.js" />
 	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="Messages\" />
-	</ItemGroup>
 </Project>
