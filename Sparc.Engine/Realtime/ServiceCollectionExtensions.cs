@@ -1,6 +1,4 @@
-﻿using Sparc.Engine.Billing.Stripe;
-
-namespace Sparc.Engine.Chat;
+﻿namespace Sparc.Blossom.Realtime;
 
 public static class ServiceCollectionExtensions
 {

@@ -1,20 +1,20 @@
 ﻿using Sparc.Blossom.Authentication;
 using Sparc.Blossom.Data;
-using Sparc.Core.Chat;
+using Sparc.Blossom.Realtime.Matrix;
 using System.Security.Claims;
 
-namespace Sparc.Engine.Chat;
+namespace Sparc.Blossom.Realtime;
 
 public class SparcEngineChatService(MatrixEvents events, SparcAuthenticator<BlossomUser> auth)
     : IBlossomEndpoints
 {
-    private async Task<MatrixPresence> GetPresenceAsync(ClaimsPrincipal principal, string userId)
+    private async Task<BlossomPresence> GetPresenceAsync(ClaimsPrincipal principal, string userId)
     {
         var user = await auth.GetAsync(principal);
-        return new MatrixPresence(user.Avatar);
+        return new BlossomPresence(user.Avatar);
     }
 
-    private async Task SetPresenceAsync(ClaimsPrincipal principal, string userId, MatrixPresence presence)
+    private async Task SetPresenceAsync(ClaimsPrincipal principal, string userId, BlossomPresence presence)
     {
         var user = await auth.GetAsync(principal);
         presence.ApplyToAvatar(user.Avatar);
@@ -156,7 +156,7 @@ public class SparcEngineChatService(MatrixEvents events, SparcAuthenticator<Blos
         {
             return await GetPresenceAsync(principal, userId);
         });
-        chatGroup.MapPut("/presence/{userId}/status", async (ClaimsPrincipal principal, string userId, MatrixPresence presence) =>
+        chatGroup.MapPut("/presence/{userId}/status", async (ClaimsPrincipal principal, string userId, BlossomPresence presence) =>
         {
             await SetPresenceAsync(principal, userId, presence);
             return Results.Ok();

@@ -1,7 +1,4 @@
-﻿
-using Sparc.Blossom.Authentication;
-
-namespace Sparc.Engine;
+﻿namespace Sparc.Blossom.Content;
 
 public class Contents(BlossomAggregateOptions<TextContent> options) 
     : BlossomAggregate<TextContent>(options)

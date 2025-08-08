@@ -1,6 +1,4 @@
-﻿using Sparc.Blossom.Authentication;
-
-namespace Sparc.Engine;
+﻿namespace Sparc.Blossom.Authentication;
 
 public class SparcAuthenticatorMiddleware(RequestDelegate next)
 {

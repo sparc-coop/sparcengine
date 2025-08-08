@@ -2,7 +2,7 @@
 using NAudio.Lame;
 using NAudio.Wave;
 
-namespace Sparc.Engine;
+namespace Sparc.Blossom.Content;
 
 internal class AzureSpeaker : ISpeaker
 {

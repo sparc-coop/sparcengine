@@ -1,10 +1,9 @@
 ﻿using OtpNet;
-using Sparc.Blossom.Authentication;
 using System.Collections.Concurrent;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace Sparc.Engine.Aura;
+namespace Sparc.Blossom.Authentication;
 
 public record SparcCodeIndex(string Hash, string UserId, byte[] UserSecret, DateTime Expires);
 public class SparcCodes

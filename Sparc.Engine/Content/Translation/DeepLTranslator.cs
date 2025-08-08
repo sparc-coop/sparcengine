@@ -1,7 +1,6 @@
 ﻿using DeepL;
-using System.Text.Json;
 
-namespace Sparc.Engine;
+namespace Sparc.Blossom.Content;
 
 internal class DeepLTranslator(IConfiguration configuration) : ITranslator
 {

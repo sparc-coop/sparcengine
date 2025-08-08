@@ -1,7 +1,6 @@
-﻿using System.Text.Json;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
-namespace Sparc.Blossom.Data;
+namespace Sparc.Blossom.Data.Pouch;
 
 public class PouchRevisions
 {

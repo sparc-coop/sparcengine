@@ -1,9 +1,8 @@
 ﻿using Sparc.Blossom.Authentication;
+using Sparc.Blossom.Billing.Stripe;
 using Sparc.Blossom.Data;
-using Sparc.Core.Billing;
-using Sparc.Engine.Billing.Stripe;
 
-namespace Sparc.Engine.Billing;
+namespace Sparc.Blossom.Billing;
 
 public class Orders(
     BlossomAggregateOptions<SparcOrder> options, 

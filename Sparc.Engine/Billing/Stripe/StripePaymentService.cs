@@ -1,7 +1,6 @@
-﻿using Sparc.Core.Billing;
-using Stripe;
+﻿using Stripe;
 
-namespace Sparc.Engine.Billing.Stripe;
+namespace Sparc.Blossom.Billing.Stripe;
 
 public class StripePaymentService
 {

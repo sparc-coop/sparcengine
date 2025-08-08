@@ -1,8 +1,7 @@
 ﻿using Azure;
 using Azure.AI.Translation.Text;
-using System.Text.Json;
 
-namespace Sparc.Engine;
+namespace Sparc.Blossom.Content;
 
 internal class AzureTranslator(IConfiguration configuration) : ITranslator
 {

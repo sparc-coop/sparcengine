@@ -4,7 +4,7 @@ using System.Collections.Concurrent;
 using System.Globalization;
 using System.Security.Claims;
 
-namespace Sparc.Engine;
+namespace Sparc.Blossom.Content;
 
 public class TovikTranslator(
     IEnumerable<ITranslator> translators,

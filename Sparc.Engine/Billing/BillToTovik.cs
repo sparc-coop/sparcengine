@@ -1,9 +1,9 @@
 ﻿using MediatR;
 using Sparc.Blossom.Authentication;
+using Sparc.Blossom.Content;
 using Sparc.Blossom.Data;
-using Sparc.Core.Billing;
 
-namespace Sparc.Engine.Billing;
+namespace Sparc.Blossom.Billing;
 
 public class BillToTovik(
     IRepository<BlossomUser> users,

@@ -1,9 +1,8 @@
 ﻿using Sparc.Blossom.Authentication;
 using Sparc.Blossom.Data;
-using Sparc.Core.Chat;
-using Twilio.TwiML.Voice;
+using Sparc.Blossom.Realtime.Matrix;
 
-namespace Sparc.Engine.Chat;
+namespace Sparc.Blossom.Realtime;
 
 public class MatrixEvents(
     IRepository<MatrixEvent> events,

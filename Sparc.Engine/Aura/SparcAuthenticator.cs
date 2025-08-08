@@ -1,12 +1,11 @@
 ﻿using Passwordless;
-using Sparc.Blossom.Authentication;
+using Sparc.Blossom.Billing;
+using Sparc.Blossom.Content;
 using Sparc.Blossom.Data;
 using Sparc.Blossom.Realtime;
-using Sparc.Core.Billing;
-using Sparc.Engine.Aura;
 using System.Security.Claims;
 
-namespace Sparc.Engine;
+namespace Sparc.Blossom.Authentication;
 
 public class SparcAuthenticator<T>(
     IPasswordlessClient _passwordlessClient,

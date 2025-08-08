@@ -1,7 +1,7 @@
 ﻿using Sparc.Blossom.Data;
 using System.Text.Json;
 
-namespace Sparc.Engine.Billing;
+namespace Sparc.Blossom.Billing;
 
 public class ExchangeRates(IConfiguration config, AzureBlobRepository blobs)
 {

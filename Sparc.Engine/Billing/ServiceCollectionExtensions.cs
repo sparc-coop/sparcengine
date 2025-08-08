@@ -1,7 +1,6 @@
-﻿using Sparc.Core.Billing;
-using Sparc.Engine.Billing.Stripe;
+﻿using Sparc.Blossom.Billing.Stripe;
 
-namespace Sparc.Engine.Billing;
+namespace Sparc.Blossom.Billing;
 
 public static class ServiceCollectionExtensions
 {

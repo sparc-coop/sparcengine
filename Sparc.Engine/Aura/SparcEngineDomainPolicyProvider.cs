@@ -4,7 +4,7 @@ using Microsoft.Net.Http.Headers;
 using Sparc.Blossom.Data;
 using System.Collections.Concurrent;
 
-namespace Sparc.Engine;
+namespace Sparc.Blossom.Authentication;
 
 public class SparcEngineDomainPolicyProvider(IRepository<SparcDomain> domains, HybridCache cache) : ICorsPolicyProvider
 {

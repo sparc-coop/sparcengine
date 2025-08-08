@@ -1,7 +1,7 @@
 ﻿using Markdig;
 using Markdig.Renderers;
 
-namespace Sparc.Engine;
+namespace Sparc.Blossom.Content;
 
 internal static class ContentExtensions
 {

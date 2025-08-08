@@ -1,5 +1,5 @@
 ﻿
-namespace Sparc.Engine;
+namespace Sparc.Blossom.Authentication;
 
 public class FriendlyId
 {

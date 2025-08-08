@@ -1,11 +1,9 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Components.Authorization;
-using Sparc.Blossom.Authentication;
 using Sparc.Blossom.Platforms.Server;
-using Sparc.Engine.Aura;
 using System.Security.Claims;
 
-namespace Sparc.Engine;
+namespace Sparc.Blossom.Authentication;
 
 public static class ServiceCollectionExtensions
 {

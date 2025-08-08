@@ -1,19 +1,16 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Sparc.Blossom.Authentication;
-using Sparc.Blossom.Data;
+using Sparc.Blossom.Billing;
+using Sparc.Blossom.Content;
 using Sparc.Blossom.Data.Pouch;
-using Sparc.Core.Billing;
-using Sparc.Core.Chat;
-using Sparc.Engine;
+using Sparc.Blossom.Realtime.Matrix;
+
+namespace Sparc.Blossom.Engine;
 
 internal class SparcEngineContext(DbContextOptions<SparcEngineContext> options) : DbContext(options)
 {
-
-    public DbSet<RoomMembership> Memberships { get; set; }
     protected override void OnModelCreating(ModelBuilder model)
     {
-
-        
         model.Entity<PouchDatum>().ToContainer("Data")
             .HasPartitionKey(x => new { x.Db, x.PouchId })
             .HasKey(x => x.Id);

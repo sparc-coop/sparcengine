@@ -3,7 +3,7 @@ using Sparc.Blossom.Authentication;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 
-namespace Sparc.Engine.Aura;
+namespace Sparc.Blossom.Authentication;
 
 public class SparcTokens(IConfiguration config)
 {

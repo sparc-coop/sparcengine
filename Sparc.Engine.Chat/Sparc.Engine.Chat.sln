@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.14.36221.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sparc.Engine", "..\Sparc.Engine\Sparc.Engine.csproj", "{25013180-A99A-AC11-6383-266719804843}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sparc.Blossom.Engine", "..\Sparc.Engine\Sparc.Blossom.Engine.csproj", "{25013180-A99A-AC11-6383-266719804843}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sparc.Blossom.Chat.Example", "..\..\blossom\Sparc.Blossom.Chat.Example\Sparc.Blossom.Chat.Example.csproj", "{759BE696-4631-250A-801B-1FFAD5D2082D}"
 EndProject

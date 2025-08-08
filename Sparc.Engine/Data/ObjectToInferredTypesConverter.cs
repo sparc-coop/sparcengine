@@ -1,7 +1,7 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace Sparc.Engine;
+namespace Sparc.Blossom.Data;
 
 public class ObjectToInferredTypesConverter : JsonConverter<object>
 {

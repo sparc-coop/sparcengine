@@ -1,16 +1,15 @@
 ﻿using Microsoft.Extensions.Options;
 
-namespace Sparc2.Services
+namespace Sparc.Blossom.Content.Slack;
+
+public static class ServiceCollectionExtensions
 {
-    public static class ServiceCollectionExtensions
+    public static IServiceCollection AddSlackIntegration(this IServiceCollection services, IConfiguration config)
     {
-        public static IServiceCollection AddSlackIntegration(this IServiceCollection services, IConfiguration config)
-        {
-            services.Configure<SlackIntegrationOptions>(config.GetSection("SlackIntegration"));
-            services.AddSingleton(sp =>
-                sp.GetRequiredService<IOptions<SlackIntegrationOptions>>().Value);
-            services.AddSingleton<ISlackIntegrationService, SlackIntegrationService>();
-            return services;
-        }
+        services.Configure<SlackIntegrationOptions>(config.GetSection("SlackIntegration"));
+        services.AddSingleton(sp =>
+            sp.GetRequiredService<IOptions<SlackIntegrationOptions>>().Value);
+        services.AddSingleton<ISlackIntegrationService, SlackIntegrationService>();
+        return services;
     }
 }

@@ -1,10 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.Cosmos;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
-using System.Linq;
 
-namespace Sparc.Blossom.Data;
+namespace Sparc.Blossom.Data.Pouch;
 
 public class PouchData(CosmosDbSimpleRepository<PouchDatum> data) : IBlossomEndpoints
 {

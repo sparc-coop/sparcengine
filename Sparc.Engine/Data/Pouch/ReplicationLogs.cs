@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Sparc.Blossom.Data;
-using Sparc.Blossom.Data.Pouch;
 
-namespace Sparc.Engine;
+namespace Sparc.Blossom.Data.Pouch;
 
 public class ReplicationLogs(CosmosDbSimpleRepository<ReplicationLog> logs) : IBlossomEndpoints
 {

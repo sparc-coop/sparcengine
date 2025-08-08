@@ -2,7 +2,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace Sparc.Blossom.Data;
+namespace Sparc.Blossom.Data.Pouch;
 
 public record PouchRevisionAdded(PouchDatum Datum) : BlossomEvent<PouchDatum>(Datum);
 public class PouchDatum(string db, string pouchId, string rev) : BlossomEntity<string>($"{pouchId}:{rev}")

@@ -1,7 +1,6 @@
-﻿namespace Sparc2.Services
+﻿namespace Sparc.Blossom.Content.Slack;
+
+public class SlackIntegrationOptions
 {
-    public class SlackIntegrationOptions
-    {
-        public required string BotToken { get; set; }
-    }
+    public required string BotToken { get; set; }
 }
