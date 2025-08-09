@@ -14,6 +14,12 @@ public class SparcEngineChatService(MatrixEvents events, SparcAuthenticator<Blos
         return new MatrixPresence(user.Avatar);
     }
 
+    private async Task<MatrixPresence?> GetLatestPresenceAsync(string userId)
+    {
+        var presences = await events.GetAllAsync<MatrixPresence>(userId);
+        return presences.LastOrDefault()?.Content;
+    }
+
     private async Task SetPresenceAsync(ClaimsPrincipal principal, string userId, MatrixPresence presence)
     {
         var user = await auth.GetAsync(principal);
@@ -161,6 +167,10 @@ public class SparcEngineChatService(MatrixEvents events, SparcAuthenticator<Blos
         {
             await SetPresenceAsync(principal, userId, presence);
             return Results.Ok();
+        });
+        chatGroup.MapGet("/presence/{userId}/latest", async (string userId) =>
+        {
+            return await GetLatestPresenceAsync(userId);
         });
 
         var legacyChatGroup = endpoints.MapGroup("/_matrix/client/v1");
