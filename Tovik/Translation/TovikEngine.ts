@@ -11,8 +11,15 @@ export default class TovikEngine {
     static rtlLanguages = ['ar', 'fa', 'he', 'ur', 'ps', 'ku', 'dv', 'yi', 'sd', 'ug'];
 
     static async getUserLanguage() {
+        // If query parameter lang is set, use it
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has('lang')) {
+            return urlParams.get('lang');
+        }
+
         if (this.userLang)
             return this.userLang;
+
         var profile = await db.profiles.get('default');
         if (profile) {
             this.userLang = profile.language;
@@ -27,7 +34,7 @@ export default class TovikEngine {
         let lang = await this.getUserLanguage();
         this.documentLang = document.documentElement.lang;
 
-        this.setLanguage(lang);
+        await this.setLanguage(lang);
         document.addEventListener('tovik-user-language-changed', async (event: CustomEvent) => {
             await this.setLanguage(event.detail);
         });
