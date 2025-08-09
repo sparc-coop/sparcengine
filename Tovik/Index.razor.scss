@@ -45,7 +45,6 @@
 
         button.primary-btn {
             width: auto;
-            margin-top: 32px;
         }
 
         ::deep .code-block {
@@ -59,6 +58,9 @@
             font-size: 2.5rem;
             font-weight: 700;
             margin-bottom: 16px;
+            display: flex;
+            justify-content: flex-start;
+            gap: 20px;
         }
 
         p, li {
@@ -71,7 +73,8 @@
         }
 
         ul {
-            padding-left: 16px;
+            padding-left: 0;
+            list-style: none;
         }
 
         li {
@@ -84,17 +87,47 @@
         grid-template-columns: 1fr;
         gap: 24px;
 
+        ul {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 24px;
+            margin-top: 48px;
+
+            p {
+                margin-top: 8px;
+            }
+
+            @media screen and (min-width: 600px) {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
         p, li {
             font-size: 1.6rem;
         }
 
-        @media screen and (min-width: 1024px) {
+        li {
+            background-color: var(--blue-600);
+            border-radius: 24px;
+            padding: 24px;
+
+            p {
+                margin-bottom: 0;
+            }
+        }
+
+        @media screen and (min-width: 4000px) {
             grid-template-columns: 1fr 1fr;
         }
     }
 
     section.trial {
         align-items: flex-start;
+
+        h2 {
+            display: flex;
+            justify-content: space-between;
+        }
 
         span {
             display: inline-block;
@@ -117,40 +150,24 @@
             margin-top: 8px;
         }
 
-        img {
-            height: 30px;
+        > header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
         }
 
         footer {
+            margin-top: 16px;
+            width: 100%;
+
             button {
                 width: 100%;
-
-                &[disabled] {
-                    opacity: 0.3;
-                }
-
-                &:hover {
-                    font-weight: 600;
-                }
             }
         }
 
-        @media screen and (min-width: 1024px) {
-            padding: 64px 64px 200px 64px !important;
-
-            footer {
-                position: absolute;
-                bottom: 0;
-                left: 0;
-                right: 0;
-                padding: 32px;
-            }
-        }
-
-        &.mini {
-            @media screen and (min-width: 1024px) {
-                padding: 64px 64px 120px 64px !important;
-            }
+        img {
+            height: 30px;
         }
     }
 

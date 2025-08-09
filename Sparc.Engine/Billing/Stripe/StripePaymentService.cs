@@ -73,19 +73,25 @@ public class StripePaymentService
         return product;
     }
 
+    static Dictionary<string, StripeList<Price>> PriceCache = [];
+
     public async Task<decimal?> GetPriceAsync(string productId, string currencyId, bool stripeFormat = false)
     {
         currencyId = currencyId.ToLower();
 
-        var priceService = new PriceService();
-        var listOptions = new PriceListOptions
+        if (!PriceCache.TryGetValue(productId, out StripeList<Price>? value))
         {
-            Product = productId,
-            Expand = ["data.currency_options"]
-        };
+            var priceService = new PriceService();
+            var listOptions = new PriceListOptions
+            {
+                Product = productId,
+                Expand = ["data.currency_options"]
+            };
+            value = await priceService.ListAsync(listOptions);
+            PriceCache.Add(productId, value);
+        }
 
-        var pricesResult = await priceService.ListAsync(listOptions);
-        var basePrice = pricesResult.Data.FirstOrDefault();
+        var basePrice = value.Data.FirstOrDefault();
         if (basePrice?.UnitAmount == null)
             return null;
 

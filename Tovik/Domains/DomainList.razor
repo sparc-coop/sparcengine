@@ -1,5 +1,6 @@
 ﻿@page "/sites"
 @using Sparc.Engine.Aura
+@using Sparc.Engine.Billing
 @using Tovik.Installation
 @layout MainLayout
 
@@ -24,10 +25,10 @@
                     @("<script type=\"module\" src=\"https://tovik.app/tovik.js\"></script>")
                 </CodeBlock>
                 <p>
-                    That’s it! Tovik will now detect your visitors’ browser language and display your site accordingly.
+                    That’s it! Tovik will now detect your visitors’ browser language and display your site in their language automatically.
                 </p>
                 <aside>
-                    This message will disappear automatically once we detect the Tovik tag on your website.
+                    This message will disappear once we successfully detect the Tovik tag on your website.
                 </aside>
             </section>
         }
@@ -39,19 +40,22 @@
 
             @if (IsTrial)
             {
-                <p>Your free trial of Tovik includes 1,000 words by default. Once you need additional words, you can click the button below to purchase a word pack anytime.</p>
+                <p>Your free trial of Tovik includes 1,000 words to start. Once you need to translate additional words, click the button below to purchase a word pack.</p>
             }
             else
             {
-                <p>Thank you for purchasing Tovik! Your purchase includes 100,000 words to get you started. If you ever need additional words, you can purchase an additional word pack anytime.</p>
+                <p>Thank you for purchasing Tovik! Your purchase includes 100,000 words of translation. If you ever need to translate additional words, click the button below to purchase a word pack.</p>
             }
             <div>
                 <h4>Words Translated</h4>
                 <UsageMeter Usage=Usage Limit=Limit />
             </div>
-            <div class="btn-container">
-                <button class="purchase-btn primary-btn" @onclick=GoToStore>Need more words?</button>
-            </div>
+            @if (Product != null)
+            {
+                <div class="btn-container">
+                    <button class="purchase-btn primary-btn" @onclick=GoToStore>Add 100,000 words (@Product.FormattedPrice)</button>
+                </div>
+            }
         </section>
 
         <section class="manage-domains">
@@ -112,10 +116,13 @@
 @inject Tovik.Domains.TovikDomains TovikDomains
 @inject ISparcAura Aura
 @inject IConfiguration Config
+@inject ISparcBilling Billing
+
 @code {
     List<SparcDomain> Domains = new();
     string NewDomain = "";
     string? Error;
+    GetProductResponse? Product;
 
     int Usage;
     int Limit;
@@ -132,6 +139,7 @@
         await LoadDomains();
         Limit = product.MaxUsage;
         Usage = Domains.Sum(d => d.TovikUsage);
+        Product = await Billing.GetProductAsync(Config["ProductId"]!);
     }
 
     private async Task GoToStore()

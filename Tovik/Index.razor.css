@@ -39,7 +39,6 @@ article section h4 {
 }
 article section button.primary-btn {
   width: auto;
-  margin-top: 32px;
 }
 article section ::deep .code-block {
   background-color: var(--blue-600);
@@ -49,6 +48,9 @@ article section h2 {
   font-size: 2.5rem;
   font-weight: 700;
   margin-bottom: 16px;
+  display: flex;
+  justify-content: flex-start;
+  gap: 20px;
 }
 article section p, article section li {
   font-family: var(--articulat);
@@ -59,7 +61,8 @@ article section p, article section li {
   line-height: 150%;
 }
 article section ul {
-  padding-left: 16px;
+  padding-left: 0;
+  list-style: none;
 }
 article section li {
   margin-bottom: 8px;
@@ -69,16 +72,42 @@ article div.two {
   grid-template-columns: 1fr;
   gap: 24px;
 }
+article div.two ul {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+  margin-top: 48px;
+}
+article div.two ul p {
+  margin-top: 8px;
+}
+@media screen and (min-width: 600px) {
+  article div.two ul {
+    grid-template-columns: 1fr 1fr;
+  }
+}
 article div.two p, article div.two li {
   font-size: 1.6rem;
 }
-@media screen and (min-width: 1024px) {
+article div.two li {
+  background-color: var(--blue-600);
+  border-radius: 24px;
+  padding: 24px;
+}
+article div.two li p {
+  margin-bottom: 0;
+}
+@media screen and (min-width: 4000px) {
   article div.two {
     grid-template-columns: 1fr 1fr;
   }
 }
 article section.trial {
   align-items: flex-start;
+}
+article section.trial h2 {
+  display: flex;
+  justify-content: space-between;
 }
 article section.trial span {
   display: inline-block;
@@ -97,34 +126,21 @@ article section.trial > div {
 article section.trial input {
   margin-top: 8px;
 }
-article section.trial img {
-  height: 30px;
+article section.trial > header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+article section.trial footer {
+  margin-top: 16px;
+  width: 100%;
 }
 article section.trial footer button {
   width: 100%;
 }
-article section.trial footer button[disabled] {
-  opacity: 0.3;
-}
-article section.trial footer button:hover {
-  font-weight: 600;
-}
-@media screen and (min-width: 1024px) {
-  article section.trial {
-    padding: 64px 64px 200px 64px !important;
-  }
-  article section.trial footer {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    padding: 32px;
-  }
-}
-@media screen and (min-width: 1024px) {
-  article section.trial.mini {
-    padding: 64px 64px 120px 64px !important;
-  }
+article section.trial img {
+  height: 30px;
 }
 article section.demo {
   background-color: transparent !important;

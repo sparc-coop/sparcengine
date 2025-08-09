@@ -146,6 +146,10 @@ button {
         font-style: normal;
         font-weight: 500;
         line-height: normal;
+
+        &:hover {
+            font-weight: bold;
+        }
     }
 
     &.secondary-btn {
