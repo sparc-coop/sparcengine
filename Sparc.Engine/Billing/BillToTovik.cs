@@ -29,6 +29,10 @@ public class BillToTovik(
         if (random != 8)
             return;
 
+        domain.TovikUsage = (int)charges.Query.Where(x => x.Domain == item.Content.Domain)
+            .Sum(x => x.Amount);
+        await domains.UpdateAsync(domain);
+
         var user = await users.Query
             .Where(u => u.Id == domain.TovikUserId)
             .FirstOrDefaultAsync();
@@ -41,9 +45,5 @@ public class BillToTovik(
             .Where(x => x.UserId == domain.TovikUserId)
             .Sum(x => x.Amount);
         await users.UpdateAsync(user!);
-
-        domain.TovikUsage = (int)charges.Query.Where(x => x.Domain == item.Content.Domain)
-            .Sum(x => x.Amount);
-        await domains.UpdateAsync(domain);
     }
 }
