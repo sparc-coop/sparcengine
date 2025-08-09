@@ -44,7 +44,7 @@ internal class DeepLTranslator(IConfiguration configuration) : ITranslator
                     var result = await Client.TranslateTextAsync(texts!, sourceLanguage.Key.ToString(), safeTargetLanguage, options);
                     var newContent = safeBatch.Zip(result, (message, translation) => new TextContent(message, targetLanguage, translation.Text));
                     translatedMessages.AddRange(newContent);
-                    translatedMessages.ForEach(x => x.AddCharge(CostPerWord, $"DeepL translation of {x.OriginalText} to {x.LanguageId}"));
+                    translatedMessages.ForEach(x => x.AddCharge(CostPerWord, $"DeepL translation of {x.Id} {x.OriginalText} to {x.LanguageId}"));
                 }
             }
         }
