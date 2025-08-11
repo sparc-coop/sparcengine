@@ -23,7 +23,8 @@
                 <div class="user-img">
                 </div>
                 <div class="user-info">
-                    <h4>FirstName LastName</h4>
+                    <h4>@(Room != null ? (Room.Name ?? Room.RoomId.Substring(0, 16)) : "")</h4>
+                    <aside>@(Room != null ? Room.Topic : "")</aside>
                 </div>
             </div>
         </div>
@@ -55,6 +56,7 @@
 
 @code {
     [Parameter] public string Page { get; set; }
+    [Parameter] public MatrixRoom? Room { get; set; }
     [Parameter] public EventCallback<bool> OnToggleVoiceMode { get; set; }
     bool voiceMode = false;
 

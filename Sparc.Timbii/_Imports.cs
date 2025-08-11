@@ -1,2 +1,4 @@
 ﻿global using Sparc.Blossom;
-global using Timbii;
+global using Sparc.Timbii;
+global using Sparc.Timbii.Users;
+global using Sparc.Timbii.Messages;
