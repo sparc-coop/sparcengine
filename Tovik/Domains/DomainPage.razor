@@ -3,6 +3,12 @@
 @layout MainLayout
 
 <PageTitle>Tovik | @(Domain != null ? Domain.Domain : "Your Domain")</PageTitle>
+<HeadContent>
+    <!-- Event snippet for Domain Added conversion page -->
+    <script>
+      gtag('event', 'conversion', {'send_to': 'AW-11084766602/LSImCPXjhYQbEIq70KUp'});
+    </script>
+</HeadContent>
 
 <article class="domain-page">
     <div class="page-container">
@@ -130,6 +136,8 @@
     {
         Domain = await TovikDomains.Get(Id);
         Glossaries.AddRange(new[] { "Lorem Ipsum", "Dolor Sit Amet", "Consectetur Adipiscing Elit" });
+        if (Domain != null && Domain.DateConnected == null)
+            await Verify();
     }
 
     async Task AddExemption()

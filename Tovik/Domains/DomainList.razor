@@ -165,6 +165,7 @@
             await TovikDomains.RegisterAsync(NewDomain);
             NewDomain = "";
             await LoadDomains();
+            Nav.NavigateTo($"/sites/{Domains.Last().Id}");
         }
         catch (Exception ex)
         {
