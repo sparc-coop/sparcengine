@@ -1,0 +1,27 @@
+﻿@using System.Net.Http
+@using System.Net.Http.Json
+@using Microsoft.AspNetCore.Components.Forms
+@using Microsoft.AspNetCore.Components.Routing
+@using Microsoft.AspNetCore.Components.Web
+@using static Microsoft.AspNetCore.Components.Web.RenderMode
+@using Microsoft.AspNetCore.Components.Web.Virtualization
+@using Microsoft.JSInterop
+@using Sparc.Timbii
+@using Sparc.Timbii.Rooms
+@using Sparc.Timbii.Shared
+@using Sparc.Timbii.Shared.Components
+@using Sparc.Timbii.Shared.Assets
+@using Sparc.Timbii.Shared.Icons
+@using Sparc.Engine.Chat
+@using Sparc.Engine.Aura
+
+@using Sparc.Blossom.Authentication
+@using Sparc.Core.Chat
+
+@inject ISparcChat Chats
+
+@inject IJSRuntime Js
+@inject NavigationManager Nav
+
+@* Remove later *@
+@using Sparc.MCN.Users
