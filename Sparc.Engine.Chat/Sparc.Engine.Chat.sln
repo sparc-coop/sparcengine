@@ -21,6 +21,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sparc.Blossom.Realtime.Twil
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sparc.MCN", "..\Sparc.MCN\Sparc.MCN.csproj", "{04DB077E-0F1A-852F-D454-0036ABBEBD01}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Timbii", "..\Timbii\Timbii.csproj", "{9D4EA7AB-8C8B-7AB0-D156-5E05C45D9DE9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -59,6 +61,10 @@ Global
 		{04DB077E-0F1A-852F-D454-0036ABBEBD01}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{04DB077E-0F1A-852F-D454-0036ABBEBD01}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{04DB077E-0F1A-852F-D454-0036ABBEBD01}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9D4EA7AB-8C8B-7AB0-D156-5E05C45D9DE9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9D4EA7AB-8C8B-7AB0-D156-5E05C45D9DE9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9D4EA7AB-8C8B-7AB0-D156-5E05C45D9DE9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9D4EA7AB-8C8B-7AB0-D156-5E05C45D9DE9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
