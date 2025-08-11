@@ -1,5 +1,8 @@
 ﻿@page "/"
 @page "/home"
+@page "/sapient"
+@page "/morbidology"
+
 @using Sparc.Blossom.Authentication
 @using Sparc.Engine.Aura
 @using Sparc.Engine.Billing
@@ -34,7 +37,14 @@
                     <img src="/images/site-frame.svg" alt="Web browser facade" />
                 </header>
                 <div>
-                    <h1>Your Website, Multilingual in Minutes</h1>
+                    @if (PersonalizedWelcome != null)
+                    {
+                        <h1>Welcome, @PersonalizedWelcome listener!</h1>
+                    }
+                    else
+                    {
+                        <h1>Your Website, Multilingual in Minutes</h1>
+                    }
                     <p>
                         Tovik is a simple website plugin that turns your entire site multilingual with just one line of code.
                     </p>
@@ -63,7 +73,14 @@
                         </h2>
                         <ul>
                             <li>
-                                <h3><span>1,000</span> Words Included</h3>
+                                @if (PersonalizedWelcome != null)
+                                {
+                                    <h3><span><s>1,000</s> 2,000</span> Words Included <span>(@PersonalizedWelcome Listener Special!)</span></h3>
+                                }
+                                else
+                                {
+                                    <h3><span>1,000</span> Words Included</h3>
+                                }
                                 <p>Multilingual translation on your own site, with zero commitment.</p>
                             </li>
                             <li>
@@ -150,6 +167,7 @@
     string? Error;
     GetProductResponse? Product;
     bool IsACustomer;
+    string? PersonalizedWelcome;
 
     protected override async Task OnInitializedAsync()
     {
@@ -158,11 +176,19 @@
 
         Avatar = user.Avatar;
         Product = await Billing.GetProductAsync(Config["ProductId"]!);
+
+        if (Nav.Uri.Contains("sapient"))
+            PersonalizedWelcome = "Sapient";
+        else if (Nav.Uri.Contains("morbidology"))
+            PersonalizedWelcome = "Morbidology";
     }
 
     void Start()
     {
-        Nav.NavigateTo("/sites");
+        if (PersonalizedWelcome != null)
+            Nav.NavigateTo("/sites?welcome=" + Uri.EscapeDataString(PersonalizedWelcome));
+        else
+            Nav.NavigateTo("/sites");
     }
 
     async Task Buy()

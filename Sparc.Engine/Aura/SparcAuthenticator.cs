@@ -164,7 +164,7 @@ public class SparcAuthenticator<T>(
         return SparcCodes.Generate(user);
     }
 
-    private async Task<SparcProduct> Activate(ClaimsPrincipal principal, string productId)
+    private async Task<SparcProduct> Activate(ClaimsPrincipal principal, string productId, SparcProductActivationOptions? options = null)
     {
         var user = await GetAsync(principal);
         var product = user.Product(productId);
@@ -172,7 +172,7 @@ public class SparcAuthenticator<T>(
         {
             product = new SparcProduct(productId)
             {
-                MaxUsage = 1000
+                MaxUsage = options?.MaxUsage ?? 1000
             };
             user.Fulfill(product);
             await Users.UpdateAsync((T)user);
@@ -225,6 +225,6 @@ public class SparcAuthenticator<T>(
         auth.MapGet("userinfo", async (SparcAuthenticator<T> auth, ClaimsPrincipal principal) => await GetAsync(principal));
         auth.MapPost("userinfo", async (SparcAuthenticator<T> auth, ClaimsPrincipal principal, BlossomAvatar avatar) => await auth.UpdateAsync(principal, avatar));
         auth.MapGet("code", async (SparcAuthenticator<T> auth, ClaimsPrincipal principal) => await GetSparcCode(principal));
-        auth.MapPost("activate/{productId}", async (SparcAuthenticator<T> auth, ClaimsPrincipal principal, string productId) => await auth.Activate(principal, productId));
+        auth.MapPost("activate/{productId}", async (SparcAuthenticator<T> auth, ClaimsPrincipal principal, string productId, SparcProductActivationOptions? options = null) => await auth.Activate(principal, productId, options));
     }
 }
