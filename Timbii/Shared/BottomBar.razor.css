@@ -13,7 +13,7 @@
   border-radius: 32px 32px 0 0;
   background: var(--surface-high-contrast);
 }
-footer button {
+footer ::deep .nav-link {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -21,14 +21,16 @@ footer button {
   gap: 4px;
   background: none;
   color: var(--menu-icon-normal);
+  cursor: pointer;
 }
-footer button.active {
+footer ::deep .nav-link.active {
   color: var(--menu-icon-selected);
 }
-footer button.active ::deep svg path {
+footer ::deep .nav-link.active svg path {
+  fill: var(--menu-icon-selected);
   stroke: var(--menu-icon-selected);
 }
-footer button span {
+footer ::deep .nav-link span {
   text-align: center;
   font-family: Halcom;
   font-size: 1.2rem;

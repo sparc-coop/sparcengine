@@ -28,9 +28,6 @@ public class Room : BlossomEntity<string>
 
     public string CreateRoomName(List<User> members)
     {
-        //var memberList = members.ToList();
-        Console.WriteLine(members.Count());
-
         if (members.Count == 1)
         {
             return members[0].FirstName;

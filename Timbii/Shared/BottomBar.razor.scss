@@ -13,7 +13,7 @@ footer {
     border-radius: 32px 32px 0 0;
     background: var(--surface-high-contrast);
 
-    button {
+    ::deep .nav-link {
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -21,12 +21,14 @@ footer {
         gap: 4px;
         background: none;
         color: var(--menu-icon-normal);
+        cursor: pointer;
 
         &.active {
             color: var(--menu-icon-selected);
 
-            ::deep svg {
+            svg {
                 path {
+                    fill: var(--menu-icon-selected);
                     stroke: var(--menu-icon-selected);
                 }
             }

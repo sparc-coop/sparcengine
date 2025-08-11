@@ -1,4 +1,4 @@
-﻿@page "/chat"
+﻿@page "/chats/{Id}"
 @layout AppLayout
 
 <TopBar Page="Chat" OnToggleVoiceMode=ToggleVoiceMode />
@@ -16,6 +16,7 @@
 
 @code {
     [CascadingParameter] User? User { get; set; }
+    [Parameter] public string Id { get; set; }
 
     List<Message> Messages = new List<Message>();
     IEnumerable<Message> GroupedMessages = new List<Message>();
@@ -79,7 +80,7 @@
         Message message1 = new Message
         (
             sender: User2,
-            roomId: "1",
+            roomId: Id,
             text: "Curabitur tempor quis eros tempus lacinia. Nam bibendum pellentesque quam a convallis. Sed ut vulputate nisi. Integer in felis sed leo vestibulum venenatis. Suspendisse quis arcu sem. Aenean feugiat ex eu vestibulum vestibulum. ",
             timestamp: DateTime.Now.AddMinutes(-12)
         );
@@ -95,7 +96,7 @@
         Message message3 = new Message
         (
             sender:  User,
-            roomId: "1",
+            roomId: Id,
             text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
             timestamp: DateTime.Now.AddMinutes(-8)
         );
@@ -120,7 +121,7 @@
     {
         Messages.Add(new Message (
             sender: User,
-            roomId: "1",
+            roomId: Id,
             text: messageText,
             timestamp: DateTime.UtcNow
         ));

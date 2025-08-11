@@ -1,18 +1,23 @@
 ﻿<footer class="bottom-bar">
-    <button class="friends-btn @(ActiveTab == "Friends" ? "active" : "")">
+    <NavLink class="nav-link" href="/friends" ActiveClass="active" Match="NavLinkMatch.All">
         <FriendsIcon Color="var(--egg-50)" />
         <span>Friends</span>
-    </button>
-    <button class="chats-btn @(ActiveTab == "Chats" ? "active" : "")">
+    </NavLink>
+
+    <NavLink class="nav-link" href="/chats" ActiveClass="active" Match="NavLinkMatch.All">
         <ChatsIcon Color="var(--egg-50)" />
         <span>Chats</span>
-    </button>
-    <button class="more-btn @(ActiveTab == "More" ? "active" : "")">
+    </NavLink>
+    <NavLink class="nav-link" href="/settings" ActiveClass="active" Match="NavLinkMatch.All">
         <MoreSettingsIcon Color="var(--egg-50)" />
         <span>More</span>
-    </button>
+    </NavLink>
 </footer>
 
+<script>
+    function setActiveTab() {}
+</script>
+
 @code {
-    [Parameter] public string ActiveTab { get; set; } = "Friends";
+    // [Parameter] public string ActiveTab { get; set; } = "Friends";
 }
