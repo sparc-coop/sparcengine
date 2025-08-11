@@ -1,5 +1,4 @@
-﻿namespace Sparc.MCN.Users;
-public class Contact
+﻿public class Contact
 {
     public string? UserId { get; set; }
     public string? Address1 { get; set; }

@@ -6,22 +6,22 @@
 @using static Microsoft.AspNetCore.Components.Web.RenderMode
 @using Microsoft.AspNetCore.Components.Web.Virtualization
 @using Microsoft.JSInterop
-@using Timbii
-@using Timbii.Rooms
-@using Timbii.Shared
-@using Timbii.Shared.Components
-@using Timbii.Shared.Assets
-@using Timbii.Shared.Icons
+
+@using Sparc.Blossom
+@using Sparc.Engine
 @using Sparc.Engine.Chat
 @using Sparc.Engine.Aura
 
 @using Sparc.Blossom.Authentication
 @using Sparc.Core.Chat
-
 @inject ISparcChat Chats
 
-@inject IJSRuntime Js
-@inject NavigationManager Nav
+@using Timbii
+@using Timbii.Shared
+@using Timbii.Shared.Assets
+@using Timbii.Shared.Components
+@using Timbii.Shared.Icons
+@using Timbii.Users
 
-@* Remove later *@
-@using Sparc.MCN.Users
+@inject NavigationManager Nav
+@inject IJSRuntime Js

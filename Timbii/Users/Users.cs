@@ -1,6 +1,4 @@
-﻿using Sparc.Blossom;
-
-namespace Sparc.MCN.Users;
+﻿namespace Timbii.Users;
 
 public class Users(BlossomAggregateOptions<User> options) : BlossomAggregate<User>(options)
 {

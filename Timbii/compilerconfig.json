@@ -56,6 +56,10 @@
     "inputFile": "Shared/Components/MessageCard.razor.scss"
   },
   {
+    "outputFile": "Shared/Components/MessageGroup.razor.css",
+    "inputFile": "Shared/Components/MessageGroup.razor.scss"
+  },
+  {
     "outputFile": "Shared/Components/ChatBar.razor.css",
     "inputFile": "Shared/Components/ChatBar.razor.scss"
   },
@@ -76,7 +80,7 @@
     "inputFile": "Pages/Chat.razor.scss"
   },
   {
-    "outputFile": "Rooms/Presence.razor.css",
-    "inputFile": "Rooms/Presence.razor.scss"
+    "outputFile": "Pages/ChatList.razor.css",
+    "inputFile": "Pages/ChatList.razor.scss"
   }
 ]

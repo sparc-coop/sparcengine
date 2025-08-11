@@ -1,9 +1,9 @@
 using Sparc.Blossom;
-using Sparc.Blossom.Chat.Example;
 using Sparc.Engine;
+using Timbii;
 
 var builder = BlossomApplication.CreateBuilder<Html>(args);
-builder.Services.AddSparcEngine("https://localhost:7185");
+builder.Services.AddSparcEngine("https://localhost:7197");
 var app = builder.Build();
 
 await app.RunAsync<Html>();

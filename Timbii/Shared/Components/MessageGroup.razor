@@ -1,0 +1,14 @@
+﻿<div class="message-group">
+    <div class="message-group-side">
+        <div class="user-img"></div>
+    </div>
+    <div class="message-group-list">
+        <h5>@User.FirstName</h5>
+        @ChildContent
+    </div>
+</div>
+
+@code {
+    [Parameter] public RenderFragment ChildContent { get; set; }
+    [Parameter] public User User { get; set; }
+}

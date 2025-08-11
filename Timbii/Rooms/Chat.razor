@@ -8,7 +8,7 @@
     @foreach (var msg in messages)
     {
         <div class="message-container @(IsUserMessage(msg.Sender) ? "my-message" : "")">
-            <MessageCard Message=@msg />
+            <RoomMessageCard Message=@msg />
         </div>
     }
 </main>
