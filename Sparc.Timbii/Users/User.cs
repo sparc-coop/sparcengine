@@ -1,7 +1,6 @@
-﻿using Sparc.Blossom;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace Sparc.MCN.Users;
+namespace Sparc.Timbii.Users;
 
 public class User : BlossomEntity<string>
 {

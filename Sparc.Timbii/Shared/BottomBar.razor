@@ -1,17 +1,23 @@
 ﻿<footer class="bottom-bar">
-    <button>
-        <span>Messages</span>
-    </button>
-    <button>
-        <span>Contacts</span>
-    </button>
-    <button>
-        <span>Team</span>
-    </button>
-    <button>
-        <span>You</span>
-    </button>
+    <NavLink class="nav-link" href="/friends" ActiveClass="active" Match="NavLinkMatch.All">
+        <FriendsIcon Color="var(--egg-50)" />
+        <span>Friends</span>
+    </NavLink>
+
+    <NavLink class="nav-link" href="/chats" ActiveClass="active" Match="NavLinkMatch.All">
+        <ChatsIcon Color="var(--egg-50)" />
+        <span>Chats</span>
+    </NavLink>
+    <NavLink class="nav-link" href="/settings" ActiveClass="active" Match="NavLinkMatch.All">
+        <MoreSettingsIcon Color="var(--egg-50)" />
+        <span>More</span>
+    </NavLink>
 </footer>
 
+<script>
+    function setActiveTab() {}
+</script>
+
 @code {
+    // [Parameter] public string ActiveTab { get; set; } = "Friends";
 }

@@ -1,4 +1,4 @@
-﻿namespace Sparc.MCN.Users;
+﻿namespace Sparc.Timbii.Users;
 public class Contact
 {
     public string? UserId { get; set; }

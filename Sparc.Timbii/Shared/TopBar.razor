@@ -1,25 +1,61 @@
-﻿<nav class="top-bar">
-    <div class="left">
-        <button class="back-btn icon-btn" @onclick=Back><ArrowLeftIcon Color="#7A7A7A" /></button>
-        <div class="user-card">
-            <div class="user-img">
-            </div>
-            <div class="user-info">
-                <h4>@(Room != null ? (Room.Name ?? Room.RoomId.Substring(0, 16)) : "")</h4>
-                <aside>@(Room != null ? Room.Topic : "")</aside>
+﻿@if (Page == "Chats")
+{
+    <nav class="top-bar chats-page">
+        <div class="left">
+            <h2>Chats</h2>
+        </div>
+        <div class="right">
+            <button class="add-btn icon-btn"><MessageAddIcon /></button>
+            <button class="search-btn icon-btn"><SearchIcon /></button>
+            <Sparc.Blossom.SparcEngine.Aura.SparcAura>
+                <Presence Avatar="context" />
+            </Sparc.Blossom.SparcEngine.Aura.SparcAura>
+        </div>
+    </nav>
+}
+
+@if (Page == "Chat")
+{
+    <nav class="top-bar chat-page">
+        <div class="left">
+            <button class="back-btn icon-btn" @onclick='() => Nav.NavigateTo("/chats")'><ArrowLeftIcon Color="#7A7A7A" /></button>
+            <div class="user-card">
+                <div class="user-img">
+                </div>
+                <div class="user-info">
+                    <h4>FirstName LastName</h4>
+                </div>
             </div>
         </div>
-    </div>
-    <div class="right chat-actions">
-        <button class="voice-btn icon-btn" @onclick=ToggleVoiceMode><VoiceMessageIcon Color="@(voiceMode ? "#1573FE" : "#7A7A7A")" /></button>
-        <button class="more-btn icon-btn"><MoreIcon Color="#7A7A7A" /></button>
-    </div>
-</nav>
+        <div class="right chat-actions">
+            <button class="voice-btn icon-btn" @onclick=ToggleVoiceMode><VoiceModeIcon VoiceMode=voiceMode /></button>
+            <Sparc.Blossom.SparcEngine.Aura.SparcAura>
+                <Presence Avatar="context" />
+            </Sparc.Blossom.SparcEngine.Aura.SparcAura>
+            <button class="more-btn icon-btn"><MenuIcon /></button>
+        </div>
+    </nav>
+}
 
-@inject NavigationManager Nav
+@if (Page == "New Chat")
+{
+    <nav class="top-bar new-chat">
+        <div class="left">
+            <button class="back-btn icon-btn" @onclick='() => Nav.NavigateTo("/chats")'><ArrowLeftIcon Color="#7A7A7A" /></button>
+            <h2>Start New Chat</h2>
+        </div>
+        <div class="right">
+            <button class="add-btn icon-btn"><UserAddIcon /></button>
+            <Sparc.Blossom.SparcEngine.Aura.SparcAura>
+                <Presence Avatar="context" />
+            </Sparc.Blossom.SparcEngine.Aura.SparcAura>
+        </div>
+    </nav>
+}
+
 @code {
+    [Parameter] public string Page { get; set; }
     [Parameter] public EventCallback<bool> OnToggleVoiceMode { get; set; }
-    [Parameter] public MatrixRoom? Room { get; set; }
     bool voiceMode = false;
 
     void ToggleVoiceMode()
@@ -27,6 +63,4 @@
         voiceMode = !voiceMode;
         OnToggleVoiceMode.InvokeAsync(voiceMode);
     }
-
-    void Back() => Nav.NavigateTo("/");
 }

@@ -7,15 +7,18 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Shared\Layout\**" />
+    <Content Remove="Shared\Layout\**" />
+    <EmbeddedResource Remove="Shared\Layout\**" />
+    <None Remove="Shared\Layout\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Remove="compilerconfig.json" />
   </ItemGroup>
 
   <ItemGroup>
     <None Include="compilerconfig.json" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Shared\Layout\" />
   </ItemGroup>
 
   <ItemGroup>
