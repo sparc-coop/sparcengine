@@ -81,7 +81,7 @@ h1, h2, h3, h4, h5, h6, h7 {
     font-family: var(--brother-printed), sans-serif;
 }
 
-p, ul, li {
+p, ul, ol, li {
     margin: 0;
     padding: 0;
     font-family: var(--articulat);
@@ -146,9 +146,10 @@ button {
         font-style: normal;
         font-weight: 500;
         line-height: normal;
+        transition: transform 0.1s ease-in-out;
 
         &:hover {
-            font-weight: bold;
+            transform: scale(1.03, 1.03);
         }
     }
 

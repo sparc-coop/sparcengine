@@ -1,5 +1,6 @@
 ﻿@page "/sites/{Id}"
 @using Tovik.Domains
+@using Tovik.Installation
 @layout MainLayout
 
 <PageTitle>Tovik | @(Domain != null ? Domain.Domain : "Your Domain")</PageTitle>
@@ -15,6 +16,39 @@
         <div class="back">
             <button class="back-btn secondary-btn" @onclick=NavBack><ArrowLeftIcon /> Back</button>
         </div>
+
+        @if (Domain != null && Domain.DateConnected == null)
+        {
+            <section class="welcome">
+                <img src="/images/Star.svg" alt="Star" />
+                <header>
+                    <h3>How To Install Tovik</h3>
+                </header>
+                <p>
+                    To install Tovik on <b>@Domain.Domain</b>:
+                </p>
+
+                <ol>
+                    <li>
+                        <p>Add this line of code to your site, preferably just before the closing <code>&lt;&sol;body&gt;</code> tag:</p>
+                        <CodeBlock CanCopy=true>
+                             @("<script type=\"module\" src=\"https://tovik.app/tovik.js\"></script>")
+                        </CodeBlock>
+                    </li>
+                    <li>
+                        <p>Press the button marked <span>Verify Tovik Installation</span> below, and Tovik will confirm that you've installed everything correctly.</p>
+                    </li>
+                </ol>
+                
+                <p>
+                    That’s it! Tovik will start detecting your visitors’ browser language and displaying your entire site in their language automatically.
+                </p>
+                <aside>
+                    This message will disappear once the Tovik tag is detected on <b>@Domain.Domain</b>.
+                </aside>
+            </section>
+        }
+
         <section class="domain-summary">
             <header>
                 <h3>Site Summary</h3>
@@ -81,7 +115,7 @@
                     <input type="text" @bind=Exemption placeholder="Enter a word or phrase..." />
                 </label>
                 <div class="btn-container">
-                    <button class="add-btn primary-btn" @onclick=AddExemption>Add</button>
+                    <button class="add-btn primary-btn" @onclick=AddExemption>Add to Exemptions List</button>
                 </div>
         </section>
 

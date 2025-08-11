@@ -8,7 +8,7 @@
 
 <article class="home">
     <div class="page-container">
-        @if (Usage == 0)
+        @if (Limit > 0 && !Domains.Any())
         {
             <section class="welcome">
                 <img src="/images/Star.svg" alt="Star" />
@@ -16,87 +16,68 @@
                     <h3>Welcome to Tovik!</h3>
                 </header>
                 <p>
-                    We're so happy you've decided to try Tovik.
+                    We're so happy you're here.
                 </p>
                 <p>
-                    To install Tovik, add this line of code to your site, preferably just before the closing <code>&lt;&sol;body&gt;</code> tag:
+                    Tovik is designed to make it easy to translate your website into multiple languages, so you can reach a global audience without the hassle of managing translations manually.
                 </p>
-                <CodeBlock CanCopy=true>
-                    @("<script type=\"module\" src=\"https://tovik.app/tovik.js\"></script>")
-                </CodeBlock>
                 <p>
-                    That’s it! Tovik will now detect your visitors’ browser language and display your site in their language automatically.
+                    To get started, <span>enter the domain of the website</span> where you'd like to install Tovik. Next, we'll guide you through adding a single line of code to get Tovik up and running.
                 </p>
-                <aside>
-                    This message will disappear once we successfully detect the Tovik tag on your website.
-                </aside>
             </section>
         }
+        else
+        {
+            <section class="word-usage">
+                <header>
+                    <h3>Tovik Usage</h3>
+                </header>
 
-        <section class="word-usage">
-            <header>
-                <h3>Word Usage</h3>
-            </header>
-
-            @if (IsTrial)
-            {
-                <p>Your free trial of Tovik includes 1,000 words to start. Once you need to translate additional words, click the button below to purchase a word pack.</p>
-            }
-            else
-            {
-                <p>Thank you for purchasing Tovik! Your purchase includes 100,000 words of translation. If you ever need to translate additional words, click the button below to purchase a word pack.</p>
-            }
-            <div>
-                <h4>Words Translated</h4>
-                <UsageMeter Usage=Usage Limit=Limit />
-            </div>
-            @if (Product != null)
-            {
-                <div class="btn-container">
-                    <button class="purchase-btn primary-btn" @onclick=GoToStore>Add 100,000 words (@Product.FormattedPrice)</button>
+                @if (IsTrial)
+                {
+                    <p>Your free trial of Tovik includes 1,000 words to start, with no time limits or restrictions.</p>
+                }
+                else
+                {
+                    <p>Thank you for supporting Tovik with your purchase of a word pack!</p>
+                }
+                <div>
+                    <h4>Words Translated</h4>
+                    <UsageMeter Usage=Usage Limit=Limit />
                 </div>
-            }
-        </section>
+            </section>
+        }
 
         <section class="manage-domains">
             <header>
                 <h3>My Websites</h3>
             </header>
-            @if (IsTrial)
+            @if (!Domains.Any())
             {
-                <p>Once you purchase Tovik, make sure you add your websites here. Tovik usage over 1,000 words will only be allowed on the websites you specify below.</p>
+                <p>Enter the domain name of the website where you will be installing Tovik.</p>
             }
-            else
+
+            @if (Domains.Any())
             {
-                <p>Add all of your Tovik-enabled websites here. Tovik usage over 1,000 words will only be allowed on the websites you specify below.</p>
-            }
-            <table class="domains-table">
-                <thead>
-                    <tr>
-                        <td>Domain</td>
-                        <td>Usage</td>
-                        <td></td>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var domain in Domains)
-                    {
-                        <DomainCard Domain=domain PageType="home" OnDelete=DeleteDomain />
-                    }
-                </tbody>
-                @if (!Domains.Any())
-                {
-                    <tfoot>
+                <p>
+                    Manage your Tovik-enabled websites here. You can add as many domains as you'd like, as Tovik places no limits on how many you can add to your account.
+                </p>
+                <table class="domains-table">
+                    <thead>
                         <tr>
-                            <td colspan="3">
-                                <aside>
-                                    Looks like you haven't added any sites yet. Go ahead and add your first website in the box below!
-                                </aside>
-                            </td>
+                            <td>Domain</td>
+                            <td>Usage</td>
+                            <td></td>
                         </tr>
-                    </tfoot>
-                }
-            </table>
+                    </thead>
+                    <tbody>
+                        @foreach (var domain in Domains)
+                        {
+                            <DomainCard Domain=domain PageType="home" OnDelete=DeleteDomain />
+                        }
+                    </tbody>
+                </table>
+            }
 
             @if (Error != null)
             {
@@ -107,9 +88,53 @@
                 <input type="text" placeholder="Enter a domain name" @bind="NewDomain" @bind:event="oninput" />
             </label>
             <div class="btn-container">
-                <button class="add-btn primary-btn" disabled="@(string.IsNullOrWhiteSpace(NewDomain))" @onclick=AddDomain>Add This Website</button>
+                <button class="add-btn primary-btn" @onclick=AddDomain>Add Website</button>
             </div>
         </section>
+
+        @if (IsTrial && Product != null)
+        {
+            <section class="trial">
+                <header>
+                    <img src="/images/Star.svg" alt="Star" />
+                </header>
+                <div>
+                    <h2>
+                        Buy a Tovik Word Pack
+                        <span>@Product.FormattedPrice</span>
+                    </h2>
+                    <ul>
+                        <li>
+                            <h3><span>100,000</span> Words Included</h3>
+                            <p>Massive multilingual coverage in a single bundle.</p>
+                        </li>
+                        <li>
+                            <h3><span>Unlimited</span> Domains</h3>
+                            <p>Use across all your sites, no restrictions.</p>
+                        </li>
+                        <li>
+                            <h3>One-Time Payment</h3>
+                            <p>No subscription, no recurring fee.</p>
+                        </li>
+                        <li>
+                            <h3>Local-Friendly Checkout</h3>
+                            <p>Pay in your preferred currency.</p>
+                        </li>
+                        <li>
+                            <h3>Yours To Keep</h3>
+                            <p>No expiration, no time limits.</p>
+                        </li>
+                        <li>
+                            <h3>Privacy First</h3>
+                            <p>No tracking, no data harvesting.</p>
+                        </li>
+                    </ul>
+                </div>
+                <footer>
+                    <button class="add-btn primary-btn" @onclick=Buy>Buy on Sparc Store &rarr;</button>
+                </footer>
+            </section>
+        }
     </div>
 </article>
 
@@ -142,7 +167,7 @@
         Product = await Billing.GetProductAsync(Config["ProductId"]!);
     }
 
-    private async Task GoToStore()
+    private async Task Buy()
     {
         var totp = await Aura.GetSparcCode();
         if (totp != null)
@@ -157,7 +182,10 @@
     private async Task AddDomain()
     {
         if (string.IsNullOrWhiteSpace(NewDomain))
+        {
+            Error = "This doesn't look like a valid domain name. Please enter a valid domain name to continue.";
             return;
+        }
 
         Error = null;
         try

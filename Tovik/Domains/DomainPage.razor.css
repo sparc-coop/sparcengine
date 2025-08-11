@@ -1,4 +1,32 @@
-﻿.domain-page .page-container form {
+﻿.domain-page .page-container section.welcome {
+  align-items: flex-start;
+}
+.domain-page .page-container section.welcome > img {
+  height: 30px;
+}
+.domain-page .page-container section.welcome a {
+  text-decoration: underline !important;
+}
+.domain-page .page-container section.welcome ol {
+  font-size: 1.6rem;
+  padding-left: 32px;
+  width: calc(100% - 32px);
+}
+.domain-page .page-container section.welcome ol li {
+  margin: 16px 0;
+}
+.domain-page .page-container section.welcome ol li p {
+  margin-bottom: 16px;
+}
+.domain-page .page-container section.welcome ol li span {
+  color: var(--orange-300);
+  font-weight: 600;
+}
+.domain-page .page-container section.welcome aside {
+  font-size: 1.4rem;
+  opacity: 0.7;
+}
+.domain-page .page-container form {
   display: flex;
   flex-direction: column;
   gap: 8px;
