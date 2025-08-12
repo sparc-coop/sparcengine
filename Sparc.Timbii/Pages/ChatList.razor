@@ -1,7 +1,93 @@
-﻿@page "/chats"
+﻿@using Sparc.Core.Chat
+@using Sparc.Blossom.Authentication
+@page "/chats"
 @layout AppLayout
 
-<TopBar Page="Chats" />
+<PageTitle>Chats</PageTitle>
+
+ <TopBar Page="Chats" />
+
+<main>
+    @if (Rooms == null)
+    {
+        <p><em>Loading chats…</em></p>
+    }
+    else if (!Rooms.Any())
+    {
+        <p><em>No chats available.</em></p>
+    }
+    else
+    {
+        @foreach (var room in Rooms)
+        {
+            <ChatCard Room="room" />
+        }
+    }
+</main>
+
+<BottomBar />
+
+@inject NavigationManager Nav
+@code {
+    private string? RoomId { get; set; }
+    private List<MatrixRoom> Rooms = [];
+
+    protected async override Task OnInitializedAsync()
+    {
+        await GetAllRooms();
+    }
+
+    private async Task GetAllRooms()
+    {
+        var response = await Chats.GetRoomsAsync();
+        Rooms = response.Chunk;
+    }
+
+    private void GoToRoom(MatrixRoom room)
+    {
+        Nav.NavigateTo("/chats/" + room.LocalId);
+    }
+
+    private async Task JoinRoom(MatrixRoom room)
+    {
+        await Chats.JoinRoomAsync(room.RoomId);
+        await GetAllRooms();
+        StateHasChanged();
+    }
+
+    private async Task LeaveRoom(MatrixRoom room)
+    {
+        await Chats.LeaveRoomAsync(room.RoomId);
+        await GetAllRooms();
+        StateHasChanged();
+        var response = await Chats.GetRoomsAsync();
+        Rooms = response.Chunk;
+        if (Rooms.Any())
+        {
+            RoomId = Rooms.First().RoomId;
+        }
+    }
+
+    private async Task DeleteRoom(MatrixRoom room)
+    {
+        var deletedRoom = await Chats.DeleteRoomAsync(room.RoomId);
+        await GetAllRooms();
+        StateHasChanged();
+    }
+
+    async Task Create()
+    {
+        var room = await Chats.CreateRoomAsync(new(Visibility: "public"));
+        Nav.Refresh(true);
+    }
+
+    private bool UserIsInRoom(MatrixRoom room)
+    {
+        return true;
+    }
+}
+
+@* <TopBar Page="Chats" />
 
 <main>
     @if (Room != null)
@@ -75,4 +161,4 @@
         Members.Add(Member1);
         Room = new Room(User, Members);
     }
-}
+} *@

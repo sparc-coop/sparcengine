@@ -1,5 +1,7 @@
 ﻿<footer class="chat-bar">
-    <button class="attach-btn icon-btn"><PlusIcon /></button>
+    <div class="attach-btns">
+        <button class="attach-btn icon-btn"><PlusIcon /></button>
+    </div>
     <form id="chat-form" @onsubmit=InitiateMessage>
         <div class="chat-input">
             @if (!VoiceMode)
@@ -16,7 +18,9 @@
         </div>
         @if (!VoiceMode)
         {
-            <button id="submit-btn" class="send-btn icon-btn" disabled=@enableSendBtn) type=submit><SendIcon /></button>
+            <div class="form-btns">
+                <button id="submit-btn" class="send-btn icon-btn" disabled=@enableSendBtn) type=submit><SendIcon /></button>
+            </div>
         } 
         else
         {
@@ -26,14 +30,32 @@
 </footer>
 
 <script>
+    document.querySelector("chat-textarea").addEventListener("keydown", function(event) {
+      // Check if the pressed key is Enter (keyCode 13 or key "Enter")
+      if (event.key === "Enter" || event.keyCode === 13) {
+        // Check if the Shift key is NOT pressed
+        if (!event.shiftKey) {
+          event.preventDefault(); // Prevent the default action (e.g., submitting a form, adding a new line)
+          // You can add your desired action here when Enter is pressed alone
+          console.log("Enter pressed without Shift - default prevented");
+        } else {
+          // Shift + Enter was pressed, allow the default action or perform a different action
+          console.log("Shift + Enter pressed - default allowed or custom action");
+          // For instance, if you're in a textarea, this would add a new line.
+          // Or you could trigger a form submission.
+        }
+      }
+    });
+
     function getInnerText(ref, elem) {
         return text = elem.innerText
     }
 
-    function setText(ref, elem) {
+    function setText(event, ref, elem) {
+        event.preventDefault();
         var text = getInnerText(ref, elem);
         ref.invokeMethodAsync("SetText", text);
-        console.log(text);
+        //console.log(text);
     }
 
     function initiateMessage(ref, elem) {
@@ -83,7 +105,7 @@
 
     void HandleEnter(KeyboardEventArgs? args)
     {
-        Js.InvokeVoidAsync("setText", DotNetObjectReference.Create(this), TextArea);
+        Js.InvokeVoidAsync("setText", args, DotNetObjectReference.Create(this), TextArea);
 
         if (string.IsNullOrEmpty(Text))
         {

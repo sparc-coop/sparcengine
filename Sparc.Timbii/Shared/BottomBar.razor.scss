@@ -1,7 +1,8 @@
 footer {
-    width: calc(100% - 64px);
+    //width: calc(100% - 64px);
+    width: 100%;
     height: 64px;
-    padding: 16px 32px;
+    padding: 16px 40px;
     display: flex;
     flex-direction: row;
     justify-content: space-between;

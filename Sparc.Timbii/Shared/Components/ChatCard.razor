@@ -1,4 +1,4 @@
-﻿<div class="chat-card" @onclick='() => Nav.NavigateTo($"/chats/{Room.Id}")'>
+﻿<div class="chat-card" @onclick='() => Nav.NavigateTo($"/chats/{Room.RoomId}")'>
     <div class="left">
         <div class="chat-img">
         </div>
@@ -8,77 +8,34 @@
         </div>
     </div>
     <div class="right">
-        <aside>@Messages.LastOrDefault().Timestamp.ToShortTimeString()</aside>
+        <aside>@DateTimeOffset.FromUnixTimeMilliseconds(Messages.LastOrDefault().OriginServerTs).ToLocalTime().ToString("HH:mm")</aside>
         <div class="notification-bubble">
-            <span>1</span>
+            <span>1</span> @*number of unread messages*@
         </div>
     </div>
 </div>
 
 @code {
-    [CascadingParameter] public User User { get; set; }
-    [Parameter] public Room Room { get; set; }
+    [Parameter] public MatrixRoom Room { get; set; }
 
-    IEnumerable<User> Members = new List<User>();
-    User Member1 = new User(
-        firstName: "John",
-        lastName: "Doe",
-        contact: new Contact(
-            address1: "123 Main St",
-            address2: null,
-            city: "Springfield",
-            state: "IL",
-            postalCode: "62701",
-            country: "USA",
-            emails: new List<Email>(),
-            phoneNumbers: new List<Phone>()
-        ),
-        prefix: "Mr.",
-        suffix: null
-    );
-    List<Message> Messages = new List<Message>();
+    BlossomUser? User { get; set; }
+    List<MatrixEvent<Message>> Messages = new List<MatrixEvent<Message>>();
     string? RoomName;
     string? MessagePreview;
 
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        Member1.Contact.EmailAddresses = new List<Email>() { new Email(type: "Personal", address: "johndoe1@gmail.com") };
-        Member1.Contact.PhoneNumbers = new List<Phone>() {
-            new Phone(type: "Home", number: "(239) 555-0108"),
-            new Phone(type: "Mobile", number: "(239) 555-0108"),
-        };
+        if (Room != null)
+        {
+            await GetMessagesAsync();
+        }
 
-        Message message1 = new Message
-        (
-            sender: Member1,
-            roomId: "1",
-            text: "Curabitur tempor quis eros tempus lacinia. Nam bibendum pellentesque quam a convallis. Sed ut vulputate nisi. Integer in felis sed leo vestibulum venenatis. Suspendisse quis arcu sem. Aenean feugiat ex eu vestibulum vestibulum. ",
-            timestamp: DateTime.Now.AddMinutes(-12)
-        );
+        GetMessagePreview(Messages.LastOrDefault().Content.ToString() ?? string.Empty);
+    }
 
-        Message message2 = new Message
-        (
-            sender: Member1,
-            roomId: "1",
-            text: "Nam pulvinar blandit velit!! 😊",
-            timestamp: DateTime.Now.AddMinutes(-10)
-        );
-
-        Message message3 = new Message
-        (
-            sender: User,
-            roomId: "1",
-            text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-            timestamp: DateTime.Now.AddMinutes(-8)
-        );
-
-        Messages.Add(message1);
-        Messages.Add(message2);
-        Messages.Add(message3);
-
-        Members.Append(Member1);
-        //Room = new Room(User, Members);
-        GetMessagePreview(Messages.LastOrDefault()?.Text ?? string.Empty);
+    private async Task GetMessagesAsync()
+    {
+        Messages = await Chats.GetMessagesAsync(Room!.RoomId);
     }
 
     public void GetMessagePreview(string message)

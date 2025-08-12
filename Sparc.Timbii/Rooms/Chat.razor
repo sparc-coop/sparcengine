@@ -1,16 +1,18 @@
-﻿@page "/room/{roomId}"
+﻿@page "/chats/{roomId}"
 
 @layout AppLayout
 
-<TopBar OnToggleVoiceMode=ToggleVoiceMode Room="Room" />
+<TopBar Page="Chat" OnToggleVoiceMode=ToggleVoiceMode Room="Room" />
 
 <main>
-    @foreach (var msg in messages)
-    {
-        <div class="message-container @(IsUserMessage(msg.Sender) ? "my-message" : "")">
-            <MessageCard Message=@msg />
-        </div>
-    }
+    <div class="message-list">
+        @foreach (var msg in messages)
+        {
+            <div class="message-container @(IsUserMessage(msg.Sender) ? "my-message" : "")">
+                <MessageCard Message=@msg IsMine=IsUserMessage(msg.Sender) />
+            </div>
+        }
+    </div>
 </main>
 
 <ChatBar OnSendMessage=SendMessage VoiceMode=@voiceMode MessageSent=messageSent />
@@ -56,6 +58,7 @@
 
             // currentMessage = "";
             await GetMessagesAsync();
+            messageSent = true;
         }
     }
 
