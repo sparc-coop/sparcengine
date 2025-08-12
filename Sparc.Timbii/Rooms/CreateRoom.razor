@@ -1,13 +1,13 @@
-﻿@page "/room/create"
+﻿@page "/chats/new"
 @using Sparc.Core.Chat
 
-<PageTitle>Create a new room</PageTitle>
+<PageTitle>New Chat</PageTitle>
 
 <div>
-    <h3>Create a room</h3>
+    <h3>Start a new chat</h3>
     <div>
-        <label>Room Name</label>
-        <input type="text" @bind="roomName" placeholder="Select a room name" />
+        <label>Chat Name</label>
+        <input type="text" @bind="roomName" placeholder="Select a chat name" />
     </div>
     <div>
         <button class="btn btn-sm btn-primary" @onclick="CreateNewRoom">Create</button>

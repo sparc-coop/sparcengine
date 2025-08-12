@@ -8,27 +8,30 @@
  <TopBar Page="Chats" />
 
 <main>
-    @if (Rooms == null)
-    {
-        <p><em>Loading chats…</em></p>
-    }
-    else if (!Rooms.Any())
-    {
-        <p><em>No chats available.</em></p>
-    }
-    else
-    {
-        @foreach (var room in Rooms)
+    <div class="chat-list">
+        @if (Rooms == null)
         {
-            <ChatCard Room="room" />
+            <p><em>Loading chats…</em></p>
         }
-    }
+        else if (!Rooms.Any())
+        {
+            <p><em>No chats available.</em></p>
+        }
+        else
+        {
+            @foreach (var room in Rooms)
+            {
+                <ChatCard User=User Room=room />
+            }
+        }
+    </div>
 </main>
 
 <BottomBar />
 
 @inject NavigationManager Nav
 @code {
+    BlossomUser? User { get; set; }
     private string? RoomId { get; set; }
     private List<MatrixRoom> Rooms = [];
 
@@ -46,6 +49,11 @@
     private void GoToRoom(MatrixRoom room)
     {
         Nav.NavigateTo("/chats/" + room.LocalId);
+    }
+
+    private void GoToCreateRoom()
+    {
+        Nav.NavigateTo("/chats/new");
     }
 
     private async Task JoinRoom(MatrixRoom room)

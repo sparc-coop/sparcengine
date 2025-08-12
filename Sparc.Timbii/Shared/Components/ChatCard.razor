@@ -3,12 +3,12 @@
         <div class="chat-img">
         </div>
         <div class="chat-info">
-            <h4>@Room.Name</h4>
+            <h4>@(Room.Name ?? Room.RoomId.Substring(0, 8)))</h4>
             <p>@MessagePreview</p>
         </div>
     </div>
     <div class="right">
-        <aside>@DateTimeOffset.FromUnixTimeMilliseconds(Messages.LastOrDefault().OriginServerTs).ToLocalTime().ToString("HH:mm")</aside>
+        <aside>@(Messages.Count > 0 ? DateTimeOffset.FromUnixTimeMilliseconds(Messages.LastOrDefault().OriginServerTs).ToLocalTime().ToString("HH:mm") : "")</aside>
         <div class="notification-bubble">
             <span>1</span> @*number of unread messages*@
         </div>
@@ -16,12 +16,12 @@
 </div>
 
 @code {
+    [Parameter] public BlossomUser? User {get; set;}
     [Parameter] public MatrixRoom Room { get; set; }
 
-    BlossomUser? User { get; set; }
-    List<MatrixEvent<Message>> Messages = new List<MatrixEvent<Message>>();
+    private List<MatrixEvent<MatrixMessage>> Messages = [];
     string? RoomName;
-    string? MessagePreview;
+    string? MessagePreview = "";
 
     protected override async Task OnInitializedAsync()
     {
@@ -30,7 +30,10 @@
             await GetMessagesAsync();
         }
 
-        GetMessagePreview(Messages.LastOrDefault().Content.ToString() ?? string.Empty);
+        if (Messages.Count > 0)
+        {
+            GetMessagePreview(Messages.LastOrDefault().Content.Body ?? string.Empty);
+        }
     }
 
     private async Task GetMessagesAsync()
