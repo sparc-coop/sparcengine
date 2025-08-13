@@ -3,7 +3,9 @@
 
 <PageTitle>New Chat</PageTitle>
 
-<div>
+<TopBar Page="New Chat" />
+
+<main>
     <h3>Start a new chat</h3>
     <div>
         <label>Chat Name</label>
@@ -12,9 +14,9 @@
     <div>
         <button class="btn btn-sm btn-primary" @onclick="CreateNewRoom">Create</button>
     </div>
-    
-</div>
+</main>
 
+<BottomBar />
 
 @code {
     string roomName = "";
