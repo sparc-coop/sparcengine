@@ -1,0 +1,17 @@
+﻿@using System.Reflection
+
+<Router AppAssembly="@AppAsm">
+    <Found Context="routeData">
+        <RouteView RouteData="@routeData" DefaultLayout="@typeof(MCN.Components.Layout.MainLayout)" />
+        <FocusOnNavigate RouteData="@routeData" Selector="h1" />
+    </Found>
+</Router>
+
+@code {
+    private static Assembly AppAsm =>
+#if BROWSER
+        typeof(BlazorApp).Assembly;
+#else
+        typeof(MauiProgram).Assembly;
+#endif
+}
