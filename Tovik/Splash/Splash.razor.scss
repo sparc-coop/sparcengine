@@ -1,0 +1,127 @@
+article {
+    width: 100vw;
+    height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1728px 1fr;
+    column-gap: 100px;
+    background: linear-gradient(to bottom, #FCF7F0 75%, #E7E2DC 25%);
+    overflow: auto;
+
+    .splash-container {
+        padding: 50px 0;
+        grid-column: 2 / span 1;
+        position: relative;
+    }
+
+    .tovik-banner {
+        width: 764px;
+        height: 160px;
+        background-image: url('/splash/banner.svg');
+        background-size: contain;
+        background-repeat: no-repeat;
+        position: absolute;
+        bottom: 65%;
+        transform: translateY(-35%);
+        left: 295px;
+        z-index: 30;
+
+        h2 {
+            width: 80%;
+            position: absolute;
+            top: 60%;
+            left: 50%;
+            transform: translate(-50%, -60%);
+            color: black;
+            text-transform: uppercase;
+            font-size: 48px;
+        }
+    }
+
+    .tovik-laptop {
+        width: 814px;
+        height: 502px;
+        position: absolute;
+        bottom: 200px;
+        left: 0;
+        z-index: 20;
+    }
+
+    .tovik-grid__container {
+        width: 585px;
+        position: absolute;
+        margin-right: 41px;
+        top: 50%;
+        right: 200px;
+        transform: translateY(-50%);
+        z-index: 10;
+
+        .tovik-grid {
+            position: relative;
+        }
+
+        ul {
+            width: 350px;
+            height: 215px;
+            position: absolute;
+            bottom: 150px;
+            left: 230px;
+            transform: translateY(-50);
+            list-style-image: url("/splash/checkedbox.svg");
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            gap: 16px;
+
+            li {
+                padding-left: 10px;
+                font-family: 'Comic Sans MS';
+                color: #000;
+                //font-family: "Sketchnote Text";
+                font-size: 20px;
+                font-style: normal;
+                font-weight: 400;
+                //line-height: 139.307%; /* 27.861px */
+
+
+                &::marker {
+                    vertical-align: middle;
+                }
+            }
+        }
+    }
+
+    .tovik-pencilcup {
+        position: absolute;
+        bottom: 0;
+        left: -50px;
+    }
+
+    .tovik-btn__container {
+        position: absolute;
+        bottom: 100px;
+        right: 100px;
+        z-index: 50;
+
+        button {
+            padding: 8px 60px;
+            background: #FCF7F0;
+            border-radius: 85px;
+            border: 3px solid #000;
+            background: #FCF7F0;
+            /* 3D Shadow */
+            box-shadow: -11px 8px 0 0 #000;
+            color: #EB9361;
+            text-align: center;
+            //font-family: "Brother 1816 Printed";
+            font-size: 60px;
+            font-style: normal;
+            font-weight: 700;
+            line-height: normal;
+
+            &:active {
+                box-shadow: -8px 5px 0 0 #000;
+                transform: translateY(3px) translateX(-4px);
+            }
+        }
+    }
+}
